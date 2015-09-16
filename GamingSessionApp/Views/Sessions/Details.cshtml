@@ -1,0 +1,98 @@
+﻿@model GamingSessionApp.Models.Session
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Session</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Duration.Duration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Duration.Duration)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Platform.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Platform.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatorId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatorId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScheduledDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScheduledDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GamersRequired)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GamersRequired)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RequiredGamersCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RequiredGamersCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Information)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Information)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsPublic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsPublic)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

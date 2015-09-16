@@ -1,0 +1,87 @@
+﻿@model IEnumerable<GamingSessionApp.Models.Session>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Duration.Duration)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Platform.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatorId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScheduledDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GamersRequired)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SignedGamersCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Information)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsPublic)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Duration.Duration)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Platform.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatorId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScheduledDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GamersRequired)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SignedGamersCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Information)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsPublic)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
