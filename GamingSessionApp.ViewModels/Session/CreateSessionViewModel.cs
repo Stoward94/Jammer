@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
@@ -20,33 +21,33 @@ namespace GamingSessionApp.ViewModels.Session
         [Required, HiddenInput]
         public string CreatorId { get; set; }
 
-        [Required, DataType(DataType.Date)]
+        [Required, DataType(DataType.Date), DisplayName("Schedule Date")]
         public DateTime ScheduledDate { get; set; }
         
-        [Required]
+        [Required, DisplayName("Start Time")]
         public string ScheduledTime { get; set; }
         public SelectList ScheduledTimeList { get; set; }
 
-        [Required]
+        [Required, DisplayName("Target Platform")]
         public int PlatformId { get; set; }
         public SelectList PlatformList { get; set; }
 
-        [Required]
+        [Required, DisplayName("Session Type")]
         public int TypeId { get; set; }
         public SelectList SessionTypeList { get; set; }
 
-        [Required]
+        [Required, DisplayName("Gamers Needed")]
         public int GamersRequired { get; set; }
         public SelectList GamersRequiredList { get; set; }
 
         [Required, StringLength(5000)]
         public string Information { get; set; }
         
-        [Required]
+        [Required, DisplayName("Expected Duration")]
         public int DurationId { get; set; }
         public SelectList DurationList { get; set; }
 
-        [Required]
+        [Required, DisplayName("Public Session?")]
         public bool IsPublic { get; set; }
     }
 }
