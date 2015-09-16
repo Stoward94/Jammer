@@ -13,7 +13,7 @@ using GamingSessionApp.ViewModels.Session;
 
 namespace GamingSessionApp.Controllers
 {
-    public class SessionsController : Controller
+    public class SessionsController : BaseController
     {
         private SessionLogic _sessionLogic;
 
@@ -43,15 +43,18 @@ namespace GamingSessionApp.Controllers
 
         // GET: Sessions/Create
         [HttpGet]
+        [Authorize]
         public async Task<ViewResult> Create()
         {
-            var viewModel = await _sessionLogic.PrepareCreateSessionViewModel();
+            var viewModel = new CreateSessionViewModel {CreatorId = UserId};
+            viewModel = await _sessionLogic.PrepareCreateSessionViewModel(viewModel);
 
             return View(viewModel);
         }
 
         
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateSessionViewModel viewModel)
         {

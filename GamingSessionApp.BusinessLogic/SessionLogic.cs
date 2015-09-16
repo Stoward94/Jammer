@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,25 +59,36 @@ namespace GamingSessionApp.BusinessLogic
 
         public async Task<bool> CreateSession(CreateSessionViewModel viewModel)
         {
-            //Map the properties from view model to model
-            Session model = Mapper.Map<CreateSessionViewModel, Session>(viewModel);
+            try
+            {
+                //Map the properties from view model to model
+                Session model = Mapper.Map<CreateSessionViewModel, Session>(viewModel);
 
+                //Combine both date and time fields
+                model.ScheduledDate = CombineDateAndTime(model.ScheduledDate, viewModel.ScheduledTime);
 
+                //Insert the new session into the db
+                _sessionRepo.Insert(model);
+                await SaveChangesAsync();
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log exception    
+                return false;
+            }
         }
 
         #endregion
 
         #region Prepare View Models
 
-        public async Task<CreateSessionViewModel> PrepareCreateSessionViewModel(CreateSessionViewModel viewModel = null)
+        public async Task<CreateSessionViewModel> PrepareCreateSessionViewModel(CreateSessionViewModel viewModel)
         {
-            if (viewModel == null)
-            {
-                viewModel = new CreateSessionViewModel();
+            //Set the default time if we don't already have one
+            if(String.IsNullOrEmpty(viewModel.ScheduledTime))
                 viewModel.ScheduledTime = SetDefaultSessionTime();
-            }
 
             //Add the select lists options
             List<SessionDuration> durationList = await _durationLogic.GetAll();
@@ -128,6 +140,16 @@ namespace GamingSessionApp.BusinessLogic
             var time = DateTime.Now.AddHours(1);
             var dif = TimeSpan.FromMinutes(15);
             return new DateTime(((time.Ticks + dif.Ticks - 1) / dif.Ticks) * dif.Ticks).ToShortTimeString();
+        }
+
+        private DateTime CombineDateAndTime(DateTime date, string time )
+        {
+            //Convert time string to timespan
+            TimeSpan ts = DateTime.ParseExact(time, "HH:mm", CultureInfo.InvariantCulture).TimeOfDay;
+
+            DateTime newDateTime = date + ts;
+
+            return newDateTime;
         }
 
         #endregion

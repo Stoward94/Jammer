@@ -1,8 +1,13 @@
+using System.Data.Entity;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using Microsoft.Practices.Unity;
 using Unity.Mvc3;
 using GamingSessionApp.Controllers;
+using GamingSessionApp.DataAccess;
+using GamingSessionApp.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GamingSessionApp
 {
@@ -19,7 +24,14 @@ namespace GamingSessionApp
         {
             var container = new UnityContainer();
 
-            container.RegisterType<SessionLogic>();          
+            //User Manager / DB contect
+            container.RegisterType<UserManager<ApplicationUser>>(new HierarchicalLifetimeManager());
+            container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new HierarchicalLifetimeManager());
+            container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
+
+            container.RegisterType<AccountController>(new InjectionConstructor());
+
+            container.RegisterType<SessionLogic>();
 
             return container;
         }

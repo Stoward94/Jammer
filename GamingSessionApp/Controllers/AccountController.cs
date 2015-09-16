@@ -13,10 +13,9 @@ using GamingSessionApp.Models;
 namespace GamingSessionApp.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
 
         public AccountController()
         {
@@ -37,18 +36,6 @@ namespace GamingSessionApp.Controllers
             private set 
             { 
                 _signInManager = value; 
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
             }
         }
 
@@ -407,12 +394,6 @@ namespace GamingSessionApp.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
                 if (_signInManager != null)
                 {
                     _signInManager.Dispose();

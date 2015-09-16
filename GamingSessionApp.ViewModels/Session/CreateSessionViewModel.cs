@@ -17,10 +17,12 @@ namespace GamingSessionApp.ViewModels.Session
             IsPublic = true;
         }
 
+        [Required, HiddenInput]
+        public string CreatorId { get; set; }
+
         [Required, DataType(DataType.Date)]
         public DateTime ScheduledDate { get; set; }
         
-
         [Required]
         public string ScheduledTime { get; set; }
         public SelectList ScheduledTimeList { get; set; }
@@ -30,12 +32,12 @@ namespace GamingSessionApp.ViewModels.Session
         public SelectList PlatformList { get; set; }
 
         [Required]
-        public int SessionTypeId { get; set; }
+        public int TypeId { get; set; }
         public SelectList SessionTypeList { get; set; }
 
         [Required]
-        public int GamersRequiredId { get; set; }
-        public SelectList GamersRequired { get; set; }
+        public int GamersRequired { get; set; }
+        public SelectList GamersRequiredList { get; set; }
 
         [Required, StringLength(5000)]
         public string Information { get; set; }

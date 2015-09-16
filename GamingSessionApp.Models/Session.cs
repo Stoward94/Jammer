@@ -11,6 +11,7 @@ namespace GamingSessionApp.Models
         public Session()
         {
             CreatedDate = DateTime.Now;
+            SignedGamersCount = 0;
         }
 
         public int Id { get; set; }
@@ -43,7 +44,7 @@ namespace GamingSessionApp.Models
         public int GamersRequired { get; set; }
 
         //# of gamers registered for session
-        public int SignedGamersCount { get { return SignedGamers.Count(); } }
+        public int SignedGamersCount { get; set; }
 
         //Description of what the session is about
         [Required, StringLength(5000)]
