@@ -1,4 +1,4 @@
-﻿@model GamingSessionApp.Models.Session
+﻿@model GamingSessionApp.ViewModels.Session.SessionDetailsViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,35 +11,35 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Duration.Duration)
+            @Html.DisplayNameFor(model => model.Duration)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Duration.Duration)
+            @Html.DisplayFor(model => model.Duration)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Platform.Name)
+            @Html.DisplayNameFor(model => model.Platform)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Platform.Name)
+            @Html.DisplayFor(model => model.Platform)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Type.Name)
+            @Html.DisplayNameFor(model => model.Type)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Type.Name)
+            @Html.DisplayFor(model => model.Type)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.CreatorId)
+            @Html.DisplayNameFor(model => model.CreatorName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.CreatorId)
+            @Html.DisplayFor(model => model.CreatorName)
         </dd>
 
         <dt>
@@ -67,11 +67,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.RequiredGamersCount)
+            @Html.DisplayNameFor(model => model.GamersRequired)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.RequiredGamersCount)
+            @Html.DisplayFor(model => model.GamersRequired)
         </dd>
 
         <dt>

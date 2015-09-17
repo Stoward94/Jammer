@@ -3,7 +3,7 @@ namespace GamingSessionApp.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class IntialCreation : DbMigration
+    public partial class GuidMigration : DbMigration
     {
         public override void Up()
         {
@@ -52,28 +52,27 @@ namespace GamingSessionApp.Migrations
                 "dbo.Sessions",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
-                        CreatorId = c.Int(nullable: false),
+                        Id = c.Guid(nullable: false, identity: true),
+                        CreatorId = c.String(nullable: false, maxLength: 128),
                         CreatedDate = c.DateTime(nullable: false),
                         ScheduledDate = c.DateTime(nullable: false),
                         PlatformId = c.Int(nullable: false),
                         TypeId = c.Int(nullable: false),
                         GamersRequired = c.Int(nullable: false),
-                        RequiredGamersCount = c.Int(nullable: false),
-                        Information = c.String(),
+                        SignedGamersCount = c.Int(nullable: false),
+                        Information = c.String(nullable: false),
                         DurationId = c.Int(nullable: false),
                         IsPublic = c.Boolean(nullable: false),
-                        Creator_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.Creator_Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.CreatorId, cascadeDelete: true)
                 .ForeignKey("dbo.SessionDurations", t => t.DurationId, cascadeDelete: true)
                 .ForeignKey("dbo.Platforms", t => t.PlatformId, cascadeDelete: true)
                 .ForeignKey("dbo.SessionTypes", t => t.TypeId, cascadeDelete: true)
+                .Index(t => t.CreatorId)
                 .Index(t => t.PlatformId)
                 .Index(t => t.TypeId)
-                .Index(t => t.DurationId)
-                .Index(t => t.Creator_Id);
+                .Index(t => t.DurationId);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -91,7 +90,7 @@ namespace GamingSessionApp.Migrations
                         LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
-                        Session_Id = c.Int(),
+                        Session_Id = c.Guid(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Sessions", t => t.Session_Id)
@@ -140,7 +139,7 @@ namespace GamingSessionApp.Migrations
             DropForeignKey("dbo.AspNetUsers", "Session_Id", "dbo.Sessions");
             DropForeignKey("dbo.Sessions", "PlatformId", "dbo.Platforms");
             DropForeignKey("dbo.Sessions", "DurationId", "dbo.SessionDurations");
-            DropForeignKey("dbo.Sessions", "Creator_Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Sessions", "CreatorId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
@@ -149,10 +148,10 @@ namespace GamingSessionApp.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", new[] { "Session_Id" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.Sessions", new[] { "Creator_Id" });
             DropIndex("dbo.Sessions", new[] { "DurationId" });
             DropIndex("dbo.Sessions", new[] { "TypeId" });
             DropIndex("dbo.Sessions", new[] { "PlatformId" });
+            DropIndex("dbo.Sessions", new[] { "CreatorId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");

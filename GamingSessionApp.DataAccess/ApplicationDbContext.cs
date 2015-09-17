@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -14,6 +15,13 @@ namespace GamingSessionApp.DataAccess
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<Session>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Session> Sessions { get; set; }

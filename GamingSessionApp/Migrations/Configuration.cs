@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Linq;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GamingSessionApp.Migrations
 {
@@ -15,18 +18,21 @@ namespace GamingSessionApp.Migrations
 
         protected override void Seed(ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            var user = new ApplicationUser();
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            //Seed the Master User if required
+            if (!context.Users.Any())
+            {
+                var um = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+
+                user = new ApplicationUser
+                {
+                    UserName = "luke.stoward",
+                    Email = "luke.stoward@msmsoftware.com",
+                };
+                um.Create(user, "Password");
+                context.SaveChanges();
+            }
 
             //Seed the SessionDuration Values
             var durationValues = new List<string>
@@ -74,12 +80,22 @@ namespace GamingSessionApp.Migrations
             context.SaveChanges();
 
             //Seed sample sessions
-            context.Sessions.AddOrUpdate(x => x.PlatformId,
-                new Session
-                {
-                    CreatedDate = DateTime.Now, IsPublic = true, PlatformId = 2, CreatorId = "hsdhafd", DurationId = 3, GamersRequired = 4, Information = "This is the first session",
-                    ScheduledDate = DateTime.Now.AddDays(12), TypeId = 1
-                });
+            if (!context.Sessions.Any())
+            {
+                context.Sessions.AddOrUpdate(x => x.PlatformId,
+                    new Session
+                    {
+                        CreatedDate = DateTime.Now,
+                        IsPublic = true,
+                        PlatformId = 2,
+                        CreatorId = user.Id,
+                        DurationId = 3,
+                        GamersRequired = 4,
+                        Information = "This is the first session",
+                        ScheduledDate = DateTime.Now.AddDays(12),
+                        TypeId = 1
+                    });
+            }
         }
     }
 }

@@ -7,13 +7,13 @@ namespace GamingSessionApp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class IntialCreation : IMigrationMetadata
+    public sealed partial class GuidMigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(IntialCreation));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(GuidMigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509142130496_IntialCreation"; }
+            get { return "201509162118350_Guid Migration"; }
         }
         
         string IMigrationMetadata.Source

@@ -11,8 +11,8 @@ namespace GamingSessionApp.BusinessLogic
     {
         Task<List<T>> GetAll();
 
-        T GetById(int id);
+        T GetById(object id);
 
-        Task<T> GetByIdAsync(int id);
+        Task<T> GetByIdAsync(object id);
     }
 }

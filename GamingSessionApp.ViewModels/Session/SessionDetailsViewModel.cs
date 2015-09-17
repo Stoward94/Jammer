@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using GamingSessionApp.Models;
 
-namespace GamingSessionApp.Models
+namespace GamingSessionApp.ViewModels.Session
 {
-    public class Session
+    public class SessionDetailsViewModel
     {
-        public Session()
-        {
-            CreatedDate = DateTime.Now;
-            SignedGamersCount = 0;
-            Active = true;
-        }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [HiddenInput]
         public Guid Id { get; set; }
 
         //Who is the creator of this session
         [Required]
-        public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
+        public string CreatorName { get; set; }
 
         //When the Session was created
         [Required]
@@ -34,13 +28,11 @@ namespace GamingSessionApp.Models
 
         //Which platform is this session for?
         [Required]
-        public int PlatformId { get; set; }
-        public virtual Platform Platform { get; set; }
-        
+        public string Platform { get; set; }
+
         //Type of session this session is 'Boosting/Co-op etc.
         [Required]
-        public int TypeId { get; set; }
-        public virtual SessionType Type { get; set; }
+        public string Type { get; set; }
 
         //# of gamers needed for the session
         [Required]
@@ -55,15 +47,11 @@ namespace GamingSessionApp.Models
 
         //Expected duration of the session
         [Required]
-        public int DurationId { get; set; }
-        public virtual SessionDuration Duration { get; set; }
+        public string Duration { get; set; }
 
         //Is the session publicly available
         [Required]
         public bool IsPublic { get; set; }
-
-        //Is the session active (not yet reached the scheduled start date)
-        public bool Active { get; set; }
 
         //A collection of the gamers signed to the session
         public virtual ICollection<ApplicationUser> SignedGamers { get; set; }

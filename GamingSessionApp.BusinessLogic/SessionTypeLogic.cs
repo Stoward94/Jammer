@@ -23,12 +23,12 @@ namespace GamingSessionApp.BusinessLogic
             return await _sessionTypeRepo.Get().ToListAsync();
         }
 
-        public SessionType GetById(int id)
+        public SessionType GetById(object id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SessionType> GetByIdAsync(int id)
+        public Task<SessionType> GetByIdAsync(object id)
         {
             throw new NotImplementedException();
         }

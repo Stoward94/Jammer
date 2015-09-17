@@ -15,7 +15,7 @@ namespace GamingSessionApp.Controllers
 {
     public class SessionsController : BaseController
     {
-        private SessionLogic _sessionLogic;
+        private readonly SessionLogic _sessionLogic;
 
         public SessionsController(SessionLogic sessionLogic)
         {
@@ -28,18 +28,8 @@ namespace GamingSessionApp.Controllers
             List<Session> sessions = await _sessionLogic.GetAll();
             return View(sessions);
         }
-
-        // GET: Sessions/Details/5
-        public async Task<ActionResult> Details(int id = 0)
-        {
-            if (id == 0) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            Session session = await _sessionLogic.GetByIdAsync(id);
-
-            if (session == null) return HttpNotFound();
-
-            return View(session);
-        }
+        
+        #region Create Session
 
         // GET: Sessions/Create
         [HttpGet]
@@ -52,7 +42,6 @@ namespace GamingSessionApp.Controllers
             return View(viewModel);
         }
 
-        
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -68,6 +57,25 @@ namespace GamingSessionApp.Controllers
             viewModel = await _sessionLogic.PrepareCreateSessionViewModel(viewModel);
             return View(viewModel);
         }
+
+        #endregion
+
+        #region View Session
+
+        // GET: Sessions/Details/{Guid}
+        [HttpGet]
+        public async Task<ActionResult> Details(Guid? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var viewModel = await _sessionLogic.PrepareViewSessionViewModel(id.Value);
+
+            if (viewModel == null) return HttpNotFound();
+
+            return View(viewModel);
+        }
+
+        #endregion
 
         protected override void Dispose(bool disposing)
         {
