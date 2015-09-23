@@ -10,9 +10,9 @@ using System.Web.Mvc;
 
 namespace GamingSessionApp.ViewModels.Session
 {
-    public class CreateSessionViewModel
+    public class CreateSessionVM
     {
-        public CreateSessionViewModel()
+        public CreateSessionVM()
         {
             ScheduledDate = DateTime.Now;
             IsPublic = true;
@@ -24,8 +24,8 @@ namespace GamingSessionApp.ViewModels.Session
         [Required, DataType(DataType.Date), DisplayName("Schedule Date")]
         public DateTime ScheduledDate { get; set; }
         
-        [Required, DisplayName("Start Time")]
-        public string ScheduledTime { get; set; }
+        [Required, DataType(DataType.Time), DisplayName("Start Time")]
+        public DateTime ScheduledTime { get; set; }
         public SelectList ScheduledTimeList { get; set; }
 
         [Required, DisplayName("Target Platform")]
@@ -37,7 +37,7 @@ namespace GamingSessionApp.ViewModels.Session
         public SelectList SessionTypeList { get; set; }
 
         [Required, DisplayName("Gamers Needed")]
-        public int GamersRequired { get; set; }
+        public string GamersRequired { get; set; }
         public SelectList GamersRequiredList { get; set; }
 
         [Required, StringLength(5000)]
@@ -49,5 +49,8 @@ namespace GamingSessionApp.ViewModels.Session
 
         [Required, DisplayName("Public Session?")]
         public bool IsPublic { get; set; }
+
+        [Required, DisplayName("Manually Approve Joining Members")]
+        public bool ApproveJoinees { get; set; }
     }
 }

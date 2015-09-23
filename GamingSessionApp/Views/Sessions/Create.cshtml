@@ -1,92 +1,147 @@
-﻿@model GamingSessionApp.ViewModels.Session.CreateSessionViewModel
+﻿@model GamingSessionApp.ViewModels.Session.CreateSessionVM
 
 @{
     ViewBag.Title = "Create Session";
 }
 
-<h2>Create Session</h2>
+<div class="jumbotron">
+    <h1>
+        Create Session <small>Details</small>
+    </h1>
+</div>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Session Details</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.ScheduledDate, new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.ScheduledDate, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(m => m.ScheduledDate, "", new {@class = "text-danger"})
-            </div>
+        @* Section Options/Tabs *@
+        <div class="col-md-2" style="border-right: 1px solid #eeeeee; height: 100%">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="active">
+                    <a href="#info" aria-controls="info" role="tab" data-toggle="tab">Session Information</a>
+                </li>
+                <li role="presentation">
+                    <a href="#requirements" aria-controls="requirements" role="tab" data-toggle="tab">Requirements</a>
+                </li>
+                <li role="presentation">
+                    <a href="#preferences" aria-controls="preferences" role="tab" data-toggle="tab">Preferences</a>
+                </li>
+                <li role="presentation">
+                    <a href="#invitations" aria-controls="invitations" role="tab" data-toggle="tab">Invitations</a>
+                </li>
+            </ul>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.ScheduledTime, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.ScheduledTime, Model.ScheduledTimeList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.ScheduledTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div class="col-md-10">
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.PlatformId, "PlatformId", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.PlatformId, Model.PlatformList, null,  new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.PlatformId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            @* Session Information tab *@
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="info">
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.TypeId, "TypeId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.TypeId, Model.SessionTypeList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.TypeId, "", new {@class = "text-danger"})
-            </div>
-        </div>
+                    <fieldset>
+                        <legend>Timings</legend>
 
-        @*<div class="form-group">
-            @Html.LabelFor(m => m.GamersRequired, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.GamersRequired, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.GamersRequired, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ScheduledDate, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(m => m.ScheduledDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.ScheduledDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.Information, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.Information, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.Information, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ScheduledTime, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.ScheduledTime, Model.ScheduledTimeList, null, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.ScheduledTime, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        
+                    </fieldset>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.DurationId, "DurationId", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.DurationId, "", new {@class = "text-danger"})
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PlatformId, "PlatformId", new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.PlatformId, Model.PlatformList, null, new {@class = "form-control"})
+                            @Html.ValidationMessageFor(m => m.PlatformId, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.IsPublic, new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(m => m.IsPublic)
-                    @Html.ValidationMessageFor(m => m.IsPublic, "", new {@class = "text-danger"})
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TypeId, "TypeId", new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.TypeId, Model.SessionTypeList, null, new {@class = "form-control"})
+                            @Html.ValidationMessageFor(m => m.TypeId, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Information, new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.Information, new {htmlAttributes = new {@class = "form-control"}})
+                            @Html.ValidationMessageFor(m => m.Information, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.DurationId, "DurationId", new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new {@class = "form-control"})
+                            @Html.ValidationMessageFor(m => m.DurationId, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.IsPublic, new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(m => m.IsPublic)
+                                @Html.ValidationMessageFor(m => m.IsPublic, "", new {@class = "text-danger"})
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                @* Requirements tab *@
+                <div role="tabpanel" class="tab-pane" id="requirements">
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.GamersRequired, new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.GamersRequired, Model.GamersRequiredList, null, new {@class = "form-control"})
+                            @Html.ValidationMessageFor(m => m.GamersRequired, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                </div>
+
+                @* Preferences tab *@
+                <div role="tabpanel" class="tab-pane" id="preferences">
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ApproveJoinees, new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(m => m.ApproveJoinees)
+                                @Html.ValidationMessageFor(m => m.ApproveJoinees, "", new {@class = "text-danger"})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="invitations">4</div>
             </div>
-        </div>
 
-        @Html.HiddenFor(m => m.CreatorId)
+            @Html.HiddenFor(m => m.CreatorId)
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default"/>
+                </div>
             </div>
         </div>
     </div>

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.Models;
@@ -22,12 +18,16 @@ namespace GamingSessionApp.Controllers
             _sessionLogic = sessionLogic;
         }
 
-        // GET: Sessions
+        #region All Sessions
+        
+        [HttpGet]
         public async Task<ActionResult> Index()
         {
             List<Session> sessions = await _sessionLogic.GetAll();
             return View(sessions);
         }
+
+        #endregion
         
         #region Create Session
 
@@ -36,8 +36,8 @@ namespace GamingSessionApp.Controllers
         [Authorize]
         public async Task<ViewResult> Create()
         {
-            var viewModel = new CreateSessionViewModel {CreatorId = UserId};
-            viewModel = await _sessionLogic.PrepareCreateSessionViewModel(viewModel);
+            var viewModel = new CreateSessionVM {CreatorId = UserId};
+            viewModel = await _sessionLogic.PrepareCreateSessionVM(viewModel);
 
             return View(viewModel);
         }
@@ -45,7 +45,7 @@ namespace GamingSessionApp.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateSessionViewModel viewModel)
+        public async Task<ActionResult> Create(CreateSessionVM viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -54,7 +54,7 @@ namespace GamingSessionApp.Controllers
                     return RedirectToAction("Index");
             }
 
-            viewModel = await _sessionLogic.PrepareCreateSessionViewModel(viewModel);
+            viewModel = await _sessionLogic.PrepareCreateSessionVM(viewModel);
             return View(viewModel);
         }
 
@@ -68,7 +68,7 @@ namespace GamingSessionApp.Controllers
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var viewModel = await _sessionLogic.PrepareViewSessionViewModel(id.Value);
+            var viewModel = await _sessionLogic.PrepareViewSessionVM(id.Value);
 
             if (viewModel == null) return HttpNotFound();
 
@@ -77,6 +77,38 @@ namespace GamingSessionApp.Controllers
 
         #endregion
 
+        #region Edit Session
+
+        [HttpGet]
+        public async Task<ActionResult> Edit(Guid? id)
+        {
+            if (!id.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var viewModel = await _sessionLogic.EditSessionVM(id.Value);
+
+            if (viewModel == null) return HttpNotFound();
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Edit(EditSessionVM viewModel)
+        {
+            if (viewModel.SessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            //Try and update the record
+            if (await _sessionLogic.EditSession(viewModel))
+            {
+                //Redirect on success
+                return RedirectToAction("Index");
+            }
+
+            viewModel = await _sessionLogic.PrepareEditSessionVM(viewModel);
+            return View(viewModel);
+        }
+
+        #endregion
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -86,8 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Session\CreateSessionViewModel.cs" />
-    <Compile Include="Session\SessionDetailsViewModel.cs" />
+    <Compile Include="Session\CreateSessionVM.cs" />
+    <Compile Include="Session\EditSessionVM.cs" />
+    <Compile Include="Session\SessionDetailsVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

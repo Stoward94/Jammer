@@ -58,12 +58,11 @@ namespace GamingSessionApp.Models
         public int DurationId { get; set; }
         public virtual SessionDuration Duration { get; set; }
 
-        //Is the session publicly available
-        [Required]
-        public bool IsPublic { get; set; }
-
         //Is the session active (not yet reached the scheduled start date)
         public bool Active { get; set; }
+
+        //Property to the settings object
+        public virtual SessionSettings Settings { get; set; }
 
         //A collection of the gamers signed to the session
         public virtual ICollection<ApplicationUser> SignedGamers { get; set; }

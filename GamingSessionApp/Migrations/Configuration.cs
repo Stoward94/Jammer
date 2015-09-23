@@ -28,7 +28,7 @@ namespace GamingSessionApp.Migrations
                 user = new ApplicationUser
                 {
                     UserName = "luke.stoward",
-                    Email = "luke.stoward@msmsoftware.com",
+                    Email = "luke@email.com",
                 };
                 um.Create(user, "Password");
                 context.SaveChanges();
@@ -86,14 +86,18 @@ namespace GamingSessionApp.Migrations
                     new Session
                     {
                         CreatedDate = DateTime.Now,
-                        IsPublic = true,
                         PlatformId = 2,
                         CreatorId = user.Id,
                         DurationId = 3,
                         GamersRequired = 4,
                         Information = "This is the first session",
                         ScheduledDate = DateTime.Now.AddDays(12),
-                        TypeId = 1
+                        TypeId = 1,
+                        Settings = new SessionSettings
+                        {
+                            IsPublic = true,
+                            ApproveJoinees = false
+                        }
                     });
             }
         }

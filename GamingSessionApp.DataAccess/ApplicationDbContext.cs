@@ -7,8 +7,7 @@ namespace GamingSessionApp.DataAccess
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-            : base("DefaultConnection", false)
+        public ApplicationDbContext() : base("DefaultConnection", false)
         {
         }
 
@@ -17,14 +16,9 @@ namespace GamingSessionApp.DataAccess
             return new ApplicationDbContext();
         }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            //modelBuilder.Entity<Session>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-
-            base.OnModelCreating(modelBuilder);
-        }
-
         public DbSet<Session> Sessions { get; set; }
+
+        public DbSet<SessionSettings> SessionSettings { get; set; }
 
         public DbSet<SessionDuration> SessionDurations { get; set; }
 

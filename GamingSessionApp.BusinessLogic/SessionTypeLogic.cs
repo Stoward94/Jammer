@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 
@@ -31,6 +32,13 @@ namespace GamingSessionApp.BusinessLogic
         public Task<SessionType> GetByIdAsync(object id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<SelectList> GetTypeSelectList()
+        {
+            List<SessionType> typeList = await GetAll();
+
+            return new SelectList(typeList, "Id", "Name");
         }
     }
 }

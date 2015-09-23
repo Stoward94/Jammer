@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 
@@ -32,5 +33,12 @@ namespace GamingSessionApp.BusinessLogic
         {
             throw new NotImplementedException();
         }
+
+        public async Task<SelectList> GetDurationSelectList()
+        {
+            List<SessionDuration> durationList = await GetAll();
+
+            return new SelectList(durationList, "Id", "Duration");
+        } 
     }
 }

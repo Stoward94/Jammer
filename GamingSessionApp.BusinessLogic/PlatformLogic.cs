@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
+using System.Web.Mvc;
 
 namespace GamingSessionApp.BusinessLogic
 {
@@ -31,6 +32,13 @@ namespace GamingSessionApp.BusinessLogic
         public Task<Platform> GetByIdAsync(object id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<SelectList> GetPlatformSelectList()
+        {
+            List<Platform> typeList = await GetAll();
+
+            return new SelectList(typeList, "Id", "Name");
         }
     }
 }

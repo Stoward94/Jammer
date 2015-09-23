@@ -9,7 +9,7 @@ using GamingSessionApp.Models;
 
 namespace GamingSessionApp.ViewModels.Session
 {
-    public class SessionDetailsViewModel
+    public class SessionDetailsVM
     {
         [HiddenInput]
         public Guid Id { get; set; }

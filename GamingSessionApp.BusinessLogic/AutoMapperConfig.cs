@@ -17,18 +17,43 @@ namespace GamingSessionApp.BusinessLogic
             {
                 #region Session Maps
 
-                config.CreateMap<Session, CreateSessionViewModel>()
+                //Create Session
+                config.CreateMap<Session, CreateSessionVM>()
+                    .ForMember(dest => dest.DurationList, opt => opt.Ignore())
+                    .ForMember(dest => dest.SessionTypeList, opt => opt.Ignore())
+                    .ForMember(dest => dest.PlatformList, opt => opt.Ignore())
+                    .ForMember(dest => dest.GamersRequiredList, opt => opt.Ignore())
+                    .ForMember(dest => dest.ScheduledTimeList, opt => opt.Ignore())
+                    .ForMember(dest => dest.ScheduledTime, opt => opt.Ignore())
                     .ReverseMap();
 
-                config.CreateMap<Session, SessionDetailsViewModel>()
-                    .ForMember(dest => dest.Platform, opt => opt.MapFrom(src => src.Platform.Name)) //Map platform name
-                    .ForMember(dest => dest.CreatorName, opt => opt.MapFrom(src => src.Creator.UserName)) //Map the creator username
-                    .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.Duration)) //Map the duration value
-                    .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.Name)) //Map the type name
+                config.CreateMap<SessionSettings, CreateSessionVM>()
                     .ReverseMap();
+            
+                //View Session
+                config.CreateMap<Session, SessionDetailsVM>()
+                    .ForMember(dest => dest.Platform, opt => opt.MapFrom(src => src.Platform.Name)) //Map platform name
+                    .ForMember(dest => dest.CreatorName, opt => opt.MapFrom(src => src.Creator.UserName))
+                    //Map the creator username
+                    .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.Duration))
+                    //Map the duration value
+                    .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.Name)) //Map the type name
+                    .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Settings.IsPublic))
+                    //Map the settings
+                    .ReverseMap();
+
+                //Edit Session (Used to map the changes from the view model to the model when editing a session)
+                config.CreateMap<EditSessionVM, Session>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SessionId));
+
+                //Edit Session Settings (Used to map the changes from the view model to the model when editing a session)
+                config.CreateMap<EditSessionVM, SessionSettings>();
+
+
+
+                //Mapper.AssertConfigurationIsValid();
 
                 #endregion
-
             });
         }
     }
