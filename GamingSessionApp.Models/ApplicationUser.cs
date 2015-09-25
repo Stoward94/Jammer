@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -16,6 +17,13 @@ namespace GamingSessionApp.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        #region ApplicationUser extension properties
+        
+        //Which time zone has the user selected
+        public string TimeZoneId { get; set; }
+
+        #endregion
     }
 
     

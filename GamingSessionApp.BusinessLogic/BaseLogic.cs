@@ -1,14 +1,33 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Elmah;
 using GamingSessionApp.DataAccess;
+using GamingSessionApp.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GamingSessionApp.BusinessLogic
 {
     public class BaseLogic
     {
         protected readonly UnitOfWork UoW = new UnitOfWork();
+        public string UserId { get; set; }
+
+        private UserManager<ApplicationUser> _userManager;
+        private ApplicationUser _applicationUser;
+        private TimeZoneInfo _userTimeZone;
+
+        public UserManager<ApplicationUser> UserManager
+        {
+            get { return _userManager ?? (_userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()))); }
+            set { _userManager = value; }
+        }
+
+        protected ApplicationUser CurrentUser
+        {
+            get { return _applicationUser ?? (_applicationUser = UoW.Repository<ApplicationUser>().GetById(UserId)); }
+            set { _applicationUser = value; }
+        }
 
         protected void SaveChanges()
         {
@@ -36,7 +55,17 @@ namespace GamingSessionApp.BusinessLogic
             else
                 ErrorSignal.FromCurrentContext().Raise(ex);
         }
-        
+
+        protected TimeZoneInfo GetUserTimeZone()
+        {
+            if (_userTimeZone != null) return _userTimeZone;
+
+            if (CurrentUser != null) return _userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(CurrentUser.TimeZoneId);
+
+            //Else return local time zone (non-registered users)
+            return _userTimeZone = TimeZoneInfo.Local;
+        }
+
         public void Dispose()
         {
             UoW.Dispose();

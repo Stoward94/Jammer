@@ -16,8 +16,8 @@ namespace GamingSessionApp.ViewModels.Session
         [Required, DataType(DataType.Date), DisplayName("Scheduled Date")]
         public DateTime ScheduledDate { get; set; }
 
-        [Required, DisplayName("Start Time")]
-        public string ScheduledTime { get; set; }
+        [Required, DataType(DataType.Time), DisplayName("Start Time")]
+        public DateTime ScheduledTime { get; set; }
         public SelectList ScheduledTimeList { get; set; }
 
         [Required, DisplayName("Target Platform")]

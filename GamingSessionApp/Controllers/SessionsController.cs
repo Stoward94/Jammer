@@ -23,6 +23,9 @@ namespace GamingSessionApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
+            //If we have a user then pass the Id
+            _sessionLogic.UserId = UserId;
+
             List<Session> sessions = await _sessionLogic.GetAll();
             return View(sessions);
         }
@@ -67,6 +70,9 @@ namespace GamingSessionApp.Controllers
         public async Task<ActionResult> Details(Guid? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            //If we have a user then pass the Id
+            _sessionLogic.UserId = UserId;
 
             var viewModel = await _sessionLogic.PrepareViewSessionVM(id.Value);
 

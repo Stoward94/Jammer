@@ -15,7 +15,8 @@ namespace GamingSessionApp.BusinessLogic
 {
     public class SessionLogic : BaseLogic, IBusinessLogic<Session>
     {
-        #region Variables
+
+    #region Variables
 
         //Session Repository
         private readonly GenericRepository<Session> _sessionRepo;
@@ -25,9 +26,9 @@ namespace GamingSessionApp.BusinessLogic
         private readonly SessionTypeLogic _typeLogic;
         private readonly PlatformLogic _platformLogic;
 
-        #endregion
+    #endregion
 
-        #region Constructor
+    #region Constructor
 
         public SessionLogic()
         {
@@ -40,11 +41,22 @@ namespace GamingSessionApp.BusinessLogic
 
         #endregion
 
-        #region CRUD Operations
-
+    #region CRUD Operations
+        
         public async Task<List<Session>> GetAll()
         {
-            return await _sessionRepo.Get().Where(s => s.Settings.IsPublic).ToListAsync();
+            //Get all the sessions from the db
+            var sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic)
+                .OrderByDescending(x => x.ScheduledDate)
+                .ToListAsync();
+
+            //Convert the DateTimes to the users time zone
+            foreach (var s in sessions)
+            {
+                ConvertSessionTimesToTimeZone(s);
+            }
+
+            return sessions;
         }
 
         public Session GetById(object id)
@@ -64,9 +76,12 @@ namespace GamingSessionApp.BusinessLogic
                 //Map the properties from view model to model
                 Session model = Mapper.Map<CreateSessionVM, Session>(viewModel);
                 model.Settings = Mapper.Map<CreateSessionVM, SessionSettings>(viewModel);
-
+                
                 //Combine both date and time fields
                 model.ScheduledDate = CombineDateAndTime(model.ScheduledDate, viewModel.ScheduledTime);
+
+                //Convert all dates to UTC format
+                ConvertSessionTimesToUtc(model);
 
                 //Insert the new session into the db
                 _sessionRepo.Insert(model);
@@ -92,6 +107,9 @@ namespace GamingSessionApp.BusinessLogic
                 Mapper.Map(viewModel, model);
                 Mapper.Map(viewModel, model.Settings);
 
+                //Convert all dates to UTC format
+                ConvertSessionTimesToUtc(model);
+
                 //Update the db
                 _sessionRepo.Update(model);
                 await SaveChangesAsync();
@@ -109,7 +127,7 @@ namespace GamingSessionApp.BusinessLogic
 
         #endregion
 
-        #region View Model Preperation
+    #region View Model Preperation
 
         /// <summary>
         /// Prepares the view model used to create a session ready to be passed the view
@@ -165,6 +183,9 @@ namespace GamingSessionApp.BusinessLogic
 
                 if (model == null) return null;
 
+                //Convert the DateTimes to the users time zone
+                ConvertSessionTimesToTimeZone(model);
+
                 //Map the properties to the view model
                 var viewModel = Mapper.Map<Session, SessionDetailsVM>(model);
 
@@ -194,7 +215,7 @@ namespace GamingSessionApp.BusinessLogic
                         SessionId = x.Id,
                         CreatorId = x.CreatorId,
                         ScheduledDate = x.ScheduledDate,
-                        ScheduledTime = x.ScheduledDate.ToString(),
+                        ScheduledTime = x.ScheduledDate,
                         PlatformId = x.PlatformId,
                         TypeId = x.TypeId,
                         GamersRequired = x.GamersRequired.ToString(),
@@ -207,6 +228,10 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Make sure we have found something
                 if(viewModel == null) return null;
+
+                //Convert the DateTimes to the users time zone
+                viewModel.ScheduledDate = viewModel.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                viewModel.ScheduledTime = viewModel.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
 
                 //Add the select lists options
                 viewModel.DurationList = await _durationLogic.GetDurationSelectList();
@@ -223,9 +248,9 @@ namespace GamingSessionApp.BusinessLogic
             }
         } 
 
-        #endregion
+    #endregion
 
-        #region Helpers
+    #region Helpers
 
         /// <summary>
         /// Returns 24 hours worth of times slots rounded to the nearest 15 mins
@@ -274,7 +299,10 @@ namespace GamingSessionApp.BusinessLogic
         /// <returns></returns>
         private DateTime SetDefaultSessionTime()
         {
-            var time = DateTime.Now.AddHours(1);
+            //Add 1 hour to the current time for the user (time zone specific)
+            var time = DateTime.UtcNow.AddHours(1);
+            time = time.ToTimeZoneTime(GetUserTimeZone());
+
             var dif = TimeSpan.FromMinutes(15);
             return new DateTime(((time.Ticks + dif.Ticks - 1)/dif.Ticks)*dif.Ticks);
         }
@@ -287,8 +315,6 @@ namespace GamingSessionApp.BusinessLogic
         /// <returns></returns>
         private DateTime CombineDateAndTime(DateTime date, DateTime time)
         {
-            //Convert time string to timespan
-            //TimeSpan ts = DateTime.ParseExact(time, "HH:mm", CultureInfo.InvariantCulture).TimeOfDay;
             TimeSpan ts = time.TimeOfDay;
 
             DateTime newDateTime = date + ts;
@@ -296,6 +322,22 @@ namespace GamingSessionApp.BusinessLogic
             return newDateTime;
         }
 
+        private void ConvertSessionTimesToUtc(Session model)
+        {
+            //Convert all dates to UTC format
+            model.CreatedDate = model.CreatedDate.ToUniversalTime();
+            model.ScheduledDate = model.ScheduledDate.ToUniversalTime();
+        }
+
+        private void ConvertSessionTimesToTimeZone(Session model)
+        {
+            //Convert the DateTimes to the users time zone
+            model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+            model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+        }
+
+
         #endregion
+
     }
 }

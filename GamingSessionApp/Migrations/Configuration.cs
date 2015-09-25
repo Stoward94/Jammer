@@ -27,8 +27,9 @@ namespace GamingSessionApp.Migrations
 
                 user = new ApplicationUser
                 {
-                    UserName = "luke.stoward",
+                    UserName = "luke@email.com",
                     Email = "luke@email.com",
+                    TimeZoneId = "GMT Standard Time"
                 };
                 um.Create(user, "Password");
                 context.SaveChanges();
