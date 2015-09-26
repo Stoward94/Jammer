@@ -14,7 +14,7 @@ namespace GamingSessionApp.ViewModels.Session
     {
         public CreateSessionVM()
         {
-            ScheduledDate = DateTime.Now;
+            ScheduledDate = DateTime.UtcNow;
             IsPublic = true;
         }
 

@@ -22,6 +22,7 @@ namespace GamingSessionApp.BusinessLogic
         private readonly GenericRepository<Session> _sessionRepo;
 
         //Business Logics
+        private readonly SessionMessageLogic _messageLogic;
         private readonly SessionDurationLogic _durationLogic;
         private readonly SessionTypeLogic _typeLogic;
         private readonly PlatformLogic _platformLogic;
@@ -34,6 +35,7 @@ namespace GamingSessionApp.BusinessLogic
         {
             _sessionRepo = UoW.Repository<Session>();
 
+            _messageLogic = new SessionMessageLogic();
             _durationLogic = new SessionDurationLogic();
             _typeLogic = new SessionTypeLogic();
             _platformLogic = new PlatformLogic();
@@ -82,6 +84,9 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Convert all dates to UTC format
                 ConvertSessionTimesToUtc(model);
+
+                //Add the intial message to the session messages feed
+                _messageLogic.AddSessionCreatedMessage(model);
 
                 //Insert the new session into the db
                 _sessionRepo.Insert(model);
@@ -189,6 +194,8 @@ namespace GamingSessionApp.BusinessLogic
                 //Map the properties to the view model
                 var viewModel = Mapper.Map<Session, SessionDetailsVM>(model);
 
+                //Map messages to viewModel
+                viewModel.Messages = model.Messages.ToList();
 
                 return viewModel;
             }
@@ -334,6 +341,11 @@ namespace GamingSessionApp.BusinessLogic
             //Convert the DateTimes to the users time zone
             model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
             model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+
+            foreach (var msg in model.Messages)
+            {
+                msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+            }
         }
 
 

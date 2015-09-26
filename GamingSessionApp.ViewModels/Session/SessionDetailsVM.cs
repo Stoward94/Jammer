@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using GamingSessionApp.Models;
 
@@ -52,6 +49,8 @@ namespace GamingSessionApp.ViewModels.Session
         //Is the session publicly available
         [Required]
         public bool IsPublic { get; set; }
+
+        public List<SessionMessage> Messages { get; set; }
 
         //A collection of the gamers signed to the session
         public virtual ICollection<ApplicationUser> SignedGamers { get; set; }

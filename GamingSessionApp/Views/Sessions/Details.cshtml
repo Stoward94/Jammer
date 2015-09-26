@@ -95,3 +95,19 @@
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+<div id="sessionFeed">
+    @foreach (var message in Model.Messages)
+    {
+        <div class="well">
+            <span>#@message.MessageNo: @message.Author.UserName</span>
+            <br/>
+            <br/>
+            @Html.DisplayFor(modelItem => message.Body)
+            <br/>
+            <br/>
+            @Html.DisplayFor(modelItem => message.CreatedDate)
+        </div>
+    }
+    
+</div>

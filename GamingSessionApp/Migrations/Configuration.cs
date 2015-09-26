@@ -78,6 +78,18 @@ namespace GamingSessionApp.Migrations
 
             platforms.ForEach(c => context.Platforms.AddOrUpdate(x => x.Name, new Platform { Name = c }));
 
+            //Seed the Session Feed Message Types
+            var feedMessageTypes = new List<string>
+            {
+                "System",
+                "Player Joined",
+                "Player Left",
+                "Comment",
+                "Invitation"
+            };
+
+            feedMessageTypes.ForEach(c => context.SessionMessageTypes.AddOrUpdate(x => x.Type, new SessionMessageType { Type = c }));
+
             context.SaveChanges();
 
             //Seed sample sessions
@@ -86,18 +98,25 @@ namespace GamingSessionApp.Migrations
                 context.Sessions.AddOrUpdate(x => x.PlatformId,
                     new Session
                     {
-                        CreatedDate = DateTime.Now,
+                        CreatedDate = DateTime.UtcNow,
                         PlatformId = 2,
                         CreatorId = user.Id,
                         DurationId = 3,
                         GamersRequired = 4,
                         Information = "This is the first session",
-                        ScheduledDate = DateTime.Now.AddDays(12),
+                        ScheduledDate = DateTime.UtcNow.AddDays(12),
                         TypeId = 1,
                         Settings = new SessionSettings
                         {
                             IsPublic = true,
                             ApproveJoinees = false
+                        },
+                        Messages = new List<SessionMessage>()
+                        {
+                            new SessionMessage() { AuthorId = user.Id, Body = "Session Created", MessageNo = 1, MessageTypeId = 1 },
+                            new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 },
+                            new SessionMessage() { AuthorId = user.Id, Body = "Luke Left", MessageNo = 3, MessageTypeId = 3 },
+                            
                         }
                     });
             }

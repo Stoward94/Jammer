@@ -103,7 +103,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionDurationLogic.cs" />
     <Compile Include="SessionLogic.cs" />
+    <Compile Include="SessionMessageLogic.cs" />
     <Compile Include="SessionTypeLogic.cs" />
+    <Compile Include="SystemEnums.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GamingSessionApp.DataAccess\GamingSessionApp.DataAccess.csproj">

@@ -11,9 +11,11 @@ namespace GamingSessionApp.Models
     {
         public Session()
         {
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             SignedGamersCount = 0;
             Active = true;
+            Messages = new List<SessionMessage>();
+            SignedGamers = new List<ApplicationUser>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -63,6 +65,9 @@ namespace GamingSessionApp.Models
 
         //Property to the settings object
         public virtual SessionSettings Settings { get; set; }
+
+        //Navigation property to the session messages
+        public virtual ICollection<SessionMessage> Messages { get; set; }
 
         //A collection of the gamers signed to the session
         public virtual ICollection<ApplicationUser> SignedGamers { get; set; }
