@@ -65,6 +65,7 @@
     <Compile Include="SessionMessageType.cs" />
     <Compile Include="SessionMessage.cs" />
     <Compile Include="SessionSettings.cs" />
+    <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />
   </ItemGroup>
   <ItemGroup>

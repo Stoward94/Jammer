@@ -223,6 +223,7 @@ namespace GamingSessionApp.BusinessLogic
                         CreatorId = x.CreatorId,
                         ScheduledDate = x.ScheduledDate,
                         ScheduledTime = x.ScheduledDate,
+                        Status = x.Status.Status,
                         PlatformId = x.PlatformId,
                         TypeId = x.TypeId,
                         GamersRequired = x.GamersRequired.ToString(),

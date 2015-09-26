@@ -20,6 +20,9 @@ namespace GamingSessionApp.ViewModels.Session
         public DateTime ScheduledTime { get; set; }
         public SelectList ScheduledTimeList { get; set; }
 
+        //Whats the status of the session
+        public string Status { get; set; }
+
         [Required, DisplayName("Target Platform")]
         public int PlatformId { get; set; }
         public SelectList PlatformList { get; set; }

@@ -16,5 +16,13 @@ namespace GamingSessionApp.BusinessLogic
             Comment = 4,
             Invitation = 5
         }
+
+        public enum SessionStatusEnum
+        {
+            Recruiting = 1,
+            FullyLoaded = 2,
+            Jamming = 3,
+            Retired = 4
+        }
     }
 }

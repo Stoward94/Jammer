@@ -30,6 +30,8 @@ namespace GamingSessionApp.DataAccess
 
         public DbSet<Session> Sessions { get; set; }
 
+        public DbSet<SessionStatus> SessionStatuses { get; set; }
+
         public DbSet<SessionSettings> SessionSettings { get; set; }
 
         public DbSet<SessionMessage> SessionMessages { get; set; }

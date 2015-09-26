@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.Migrations
 {
@@ -48,6 +50,14 @@ namespace GamingSessionApp.Migrations
             };
 
             durationValues.ForEach(c => context.SessionDurations.AddOrUpdate(x => x.Duration, new SessionDuration { Duration = c }));
+
+            //Seed the SessionStatus Statuses
+            context.SessionStatuses.AddOrUpdate(x => x.Status, 
+                new SessionStatus { Status = "Recruiting", Description = "This session is still in need of players to join and play" },
+                new SessionStatus { Status = "Fully Loaded", Description = "This session is currently full, however this may change before the session begins" },
+                new SessionStatus { Status = "Jamming", Description = "This session is actively jamming (reached the start time, but not yet exceeded the expected duration)" },
+                new SessionStatus { Status = "Retired", Description = "This session has now been completed" }
+                );
 
             //Seed the SessionType Descriptions
             var sessionTypes = new List<string>
@@ -106,6 +116,7 @@ namespace GamingSessionApp.Migrations
                         Information = "This is the first session",
                         ScheduledDate = DateTime.UtcNow.AddDays(12),
                         TypeId = 1,
+                        StatusId = (int)SessionStatusEnum.Recruiting,
                         Settings = new SessionSettings
                         {
                             IsPublic = true,

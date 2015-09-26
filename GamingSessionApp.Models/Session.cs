@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace GamingSessionApp.Models
 {
@@ -16,6 +14,7 @@ namespace GamingSessionApp.Models
             Active = true;
             Messages = new List<SessionMessage>();
             SignedGamers = new List<ApplicationUser>();
+            StatusId = 1; // Status = Recruiting
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -33,6 +32,10 @@ namespace GamingSessionApp.Models
         //Date of when the session is scheduled for
         [Required]
         public DateTime ScheduledDate { get; set; }
+
+        //What status is the session in
+        public int StatusId { get; set; }
+        public virtual SessionStatus Status { get; set; }
 
         //Which platform is this session for?
         [Required]

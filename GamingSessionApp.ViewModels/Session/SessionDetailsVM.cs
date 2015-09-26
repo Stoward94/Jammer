@@ -23,6 +23,10 @@ namespace GamingSessionApp.ViewModels.Session
         [Required]
         public DateTime ScheduledDate { get; set; }
 
+        //What's the status of the session
+        [Required]
+        public string Status { get; set; }
+
         //Which platform is this session for?
         [Required]
         public string Platform { get; set; }
