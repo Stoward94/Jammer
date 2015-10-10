@@ -42,5 +42,26 @@ namespace GamingSessionApp.BusinessLogic
 
             session.Messages.Add(message);
         }
+
+        public void AddCommentToSession(Session session, string comment)
+        {
+            try
+            {
+                SessionMessage message = new SessionMessage()
+                {
+                    AuthorId = UserId,
+                    Body = comment,
+                    MessageNo = (session.Messages.Count + 1),
+                    MessageTypeId = (int)SessionMessageTypeEnum.Comment,
+                    SessionId = session.Id
+                };
+
+                session.Messages.Add(message);
+            }
+            catch (Exception)
+            {
+                //Let the caller catch the exception
+            }
+        }
     }
 }

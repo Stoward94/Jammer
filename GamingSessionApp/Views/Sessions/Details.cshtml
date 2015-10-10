@@ -109,5 +109,7 @@
             @Html.DisplayFor(modelItem => message.CreatedDate)
         </div>
     }
-    
+
 </div>
+
+@Html.Partial("_SessionCommentForm", Model.Id)

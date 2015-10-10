@@ -88,6 +88,9 @@ namespace GamingSessionApp.BusinessLogic
                 //Add the intial message to the session messages feed
                 _messageLogic.AddSessionCreatedMessage(model);
 
+                //Add the creator as a member of the session
+                model.SignedGamers.Add(CurrentUser);
+
                 //Insert the new session into the db
                 _sessionRepo.Insert(model);
                 await SaveChangesAsync();
@@ -352,5 +355,28 @@ namespace GamingSessionApp.BusinessLogic
 
         #endregion
 
+        public async Task<bool> AddSessionComment(string comment, Guid sessionId)
+        {
+            try
+            {
+                //Load the session
+                Session session = await GetByIdAsync(sessionId);
+
+                //Update the UserId reference for the message logic
+                _messageLogic.UserId = UserId;
+                
+                //Add the message to the session
+                _messageLogic.AddCommentToSession(session, comment);
+
+                _sessionRepo.Update(session);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, $"Unable to add a comment to sessionId : {sessionId}");
+                return false;
+            }
+        }
     }
 }

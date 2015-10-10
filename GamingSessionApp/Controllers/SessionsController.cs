@@ -23,8 +23,7 @@ namespace GamingSessionApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            //If we have a user then pass the Id
-            _sessionLogic.UserId = UserId;
+            PassUserToLogic();
 
             List<Session> sessions = await _sessionLogic.GetAll();
             return View(sessions);
@@ -52,6 +51,8 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                PassUserToLogic();
+
                 //Pass the view model to the create logic
                 if (await _sessionLogic.CreateSession(viewModel))
                     return RedirectToAction("Index");
@@ -71,8 +72,7 @@ namespace GamingSessionApp.Controllers
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            //If we have a user then pass the Id
-            _sessionLogic.UserId = UserId;
+            PassUserToLogic();
 
             var viewModel = await _sessionLogic.PrepareViewSessionVM(id.Value);
 
@@ -114,6 +114,30 @@ namespace GamingSessionApp.Controllers
         }
 
         #endregion
+
+        public async Task<ActionResult> PostComment(string comment, Guid sessionId)
+        {
+            if(string.IsNullOrEmpty(comment) || sessionId == Guid.Empty)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            PassUserToLogic();
+
+            if (await _sessionLogic.AddSessionComment(comment, sessionId))
+            {
+                return RedirectToAction("Details", new { id = sessionId });
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+
+        /// <summary>
+        /// Passes the current user to the session logic. (or null)
+        /// </summary>
+        private void PassUserToLogic()
+        {
+            //If we have a user then pass the Id
+            _sessionLogic.UserId = UserId;
+        }
         
         protected override void Dispose(bool disposing)
         {
