@@ -26,7 +26,7 @@ namespace GamingSessionApp.Controllers
             {
                 OpenSessions = await _homeLogic.GetOpenSessions(),
                 NewSessions = await _homeLogic.GetNewSessions(),
-                RecommendedSessions = new List<SessionListItem>(),
+                RecommendedSessions = await _homeLogic.GetNewSessions()
 
 
             };

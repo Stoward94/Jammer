@@ -44,40 +44,41 @@ textarea {
     transform: rotate(-40deg);
 }
 
+.fa-clock-o { font-size: 14px; }
+
 .list-container {
     background: #f0f0f0;
     padding: 5px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    margin-bottom: 20px;
 }
 
 .list-container > h2 {
     margin: 5px;
 }
 
-.container-border-red {
-    border-bottom: 4px solid red;
-}
+.border-top-red { border-top: 4px solid #d24d57; }
+.border-bottom-red { border-bottom: 3px solid #d24d57; }
+.border-right-red {border-right: 3px solid #d24d57;}
 
-.container-border-blue {
-    border-bottom: 4px solid #3399FF;
-}
+.border-top-blue { border-top: 4px solid #3399FF; }
+.border-bottom-blue { border-bottom: 3px solid #3399FF; }
+.border-right-blue {border-right: 3px solid #3399FF;}
 
-.container-border-orange {
-    border-bottom: 4px solid #FF9933;
-}
+.border-top-orange { border-top: 4px solid #FF9933; }
+.border-bottom-orange { border-bottom: 3px solid #FF9933; }
+.border-right-orange { border-right: 3px solid #FF9933;}
+
 
 /*Session List Item styles*/
 
 div.sli-container {
     margin: 8px 0 0 0;
+    height: 125px;
 }
 
 div.sli-heading-time {
-    width: 100%;
     font-size: 12px;
     padding: 3px 5px 0;
-    background: #C0C0C0;
 }
 
 div.sli-details-left {
@@ -85,30 +86,20 @@ div.sli-details-left {
     height: 100px;
     background: whitesmoke;
     float: left;
-    border: 1px #C0C0C0 solid;
-    border-right: 3px solid #C0C0C0;
     text-align: center
 }
-div.sli-details-left-image {
-    width: 100%; 
-    margin: 10px 0;
-}
+
+div.sli-details-left-image { margin: 10px 0; }
 
 div.sli-details-right {
+    width: 70%;
     height: 100px;
+    padding: 5px;
+    float: right;
 }
 
-.sli-red{
-    background: #FFCCCC;
-    border: 1px solid #FF9999;
-}
+.sli-red{ background: #FFCCCC; }
 
-.sli-blue{
-    background: #D6EBFF;
-    border: 1px solid #ADD6FF;
-}
+.sli-blue{ background: #D6EBFF; }
 
-.sli-orange{
-    background: #FFE0C2;
-    border: 1px solid #FFCC99;
-}
+.sli-orange{ background: #FFE0C2; }
