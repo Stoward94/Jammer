@@ -96,6 +96,7 @@
     <Compile Include="AutoMapperConfig.cs" />
     <Compile Include="BaseLogic.cs" />
     <Compile Include="DateTimeHelper.cs" />
+    <Compile Include="HomeLogic.cs" />
     <Compile Include="IBusinessLogic.cs" />
     <Compile Include="IValidationDictionary.cs" />
     <Compile Include="ModelStateWrapper.cs" />

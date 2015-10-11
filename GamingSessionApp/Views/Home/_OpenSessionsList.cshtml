@@ -1,0 +1,31 @@
+﻿@model List<GamingSessionApp.ViewModels.Home.SessionListItem>
+
+<div>
+    <div class="list-container container-border-red">
+        <h2>Open Sessions</h2>
+    </div>
+
+    @foreach (var session in Model)
+    {
+        <div class="sli-container">
+            @*-- Display Scheduled Time --*@
+            <div class="sli-heading-time">
+                <i class="fa fa-clock-o" style="font-size: 12px;"></i> @session.ScheduledDate
+            </div>
+
+            @*-- Session Details --*@
+            <div class="sli-details-left">
+                <div class="sli-details-left-image">
+                    <img src="/Media/achievement-icon.png" alt="Achievemebt Hunting" height="46" width="46" class="img-circle">
+                </div>
+
+                <span><i class="fa fa-user"></i> @session.GamerCount</span>
+            </div>
+
+            <div class="sli-details-right sli-red">
+            </div>
+        </div>
+    }
+
+</div>
+

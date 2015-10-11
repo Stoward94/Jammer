@@ -9,7 +9,9 @@ using System.Web.Mvc;
 using AutoMapper;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
+using GamingSessionApp.ViewModels.Home;
 using GamingSessionApp.ViewModels.Session;
+using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
@@ -59,6 +61,11 @@ namespace GamingSessionApp.BusinessLogic
             }
 
             return sessions;
+        }
+
+        public IQueryable<Session> GetAllQueryable()
+        {
+            return _sessionRepo.Get();
         }
 
         public Session GetById(object id)
@@ -351,8 +358,7 @@ namespace GamingSessionApp.BusinessLogic
                 msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
             }
         }
-
-
+        
         #endregion
 
         public async Task<bool> AddSessionComment(string comment, Guid sessionId)

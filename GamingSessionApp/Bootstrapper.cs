@@ -32,6 +32,7 @@ namespace GamingSessionApp
             container.RegisterType<AccountController>(new InjectionConstructor());
 
             container.RegisterType<SessionLogic>();
+            container.RegisterType<HomeLogic>();
 
             return container;
         }

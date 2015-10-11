@@ -85,6 +85,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Home\HomeViewModel.cs" />
+    <Compile Include="Home\SessionListItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\CreateSessionVM.cs" />
     <Compile Include="Session\EditSessionVM.cs" />

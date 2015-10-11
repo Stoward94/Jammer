@@ -22,3 +22,93 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.navbar-nav > li > a {
+    padding-bottom: 1px;
+    transition: all 0.15s ease-in-out 0s;
+}
+
+.navbar-nav > li > a:hover {
+    border-bottom: 3px solid red;
+}
+
+.fa {
+    font-size: 18px;
+}
+
+.fa-gamepad {
+    -webkit-transform: rotate(-40deg);
+    -moz-transform: rotate(-40deg);
+    -ms-transform: rotate(-40deg);
+    -o-transform: rotate(-40deg);
+    transform: rotate(-40deg);
+}
+
+.list-container {
+    background: #f0f0f0;
+    padding: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.list-container > h2 {
+    margin: 5px;
+}
+
+.container-border-red {
+    border-bottom: 4px solid red;
+}
+
+.container-border-blue {
+    border-bottom: 4px solid #3399FF;
+}
+
+.container-border-orange {
+    border-bottom: 4px solid #FF9933;
+}
+
+/*Session List Item styles*/
+
+div.sli-container {
+    margin: 8px 0 0 0;
+}
+
+div.sli-heading-time {
+    width: 100%;
+    font-size: 12px;
+    padding: 3px 5px 0;
+    background: #C0C0C0;
+}
+
+div.sli-details-left {
+    width: 30%;
+    height: 100px;
+    background: whitesmoke;
+    float: left;
+    border: 1px #C0C0C0 solid;
+    border-right: 3px solid #C0C0C0;
+    text-align: center
+}
+div.sli-details-left-image {
+    width: 100%; 
+    margin: 10px 0;
+}
+
+div.sli-details-right {
+    height: 100px;
+}
+
+.sli-red{
+    background: #FFCCCC;
+    border: 1px solid #FF9999;
+}
+
+.sli-blue{
+    background: #D6EBFF;
+    border: 1px solid #ADD6FF;
+}
+
+.sli-orange{
+    background: #FFE0C2;
+    border: 1px solid #FFCC99;
+}

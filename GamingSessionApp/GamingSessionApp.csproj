@@ -228,12 +228,21 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\font-awesome\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Media\achievement-icon.png" />
+    <Content Include="Media\SiteTitle.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\font-awesome\fontawesome-webfont.eot" />
+    <Content Include="fonts\font-awesome\fontawesome-webfont.woff" />
+    <Content Include="fonts\font-awesome\fontawesome-webfont.woff2" />
+    <Content Include="fonts\font-awesome\fontawesome-webfont.ttf" />
     <None Include="Properties\PublishProfiles\GameJammer.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -291,6 +300,9 @@
     <Content Include="Views\Sessions\Index.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Sessions\_SessionCommentForm.cshtml" />
+    <Content Include="Views\Home\_OpenSessionsList.cshtml" />
+    <Content Include="Views\Home\_NewSessionList.cshtml" />
+    <Content Include="Views\Home\_RecommendedSessionList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

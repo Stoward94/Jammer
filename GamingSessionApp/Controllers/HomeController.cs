@@ -2,17 +2,36 @@
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.Migrations;
+using GamingSessionApp.ViewModels.Home;
 
 namespace GamingSessionApp.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        private readonly HomeLogic _homeLogic;
+
+        public HomeController(HomeLogic homeLogic)
         {
-            return View();
+            _homeLogic = homeLogic;
+        }
+
+        public async Task<ViewResult> Index()
+        {
+            HomeViewModel viewModel = new HomeViewModel
+            {
+                OpenSessions = await _homeLogic.GetOpenSessions(),
+                NewSessions = await _homeLogic.GetNewSessions(),
+                RecommendedSessions = new List<SessionListItem>(),
+
+
+            };
+
+            return View(viewModel);
         }
 
         public ActionResult Contact()
