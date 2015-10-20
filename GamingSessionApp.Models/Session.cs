@@ -10,7 +10,6 @@ namespace GamingSessionApp.Models
         public Session()
         {
             CreatedDate = DateTime.UtcNow;
-            SignedGamersCount = 0;
             Active = true;
             Messages = new List<SessionMessage>();
             SignedGamers = new List<ApplicationUser>();
@@ -52,7 +51,7 @@ namespace GamingSessionApp.Models
         public int GamersRequired { get; set; }
 
         //# of gamers registered for session
-        public int SignedGamersCount { get; set; }
+        public int SignedGamersCount => SignedGamers.Count;
 
         //Description of what the session is about
         [Required, StringLength(5000)]

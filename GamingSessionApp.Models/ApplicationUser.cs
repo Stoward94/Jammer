@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace GamingSessionApp.Models
         
         //Which time zone has the user selected
         public string TimeZoneId { get; set; }
+
+        public virtual ICollection<Session> Sessions { get; set; }
 
         #endregion
     }

@@ -89,6 +89,8 @@ namespace GamingSessionApp.BusinessLogic
                 //Combine both date and time fields
                 model.ScheduledDate = CombineDateAndTime(model.ScheduledDate, viewModel.ScheduledTime);
 
+                if (!CheckForSessionConflict(model)) return false;
+
                 //Convert all dates to UTC format
                 ConvertSessionTimesToUtc(model);
 
@@ -183,38 +185,6 @@ namespace GamingSessionApp.BusinessLogic
 
             return viewModel;
         } 
-
-        /// <summary>
-        /// Prepares the view model used to view a session ready to be passed the view
-        /// </summary>
-        /// <param name="sessionId"></param>
-        /// <returns></returns>
-        public async Task<SessionDetailsVM> PrepareViewSessionVM(Guid sessionId)
-        {
-            try
-            {
-                //Load the session from the db
-                Session model = await GetByIdAsync(sessionId);
-
-                if (model == null) return null;
-
-                //Convert the DateTimes to the users time zone
-                ConvertSessionTimesToTimeZone(model);
-
-                //Map the properties to the view model
-                var viewModel = Mapper.Map<Session, SessionDetailsVM>(model);
-
-                //Map messages to viewModel
-                viewModel.Messages = model.Messages.ToList();
-
-                return viewModel;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw;
-            }
-        }
 
         /// <summary>
         /// Get the details of a session and set up the edit view model
@@ -340,14 +310,14 @@ namespace GamingSessionApp.BusinessLogic
             return newDateTime;
         }
 
-        private void ConvertSessionTimesToUtc(Session model)
+        protected void ConvertSessionTimesToUtc(Session model)
         {
             //Convert all dates to UTC format
             model.CreatedDate = model.CreatedDate.ToUniversalTime();
             model.ScheduledDate = model.ScheduledDate.ToUniversalTime();
         }
 
-        private void ConvertSessionTimesToTimeZone(Session model)
+        protected void ConvertSessionTimesToTimeZone(Session model)
         {
             //Convert the DateTimes to the users time zone
             model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
@@ -358,7 +328,45 @@ namespace GamingSessionApp.BusinessLogic
                 msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
             }
         }
-        
+
+        /// <summary>
+        /// Checks through the users session to see if the new 
+        /// session conflicts with any of them.
+        /// </summary>
+        /// <param name="tSession"></param>
+        /// <returns></returns>
+        private bool CheckForSessionConflict(Session tSession)
+        {
+            foreach (var s in CurrentUser.Sessions.Where(s => s.Active))
+            {
+                if (tSession.ScheduledDate >= s.ScheduledDate &&
+                    tSession.ScheduledDate < s.ScheduledDate.AddMinutes(s.Duration.Minutes))
+                {
+                    return false;
+                }
+            }
+            
+
+            return true;
+        }
+
+        /// <summary>
+        /// Evaluates the session and updates the sessions status if needed
+        /// </summary>
+        /// <param name="session"></param>
+        private void CheckSessionStatus(Session session)
+        {
+            //Is the session now full?
+            if (session.SignedGamersCount == session.GamersRequired)
+            {
+                session.StatusId = (int) SessionStatusEnum.FullyLoaded;
+            }
+            else
+            {
+                session.StatusId = (int)SessionStatusEnum.Recruiting;
+            }
+        }
+
         #endregion
 
         public async Task<bool> AddSessionComment(string comment, Guid sessionId)
@@ -384,5 +392,86 @@ namespace GamingSessionApp.BusinessLogic
                 return false;
             }
         }
+
+        public async Task<bool> AddUserToSession(Guid sessionId)
+        {
+            try
+            {
+                Session targetSession = await GetByIdAsync(sessionId);
+
+                if (targetSession == null) return false;
+
+                //Check the session is active and that there is room to join
+                if (targetSession.Active && targetSession.SignedGamersCount < targetSession.GamersRequired)
+                {
+                    //Check this user also isn't already a member of the session.
+                    var existingUser = targetSession.SignedGamers.FirstOrDefault(x => x.Id == CurrentUser.Id);
+
+                    //If we found a matching user return false;
+                    if (existingUser != null) return false;
+
+                    //Check that this session doesn't conflict with the users existing sessions
+                    if (!CheckForSessionConflict(targetSession)) return false;
+
+                    targetSession.SignedGamers.Add(CurrentUser);
+
+                    //Check if the status needs updating
+                    CheckSessionStatus(targetSession);
+
+                    //Add 'User left' message to session feed
+                    _messageLogic.UserId = UserId;
+                    _messageLogic.AddUserJoinedMessage(targetSession);
+
+                    _sessionRepo.Update(targetSession);
+                    await SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to add user to session");
+                throw;
+            }
+        }
+
+        public async Task<bool> RemoveUserFromSession(Guid sessionId)
+        {
+            try
+            {
+                Session targetSession = await GetByIdAsync(sessionId);
+
+                if (targetSession == null) return false;
+
+                if (!targetSession.Active) return false;
+
+                //Remove the user
+                targetSession.SignedGamers.Remove(CurrentUser);
+
+                //Check if the status needs updating
+                CheckSessionStatus(targetSession);
+
+                //Add 'User left' message to session feed
+                _messageLogic.UserId = UserId;
+                _messageLogic.AddUserLeftMessage(targetSession);
+
+                _sessionRepo.Update(targetSession);
+                await SaveChangesAsync();
+
+                //Send email
+                //TODO: Send email
+                //Send notification
+                //TODO: Send notification
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                throw;
+            }
+        } 
     }
 }

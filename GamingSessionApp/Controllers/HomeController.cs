@@ -20,6 +20,7 @@ namespace GamingSessionApp.Controllers
             _homeLogic = homeLogic;
         }
 
+        [HttpGet, AllowAnonymous]
         public async Task<ViewResult> Index()
         {
             HomeViewModel viewModel = new HomeViewModel
@@ -34,6 +35,7 @@ namespace GamingSessionApp.Controllers
             return View(viewModel);
         }
 
+        [AllowAnonymous]
         public ActionResult Contact()
         {
             var configuration = new Configuration();

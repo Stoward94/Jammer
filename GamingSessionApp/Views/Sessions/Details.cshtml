@@ -93,6 +93,16 @@
     </dl>
 </div>
 <p>
+    @if (Model.CanJoin)
+    {
+        @Html.ActionLink("Join", "JoinSession", "Sessions", new {sessionId = Model.Id}, new {@class = "btn btn-primary"})
+    }
+
+    @if (Model.CanLeave)
+    {
+        @Html.ActionLink("Leave", "LeaveSession", "Sessions", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+
     @Html.ActionLink("Back to List", "Index")
 </p>
 
@@ -112,4 +122,7 @@
 
 </div>
 
-@Html.Partial("_SessionCommentForm", Model.Id)
+@if (Model.CanPost)
+{
+    @Html.Partial("_SessionCommentForm", Model.Id)
+}

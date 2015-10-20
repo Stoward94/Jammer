@@ -63,5 +63,47 @@ namespace GamingSessionApp.BusinessLogic
                 //Let the caller catch the exception
             }
         }
+
+        public void AddUserJoinedMessage(Session session)
+        {
+            try
+            {
+                SessionMessage message = new SessionMessage()
+                {
+                    AuthorId = UserId,
+                    Body = $"{CurrentUser.UserName} has joined the session",
+                    MessageNo = (session.Messages.Count + 1),
+                    MessageTypeId = (int)SessionMessageTypeEnum.PlayerJoined,
+                    SessionId = session.Id
+                };
+
+                session.Messages.Add(message);
+            }
+            catch (Exception)
+            {
+                //Let the caller catch the exception
+            }
+        }
+
+        public void AddUserLeftMessage(Session session)
+        {
+            try
+            {
+                SessionMessage message = new SessionMessage()
+                {
+                    AuthorId = UserId,
+                    Body = $"{CurrentUser.UserName} has left the session",
+                    MessageNo = (session.Messages.Count + 1),
+                    MessageTypeId = (int)SessionMessageTypeEnum.PlayerLeft,
+                    SessionId = session.Id
+                };
+
+                session.Messages.Add(message);
+            }
+            catch (Exception)
+            {
+                //Let the caller catch the exception
+            }
+        }
     }
 }

@@ -58,5 +58,12 @@ namespace GamingSessionApp.ViewModels.Session
 
         //A collection of the gamers signed to the session
         public virtual ICollection<ApplicationUser> SignedGamers { get; set; }
+
+
+        // ---- Display Option Variables ---- //
+        public bool CanJoin { get; set; }
+        public bool CanLeave { get; set; }
+        public bool CanPost { get; set; }
+
     }
 }

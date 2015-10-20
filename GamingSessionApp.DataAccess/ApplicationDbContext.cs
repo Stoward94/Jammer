@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -24,6 +26,20 @@ namespace GamingSessionApp.DataAccess
                 .WithMany(s => s.Messages)
                 .HasForeignKey(s => s.SessionId)
                 .WillCascadeOnDelete(false);
+
+            //Many-to-many for sessions and users
+            modelBuilder.Entity<Session>()
+                   .HasMany<ApplicationUser>(s => s.SignedGamers)
+                   .WithMany(u => u.Sessions)
+                   .Map(cs =>
+                   {
+                       cs.MapLeftKey("SessionId");
+                       cs.MapRightKey("UserId");
+                       cs.ToTable("SessionMembers");
+                   });
+
+            //Overrider the cascade delete issue.
+            modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
             base.OnModelCreating(modelBuilder);
         }

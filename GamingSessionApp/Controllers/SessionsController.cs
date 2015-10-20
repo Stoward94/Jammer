@@ -12,15 +12,17 @@ namespace GamingSessionApp.Controllers
     public class SessionsController : BaseController
     {
         private readonly SessionLogic _sessionLogic;
+        private readonly SessionDetailsVmLogic _detailsVmLogic;
 
-        public SessionsController(SessionLogic sessionLogic)
+        public SessionsController(SessionLogic sessionLogic, SessionDetailsVmLogic detailsVmLogic)
         {
             _sessionLogic = sessionLogic;
+            _detailsVmLogic = detailsVmLogic;
         }
 
         #region All Sessions
         
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Index()
         {
             PassUserToLogic();
@@ -35,7 +37,6 @@ namespace GamingSessionApp.Controllers
 
         // GET: Sessions/Create
         [HttpGet]
-        [Authorize]
         public async Task<ViewResult> Create()
         {
             var viewModel = new CreateSessionVM {CreatorId = UserId};
@@ -45,7 +46,6 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateSessionVM viewModel)
         {
@@ -67,14 +67,14 @@ namespace GamingSessionApp.Controllers
         #region View Session
 
         // GET: Sessions/Details/{Guid}
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Details(Guid? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             PassUserToLogic();
 
-            var viewModel = await _sessionLogic.PrepareViewSessionVM(id.Value);
+            var viewModel = await _detailsVmLogic.PrepareViewSessionVm(id.Value);
 
             if (viewModel == null) return HttpNotFound();
 
@@ -130,6 +130,34 @@ namespace GamingSessionApp.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
+        public async Task<ActionResult> JoinSession(Guid sessionId)
+        {
+            if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            PassUserToLogic();
+
+            if (await _sessionLogic.AddUserToSession(sessionId))
+            {
+                return RedirectToAction("Details", new {id = sessionId});
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+        }
+
+        public async Task<ActionResult> LeaveSession(Guid sessionId)
+        {
+            if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            PassUserToLogic();
+
+            if (await _sessionLogic.RemoveUserFromSession(sessionId))
+            {
+                return RedirectToAction("Details", new { id = sessionId });
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+        }
+
         /// <summary>
         /// Passes the current user to the session logic. (or null)
         /// </summary>
@@ -137,6 +165,7 @@ namespace GamingSessionApp.Controllers
         {
             //If we have a user then pass the Id
             _sessionLogic.UserId = UserId;
+            _detailsVmLogic.UserId = UserId;
         }
         
         protected override void Dispose(bool disposing)
@@ -144,6 +173,7 @@ namespace GamingSessionApp.Controllers
             if (disposing)
             {
                 _sessionLogic.Dispose();
+                _detailsVmLogic.Dispose();
             }
             base.Dispose(disposing);
         }
