@@ -8,6 +8,7 @@ using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
 
 namespace GamingSessionApp
 {
@@ -30,6 +31,7 @@ namespace GamingSessionApp
             container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
 
             container.RegisterType<AccountController>(new InjectionConstructor());
+            container.RegisterType<ManageController>(new InjectionConstructor());
 
             container.RegisterType<SessionLogic>();
             container.RegisterType<SessionDetailsVmLogic>();
