@@ -16,6 +16,7 @@ namespace GamingSessionApp.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(ApplicationDbContext context)
@@ -38,18 +39,15 @@ namespace GamingSessionApp.Migrations
             }
 
             //Seed the SessionDuration Values
-            var durationValues = new List<string>
-            {
-                "0-30 mins",
-                "30-60 mins",
-                "1-2 hours",
-                "2-3 hours",
-                "3-4 hours",
-                "4-5 hours",
-                "5+ hours"
-            };
-
-            durationValues.ForEach(c => context.SessionDurations.AddOrUpdate(x => x.Duration, new SessionDuration { Duration = c }));
+            context.SessionDurations.AddOrUpdate(d => d.Minutes,
+                new SessionDuration {Duration = "0 - 30 Minutes", Minutes = 30 },
+                new SessionDuration {Duration = "30 - 60 Minutes", Minutes = 60 },
+                new SessionDuration {Duration = "1 - 2 Hours", Minutes = 120 },
+                new SessionDuration {Duration = "2 - 3 Hours", Minutes = 180 },
+                new SessionDuration {Duration = "3 - 4 Hours", Minutes = 240 },
+                new SessionDuration {Duration = "4 - 5 Hours", Minutes = 300 },
+                new SessionDuration {Duration = "5+ hours", Minutes = 301 }
+                );
 
             //Seed the SessionStatus Statuses
             context.SessionStatuses.AddOrUpdate(x => x.Status, 
@@ -131,6 +129,7 @@ namespace GamingSessionApp.Migrations
                         }
                     });
             }
+            context.SaveChanges();
         }
     }
 }

@@ -49,8 +49,8 @@ namespace GamingSessionApp.BusinessLogic
         
         public async Task<List<Session>> GetAll()
         {
-            //Get all the sessions from the db
-            var sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic)
+            //Get all the sessions that are public and active
+            var sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic && s.Active)
                 .OrderByDescending(x => x.ScheduledDate)
                 .ToListAsync();
 
@@ -319,13 +319,15 @@ namespace GamingSessionApp.BusinessLogic
 
         protected void ConvertSessionTimesToTimeZone(Session model)
         {
+            TimeZoneInfo timeZone = GetUserTimeZone();
+
             //Convert the DateTimes to the users time zone
-            model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
-            model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+            model.CreatedDate = model.CreatedDate.ToTimeZoneTime(timeZone);
+            model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(timeZone);
 
             foreach (var msg in model.Messages)
             {
-                msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(timeZone);
             }
         }
 

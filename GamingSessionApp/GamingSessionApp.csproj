@@ -234,6 +234,8 @@
     <Content Include="fonts\font-awesome\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Media\achievement-icon.png" />
+    <Content Include="Media\boosting-icon.png" />
+    <Content Include="Media\competitive-icon.png" />
     <Content Include="Media\SiteTitle.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -323,6 +325,10 @@
     <ProjectReference Include="..\GamingSessionApp.DataAccess\GamingSessionApp.DataAccess.csproj">
       <Project>{e43415fa-aae2-453d-bc91-35bcbb103f70}</Project>
       <Name>GamingSessionApp.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GamingSessionApp.Helpers\GamingSessionApp.Helpers.csproj">
+      <Project>{a49ae404-f16b-4348-97b4-ae0e60ff9be6}</Project>
+      <Name>GamingSessionApp.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\GamingSessionApp.Models\GamingSessionApp.Models.csproj">
       <Project>{AE0C33F9-25C5-4D2F-887A-EAA2E5598B31}</Project>

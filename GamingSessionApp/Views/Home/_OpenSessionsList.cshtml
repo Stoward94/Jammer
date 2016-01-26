@@ -1,4 +1,5 @@
 ﻿@model List<GamingSessionApp.ViewModels.Home.SessionListItem>
+@using GamingSessionApp.Helpers
 
 <div>
     <div class="list-container border-top-red">
@@ -16,7 +17,7 @@
             @*-- Session Details --*@
             <div class="sli-details-left border-right-red">
                 <div class="sli-details-left-image">
-                    <img src="/Media/achievement-icon.png" alt="Achievemebt Hunting" height="46" width="46" class="img-circle">
+                    @Html.SessionTypeIcon(session.Type)
                 </div>
 
                 <span><i class="fa fa-user"></i> @session.GamerCount</span>

@@ -25,7 +25,8 @@ namespace GamingSessionApp.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Index()
         {
-            PassUserToLogic();
+            //Pass user to logic
+            _sessionLogic.UserId = UserId;
 
             List<Session> sessions = await _sessionLogic.GetAll();
             return View(sessions);

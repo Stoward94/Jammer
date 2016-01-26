@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp.Models", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp.ViewModels", "GamingSessionApp.ViewModels\GamingSessionApp.ViewModels.csproj", "{69C4F158-078B-4101-8E61-84F0F79C7A44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp.Helpers", "GamingSessionApp.Helpers\GamingSessionApp.Helpers.csproj", "{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{69C4F158-078B-4101-8E61-84F0F79C7A44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C4F158-078B-4101-8E61-84F0F79C7A44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C4F158-078B-4101-8E61-84F0F79C7A44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
