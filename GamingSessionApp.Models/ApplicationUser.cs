@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -20,12 +21,22 @@ namespace GamingSessionApp.Models
         }
 
         #region ApplicationUser extension properties
-        
+
+        public ApplicationUser()
+        {
+            Kudos = new Kudos();
+        }
+
         //Which time zone has the user selected
+        [Required]
         public string TimeZoneId { get; set; }
+
+        //Users kudos
+        public Kudos Kudos { get; set; }
 
         public virtual ICollection<Session> Sessions { get; set; }
 
+        
         #endregion
     }
 
