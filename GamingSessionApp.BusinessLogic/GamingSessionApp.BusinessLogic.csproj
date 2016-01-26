@@ -98,6 +98,7 @@
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="HomeLogic.cs" />
     <Compile Include="IBusinessLogic.cs" />
+    <Compile Include="KudosLogic.cs" />
     <Compile Include="PlatformLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionDetailsVmLogic.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,5 +18,7 @@ namespace GamingSessionApp.Models
 
         [Required]
         public int Points { get; set; }
+
+        public ICollection<KudosHistory> History { get; set; }
     }
 }

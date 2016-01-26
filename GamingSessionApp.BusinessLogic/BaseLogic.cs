@@ -17,6 +17,8 @@ namespace GamingSessionApp.BusinessLogic
         private ApplicationUser _applicationUser;
         private TimeZoneInfo _userTimeZone;
 
+        protected ValidationResult VResult;
+
         public UserManager<ApplicationUser> UserManager
         {
             get { return _userManager ?? (_userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()))); }
@@ -70,5 +72,26 @@ namespace GamingSessionApp.BusinessLogic
         {
             UoW.Dispose();
         }
+    }
+
+    public class ValidationResult
+    {
+        public ValidationResult()
+        {
+            Success = true;
+        }
+
+        public string Error { get; set; }
+
+        public bool Success { get; set; }
+
+        public ValidationResult AddError(string error)
+        {
+            Error = error;
+            Success = false;
+
+            return this;
+        }
+
     }
 }
