@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GamingSessionApp.Models
 {
@@ -10,6 +11,10 @@ namespace GamingSessionApp.Models
         }
 
         public int Id { get; set; }
+
+        [ForeignKey("Kudos")]
+        public string KudosId { get; set; }
+        public Kudos Kudos { get; set; }
 
         public int Points { get; set; }
 

@@ -21,12 +21,7 @@ namespace GamingSessionApp.Models
         }
 
         #region ApplicationUser extension properties
-
-        public ApplicationUser()
-        {
-            Kudos = new Kudos();
-        }
-
+        
         //Which time zone has the user selected
         [Required]
         public string TimeZoneId { get; set; }

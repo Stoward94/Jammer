@@ -19,27 +19,19 @@ namespace GamingSessionApp.BusinessLogic
             _kudosRepo = UoW.Repository<Kudos>();
         }
 
-        public async Task<ValidationResult> AddKudosPoints(ApplicationUser user, int value)
+        public async Task<ValidationResult> AddKudosPoints(string userId, int value)
         {
             try
             {
                 var userRepo = UoW.Repository<ApplicationUser>();
 
-                if (user.Kudos != null)
-                {
-                    user.Kudos.Points += value;
-                }
-                else
-                {
-                    string userId = user.Id;
+                //Load user from the db
+                ApplicationUser user = await userRepo.Get(x => x.Id == userId)
+                    .Include(x => x.Kudos.History)
+                    .FirstOrDefaultAsync();
 
-                    //Load user from the db
-                    user = await userRepo.Get(x => x.Id == userId)
-                        .Include(x => x.Kudos)
-                        .FirstOrDefaultAsync();
-
-                    user.Kudos.Points += value;
-                }
+                user.Kudos.Points += value;
+                
 
                 //Insert Kudos history record
                 user.Kudos.History.Add(new KudosHistory { Points = value });
