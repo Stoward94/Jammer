@@ -211,3 +211,4 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 GamingSessionApp/App_Start/Startup.Auth.cs
+GamingSessionApp/Properties/PublishProfiles/GameJammer.pubxml
