@@ -103,3 +103,26 @@ div.sli-details-right {
 .sli-blue{ background: #D6EBFF; }
 
 .sli-orange{ background: #FFE0C2; }
+
+
+/* Widgets */
+
+.widget {
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px #000000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.widget > .widget-heading, .widget > .widget-body {
+    padding: 10px;
+    margin: 0;
+    border: 1px solid #D0D0D0;
+}
+
+.widget > .widget-heading {
+    background-color: #EEE;
+}
+
+.widget > .widget-body {
+    min-height: 150px;
+}

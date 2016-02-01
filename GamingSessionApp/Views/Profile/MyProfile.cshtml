@@ -1,0 +1,35 @@
+﻿@model GamingSessionApp.ViewModels.Profile.UserProfileViewModel
+
+@{
+    ViewBag.Title = Model.DisplayName + "Profile";
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
+    </div>
+    <div class="col-md-6">
+        <h1>@Model.DisplayName</h1>
+        <h2>Kudos: @Model.KudosValue</h2>
+    </div>
+
+    <div class="col-md-4">
+        @* My Sessions Widget *@
+        <div class="widget">
+            <h4 class="widget-heading">My Sessions</h4>
+            <div class="widget-body">
+                <p>You have no up-coming sessions.</p>
+                <p>Why not join some?</p>
+            </div>
+        </div>
+
+        @* My Sessions Widget *@
+        <div class="widget">
+            <h4 class="widget-heading">Friends</h4>
+            <div class="widget-body">
+                <p>You have no friends.</p>
+                <p>Best get out there!</p>
+            </div>
+        </div>
+    </div>
+</div>

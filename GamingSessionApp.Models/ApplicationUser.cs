@@ -28,6 +28,7 @@ namespace GamingSessionApp.Models
 
         //Users kudos
         public Kudos Kudos { get; set; }
+        public UserProfile Profile { get; set; }
 
         public virtual ICollection<Session> Sessions { get; set; }
 

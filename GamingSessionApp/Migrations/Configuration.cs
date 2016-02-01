@@ -33,7 +33,12 @@ namespace GamingSessionApp.Migrations
                     UserName = "luke@email.com",
                     Email = "luke@email.com",
                     TimeZoneId = "GMT Standard Time",
-                    Kudos = new Kudos()
+                    Kudos = new Kudos(),
+                    Profile = new UserProfile
+                    {
+                        DisplayName = "Stoward94",
+                        ThumbnailUrl = "/Images/thumbnails/default/001.png"
+                    }
                 };
                 um.Create(user, "Password");
                 context.SaveChanges();

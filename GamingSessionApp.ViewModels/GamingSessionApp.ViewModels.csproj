@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="Home\HomeViewModel.cs" />
     <Compile Include="Home\SessionListItem.cs" />
+    <Compile Include="Profile\UserProfileViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\CreateSessionVM.cs" />
     <Compile Include="Session\EditSessionVM.cs" />

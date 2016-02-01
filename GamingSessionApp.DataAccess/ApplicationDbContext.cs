@@ -63,5 +63,7 @@ namespace GamingSessionApp.DataAccess
         public DbSet<Kudos> Kudos { get; set; }
 
         public DbSet<KudosHistory> KudosHistory { get; set; }
+
+        public DbSet<UserProfile> UserProfiles { get; set; }
     }
 }

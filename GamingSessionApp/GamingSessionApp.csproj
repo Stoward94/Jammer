@@ -211,6 +211,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SessionsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -305,6 +306,7 @@
     <Content Include="Views\Home\_OpenSessionsList.cshtml" />
     <Content Include="Views\Home\_NewSessionList.cshtml" />
     <Content Include="Views\Home\_RecommendedSessionList.cshtml" />
+    <Content Include="Views\Profile\MyProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
