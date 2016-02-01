@@ -5,6 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Web.Security;
+using GamingSessionApp.BusinessLogic;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -62,10 +65,11 @@ namespace GamingSessionApp.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    AddClaimCookies(model.UserName);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -138,7 +142,7 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -189,7 +193,7 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -235,7 +239,7 @@ namespace GamingSessionApp.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -460,6 +464,25 @@ namespace GamingSessionApp.Controllers
                 }
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
+        }
+
+        public void AddClaimCookies(string userName)
+        {
+            UserLogic logic = new UserLogic();
+            ApplicationUser user = logic.GetUser(userName);
+
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity == null)
+                return;
+
+            // check for existing claim and remove it
+            var existingClaim = identity.FindFirst("ThumbnailUrl");
+            if (existingClaim != null)
+                identity.RemoveClaim(existingClaim);
+
+            // add new claim
+            UserManager.AddClaim(user.Id, new Claim("ThumbnailUrl", user.Profile.ThumbnailUrl));
+
         }
         #endregion
     }

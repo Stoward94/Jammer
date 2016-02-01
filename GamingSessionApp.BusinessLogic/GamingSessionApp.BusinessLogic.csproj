@@ -61,6 +61,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -100,6 +101,7 @@
     <Compile Include="IBusinessLogic.cs" />
     <Compile Include="KudosLogic.cs" />
     <Compile Include="PlatformLogic.cs" />
+    <Compile Include="ProfileLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionDetailsVmLogic.cs" />
     <Compile Include="SessionDurationLogic.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="SessionMessageLogic.cs" />
     <Compile Include="SessionTypeLogic.cs" />
     <Compile Include="SystemEnums.cs" />
+    <Compile Include="UserLogic.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GamingSessionApp.DataAccess\GamingSessionApp.DataAccess.csproj">

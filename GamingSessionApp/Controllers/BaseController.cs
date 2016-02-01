@@ -7,7 +7,7 @@ namespace GamingSessionApp.Controllers
 {
     public class BaseController : Controller
     {
-        protected ApplicationUserManager _userManager;
+        private ApplicationUserManager _userManager;
 
         protected string UserId
         {
