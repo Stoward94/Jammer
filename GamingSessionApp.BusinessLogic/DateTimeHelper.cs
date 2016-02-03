@@ -30,6 +30,8 @@ namespace GamingSessionApp.BusinessLogic
         /// <returns></returns>
         public static DateTime ToTimeZoneTime(this DateTime time, TimeZoneInfo tzi)
         {
+            if (time.Kind == DateTimeKind.Local) return time;
+
             return TimeZoneInfo.ConvertTimeFromUtc(time, tzi);
         }
     }

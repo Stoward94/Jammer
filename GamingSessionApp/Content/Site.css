@@ -56,15 +56,15 @@ textarea {
     margin: 5px;
 }
 
-.border-top-red { border-top: 4px solid #d24d57; }
+.border-top-red, .widget-red { border-top: 4px solid #d24d57; }
 .border-bottom-red { border-bottom: 3px solid #d24d57; }
 .border-right-red {border-right: 3px solid #d24d57;}
 
-.border-top-blue { border-top: 4px solid #3399FF; }
+.border-top-blue, .widget-blue { border-top: 4px solid #3399FF; }
 .border-bottom-blue { border-bottom: 3px solid #3399FF; }
 .border-right-blue {border-right: 3px solid #3399FF;}
 
-.border-top-orange { border-top: 4px solid #FF9933; }
+.border-top-orange, .widget-orange { border-top: 4px solid #FF9933; }
 .border-bottom-orange { border-bottom: 3px solid #FF9933; }
 .border-right-orange { border-right: 3px solid #FF9933;}
 
@@ -121,6 +121,7 @@ div.sli-details-right {
 
 .widget > .widget-heading {
     background-color: #EEE;
+    border-bottom:none;
 }
 
 .widget > .widget-body {

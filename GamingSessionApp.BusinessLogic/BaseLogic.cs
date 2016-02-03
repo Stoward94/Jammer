@@ -19,6 +19,11 @@ namespace GamingSessionApp.BusinessLogic
 
         protected ValidationResult VResult;
 
+        protected BaseLogic()
+        {
+            VResult = new ValidationResult();
+        }
+
         public UserManager<ApplicationUser> UserManager
         {
             get { return _userManager ?? (_userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()))); }

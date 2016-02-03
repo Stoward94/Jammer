@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,5 +22,10 @@ namespace GamingSessionApp.Models
         public string ThumbnailUrl { get; set; }
 
         public string About { get; set; }
+
+        //Users kudos
+        public Kudos Kudos { get; set; }
+
+        public ICollection<UserFriend> Friends { get; set; }
     }
 }

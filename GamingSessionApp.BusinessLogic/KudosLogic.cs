@@ -23,10 +23,10 @@ namespace GamingSessionApp.BusinessLogic
         {
             try
             {
-                var userRepo = UoW.Repository<ApplicationUser>();
+                var userRepo = UoW.Repository<UserProfile>();
 
                 //Load user from the db
-                ApplicationUser user = await userRepo.Get(x => x.Id == userId)
+                UserProfile user = await userRepo.Get(x => x.UserId == userId)
                     .Include(x => x.Kudos.History)
                     .FirstOrDefaultAsync();
 

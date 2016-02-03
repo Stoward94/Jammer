@@ -30,14 +30,14 @@ namespace GamingSessionApp.Migrations
 
                 user = new ApplicationUser
                 {
-                    UserName = "luke@email.com",
+                    UserName = "Stoward94",
                     Email = "luke@email.com",
                     TimeZoneId = "GMT Standard Time",
-                    Kudos = new Kudos(),
                     Profile = new UserProfile
                     {
                         DisplayName = "Stoward94",
-                        ThumbnailUrl = "/Images/thumbnails/default/001.png"
+                        ThumbnailUrl = "/Images/thumbnails/default/001.png",
+                        Kudos = new Kudos()
                     }
                 };
                 um.Create(user, "Password");
@@ -109,31 +109,31 @@ namespace GamingSessionApp.Migrations
             //Seed sample sessions
             if (!context.Sessions.Any())
             {
-                context.Sessions.AddOrUpdate(x => x.PlatformId,
-                    new Session
+                
+                Session session = new Session
+                {
+                    PlatformId = 2,
+                    CreatorId = user.Id,
+                    DurationId = 3,
+                    GamersRequired = 4,
+                    Information = "This is the first session",
+                    ScheduledDate = DateTime.UtcNow.AddDays(12),
+                    TypeId = 1,
+                    StatusId = (int)SessionStatusEnum.Recruiting,
+                    Settings = new SessionSettings
                     {
-                        CreatedDate = DateTime.UtcNow,
-                        PlatformId = 2,
-                        CreatorId = user.Id,
-                        DurationId = 3,
-                        GamersRequired = 4,
-                        Information = "This is the first session",
-                        ScheduledDate = DateTime.UtcNow.AddDays(12),
-                        TypeId = 1,
-                        StatusId = (int)SessionStatusEnum.Recruiting,
-                        Settings = new SessionSettings
-                        {
-                            IsPublic = true,
-                            ApproveJoinees = false
-                        },
-                        Messages = new List<SessionMessage>()
-                        {
-                            new SessionMessage() { AuthorId = user.Id, Body = "Session Created", MessageNo = 1, MessageTypeId = 1 },
-                            new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 },
-                            new SessionMessage() { AuthorId = user.Id, Body = "Luke Left", MessageNo = 3, MessageTypeId = 3 },
-                            
-                        }
-                    });
+                        IsPublic = true,
+                        ApproveJoinees = false
+                    },
+                    Messages = new List<SessionMessage>()
+                    {
+                        new SessionMessage() { AuthorId = user.Id, Body = "Session Created", MessageNo = 1, MessageTypeId = 1 },
+                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 },
+                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Left", MessageNo = 3, MessageTypeId = 3 }
+                    }
+                };
+
+                context.Sessions.AddOrUpdate(x => x.PlatformId, session);
             }
             context.SaveChanges();
         }

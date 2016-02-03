@@ -1,0 +1,53 @@
+﻿@model GamingSessionApp.ViewModels.Profile.UserProfileViewModel
+@{
+    ViewBag.Title = Model.DisplayName + "'s Profile";
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180"/>
+    </div>
+    <div class="col-md-7">
+        <h1>@Model.DisplayName</h1>
+        <h2>Kudos: @Model.KudosPoints</h2>
+    </div>
+
+    <div class="col-md-3">
+
+        <div style="margin-bottom: 20px;">
+            @* Add friend button *@
+            @Ajax.ActionLink("Add Friend", "AddFriend", "Profile", new { userName = Model.DisplayName }
+            , new AjaxOptions { HttpMethod = "Post", OnSuccess = "addFriendSuccess", LoadingElementId = "btn-spinner" }, new { @class = "btn btn-default" })
+            <i id="btn-spinner" class="fa fa-spinner fa-pulse" style="display:none"></i>
+        </div>
+
+        @* Users Friends Widget *@
+        <div class="widget widget-red">
+            <h4 class="widget-heading">Friends</h4>
+            <div class="widget-body">
+                @{
+                    if (Model.Friends.Any())
+                    {
+                        int i = 1;
+                        <table>
+                            @foreach (var friend in Model.Friends)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@friend.DisplayName</td>
+                                    <td>@friend.KudosPoints</td>
+                                </tr>
+                                i++;
+                            }
+                        </table>
+                    }
+                    else
+                    {
+                        <p>This user has no friends</p>
+                        <p>Why not invite them to be yours</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

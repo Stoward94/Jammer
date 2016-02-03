@@ -14,7 +14,7 @@ namespace GamingSessionApp.Models
 
         [Key, ForeignKey("User")]
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public UserProfile User { get; set; }
 
         [Required]
         public int Points { get; set; }

@@ -69,6 +69,7 @@
     <Compile Include="SessionSettings.cs" />
     <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />
+    <Compile Include="UserFriend.cs" />
     <Compile Include="UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>

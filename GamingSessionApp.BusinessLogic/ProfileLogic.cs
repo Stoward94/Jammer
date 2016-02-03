@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Profile;
+using GamingSessionApp.ViewModels.Session;
 
 namespace GamingSessionApp.BusinessLogic
 {
@@ -27,10 +28,33 @@ namespace GamingSessionApp.BusinessLogic
                     .Select(x => new UserProfileViewModel
                     {
                         DisplayName = x.DisplayName,
-                        KudosValue = x.User.Kudos.Points,
+                        KudosPoints = x.Kudos.Points,
                         ProfileImageUrl = x.ThumbnailUrl,
+                        Friends = x.Friends.Select(f => new UserFriendViewModel
+                        {
+                            DisplayName = f.Friend.DisplayName,
+                            KudosPoints = f.Friend.Kudos.Points
+                        }).OrderByDescending(f => f.KudosPoints).ToList(), 
+                        //My Sessions
+                        Sessions = x.User.Sessions.Where(s => s.Active).OrderBy(s => s.ScheduledDate).ToList(),
+                        //Friends Sessions
+                        FriendsSessions = x.Friends.SelectMany(f => f.Friend.User.Sessions)
+                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList()
                     })
                     .FirstOrDefaultAsync();
+
+                //Convert Session Times to Local Time
+                foreach (var s in profile.Sessions)
+                {
+                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                }
+
+                foreach (var s in profile.FriendsSessions)
+                {
+                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                }
 
                 return profile;
             }
@@ -38,6 +62,85 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex);
                 throw;
+            }
+        }
+
+        public async Task<UserProfileViewModel> GetUserProfile(string userName)
+        {
+            try
+            {
+                UserProfileViewModel profile = await _profileRepo.Get(x => x.DisplayName == userName)
+                    .Select(x => new UserProfileViewModel
+                    {
+                        DisplayName = x.DisplayName,
+                        KudosPoints = x.Kudos.Points,
+                        ProfileImageUrl = x.ThumbnailUrl,
+                        Friends = x.Friends.Select(f => new UserFriendViewModel
+                        {
+                            DisplayName = f.Friend.DisplayName,
+                            KudosPoints = f.Friend.Kudos.Points
+                        }).OrderByDescending(f => f.KudosPoints).ToList(),
+                        //My Sessions
+                        Sessions = x.User.Sessions.Where(s => s.Active).OrderBy(s => s.ScheduledDate).ToList(),
+                        //Friends Sessions
+                        FriendsSessions = x.Friends.SelectMany(fs => fs.Profile.User.Sessions)
+                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList()
+                    })
+                    .FirstOrDefaultAsync();
+
+                //Convert Session Times to Local Time
+                foreach (var s in profile.Sessions)
+                {
+                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                }
+
+                foreach (var s in profile.FriendsSessions)
+                {
+                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                }
+
+                return profile;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to get users profile");
+                throw;
+            }
+        }
+
+        public async Task<ValidationResult> AddFriend(string userName)
+        {
+            try
+            {
+                //Find the user in the db
+                string targetUserId = await _profileRepo.Get(x => x.DisplayName == userName)
+                    .Select(x => x.UserId)
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(targetUserId)) return VResult.AddError("Unable to add friend");
+
+                //Now find get the current users profile
+                UserProfile currentUser = await _profileRepo.Get(x => x.UserId == UserId)
+                    .Include(x => x.Friends).FirstOrDefaultAsync();
+
+                //Check that this user isn't already friends
+                if (currentUser.Friends.Any(x => x.FriendId == targetUserId))
+                    return VResult.AddError("You are already friends with this user");
+
+                //Add the friend
+                currentUser.Friends.Add(new UserFriend { FriendId = targetUserId });
+
+                _profileRepo.Update(currentUser);
+                await SaveChangesAsync();
+                
+                return VResult;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to add friend: " + userName);
+                return VResult.AddError("Unable to add friend");
             }
         }
     }

@@ -27,6 +27,13 @@ namespace GamingSessionApp.DataAccess
                 .HasForeignKey(s => s.SessionId)
                 .WillCascadeOnDelete(false);
 
+            //one-to-many for UserProfile => UserFriends
+            modelBuilder.Entity<UserFriend>()
+                .HasRequired(s => s.Profile)
+                .WithMany(s => s.Friends)
+                .HasForeignKey(s => s.ProfileId)
+                .WillCascadeOnDelete(false);
+
             //Many-to-many for sessions and users
             modelBuilder.Entity<Session>()
                    .HasMany<ApplicationUser>(s => s.SignedGamers)

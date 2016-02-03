@@ -26,8 +26,6 @@ namespace GamingSessionApp.Models
         [Required]
         public string TimeZoneId { get; set; }
 
-        //Users kudos
-        public Kudos Kudos { get; set; }
         public UserProfile Profile { get; set; }
 
         public virtual ICollection<Session> Sessions { get; set; }

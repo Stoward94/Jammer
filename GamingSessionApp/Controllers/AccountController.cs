@@ -142,12 +142,27 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    TimeZoneId = "GMT Standard Time",
+                    Profile = new UserProfile
+                    {
+                        DisplayName = model.UserName,
+                        ThumbnailUrl = "/Images/thumbnails/default/002.png",
+                        Kudos = new Kudos(),
+                    }
+                };
+
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
+                    AddClaimCookies(model.UserName);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
