@@ -16,6 +16,8 @@ namespace GamingSessionApp.ViewModels.Profile
 
         public List<Models.Session> FriendsSessions { get; set; }
 
+        public List<Models.KudosHistory> KudosHistory { get; set; }
+
 
     }
 }

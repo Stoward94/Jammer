@@ -1,0 +1,18 @@
+﻿@model GamingSessionApp.ViewModels.Profile.UserMenuViewModel
+
+<li><a href="#"><i class="fa fa-trophy"></i> @Model.KudosPoints</a></li>
+
+<li id="notif-toggle" class="dropdown">
+    <a href="#" title="Notifications" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-bell-o"></i>
+        @if (Model.UnseenNotifications > 0)
+        {
+            <span id="notif-count" class="badge" style="background-color: #3399FF">@Model.UnseenNotifications</span>
+        }
+    </a>
+
+    <ul id="notif-menu" class="dropdown-menu notif-menu">
+        <li class="dropdown-header">Notifications <i id="n-spinner" class="fa fa-spinner fa-pulse" style="display:none;"></i></li>
+    </ul>
+</li>
+

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.ViewModels.Profile;
@@ -31,15 +33,6 @@ namespace GamingSessionApp.Controllers
             return View(model);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-              _profileLogic.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         [HttpPost]
         public async Task<JsonResult> AddFriend(string userName)
         {
@@ -56,6 +49,50 @@ namespace GamingSessionApp.Controllers
             
             //Return error
             return Json(new { success = false, responseText = result.Error });
+        }
+
+        [HttpGet]
+        [Authorize]
+        public PartialViewResult UserMenu()
+        {
+            var model = _profileLogic.GetUserMenuInformation(UserId);
+
+            return PartialView("_UserMenu", model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<PartialViewResult> GetNotifications()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var model = await _profileLogic.GetNotifications(UserId);
+
+                if (model != null)
+                    return PartialView("_UserNotifications", model);
+            }
+            return null;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task UpdateNotifications(List<Guid> ids)
+        {
+            if (ids == null) return;
+
+            if (Request.IsAjaxRequest())
+            {
+                await _profileLogic.UpdateNotifications(UserId, ids);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+              _profileLogic.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

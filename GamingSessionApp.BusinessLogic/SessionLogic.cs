@@ -78,7 +78,7 @@ namespace GamingSessionApp.BusinessLogic
             return await _sessionRepo.GetByIdAsync(id);
         }
 
-        public async Task<bool> CreateSession(CreateSessionVM viewModel)
+        public async Task<ValidationResult> CreateSession(CreateSessionVM viewModel)
         {
             try
             {
@@ -89,7 +89,11 @@ namespace GamingSessionApp.BusinessLogic
                 //Combine both date and time fields
                 model.ScheduledDate = CombineDateAndTime(model.ScheduledDate, viewModel.ScheduledTime);
 
-                if (!CheckForSessionConflict(model)) return false;
+                Session conflictSession = CheckForSessionConflict(model);
+
+                if (conflictSession != null)
+                    return VResult.AddError("This sessions time conflicts with an existing session. " +
+                                            "Please pick another date and time.");
 
                 //Convert all dates to UTC format
                 ConvertSessionTimesToUtc(model);
@@ -104,12 +108,13 @@ namespace GamingSessionApp.BusinessLogic
                 _sessionRepo.Insert(model);
                 await SaveChangesAsync();
 
-                return true;
+                return VResult;
             }
             catch (Exception ex)
             {
                 LogError(ex, "Unable to create session");   
-                return false;
+                return VResult.AddError("Unable to create the session at this time. " +
+                                        "Please try again later.");
             }
         }
 
@@ -337,19 +342,20 @@ namespace GamingSessionApp.BusinessLogic
         /// </summary>
         /// <param name="tSession"></param>
         /// <returns></returns>
-        private bool CheckForSessionConflict(Session tSession)
+        private Session CheckForSessionConflict(Session tSession)
         {
             foreach (var s in CurrentUser.Sessions.Where(s => s.Active))
             {
                 if (tSession.ScheduledDate >= s.ScheduledDate &&
                     tSession.ScheduledDate < s.ScheduledDate.AddMinutes(s.Duration.Minutes))
                 {
-                    return false;
+                    //Return conflicting session
+                    return tSession;
                 }
             }
-            
 
-            return true;
+            //If no conflicts return null
+            return null;
         }
 
         /// <summary>
@@ -395,42 +401,53 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<bool> AddUserToSession(Guid sessionId)
+        public async Task<ValidationResult> AddUserToSession(Guid sessionId)
         {
             try
             {
                 Session targetSession = await GetByIdAsync(sessionId);
 
-                if (targetSession == null) return false;
+                if (targetSession == null)
+                    return VResult.AddError("Unable to join this session as this time");
 
                 //Check the session is active and that there is room to join
-                if (targetSession.Active && targetSession.SignedGamersCount < targetSession.GamersRequired)
-                {
-                    //Check this user also isn't already a member of the session.
-                    var existingUser = targetSession.SignedGamers.FirstOrDefault(x => x.Id == CurrentUser.Id);
+                if (!targetSession.Active)
+                    return VResult.AddError("This session is no longer active");
 
-                    //If we found a matching user return false;
-                    if (existingUser != null) return false;
+                 if(targetSession.SignedGamersCount >= targetSession.GamersRequired)
+                    return VResult.AddError("You are unable to join this session as it's full");
 
-                    //Check that this session doesn't conflict with the users existing sessions
-                    if (!CheckForSessionConflict(targetSession)) return false;
+                //Check this user isn't already a member of the session.
+                var existingUser = targetSession.SignedGamers.FirstOrDefault(x => x.Id == CurrentUser.Id);
 
-                    targetSession.SignedGamers.Add(CurrentUser);
+                //If we found a matching user return error;
+                if (existingUser != null)
+                    return VResult.AddError("You are already a member of this session");
 
-                    //Check if the status needs updating
-                    CheckSessionStatus(targetSession);
+                //Check that this session doesn't conflict with the users existing sessions
+                Session conflictSession = CheckForSessionConflict(targetSession);
 
-                    //Add 'User left' message to session feed
-                    _messageLogic.UserId = UserId;
-                    _messageLogic.AddUserJoinedMessage(targetSession);
+                if(conflictSession != null)
+                    return VResult.AddError("This sessions time conflicts with another session you have already joined. " +
+                                            "You are unable to join this session as a result.");
 
-                    _sessionRepo.Update(targetSession);
-                    await SaveChangesAsync();
+                targetSession.SignedGamers.Add(CurrentUser);
 
-                    return true;
-                }
+                //Check if the status needs updating
+                CheckSessionStatus(targetSession);
 
-                return false;
+                //Add 'User joined' message to session feed
+                _messageLogic.UserId = UserId;
+                _messageLogic.AddUserJoinedMessage(targetSession);
+
+                //Send notification to the session owner
+                NotificationLogic nLogic = new NotificationLogic();
+                await nLogic.AddUserJoinedNotification(targetSession, CurrentUser);
+
+                _sessionRepo.Update(targetSession);
+                await SaveChangesAsync();
+
+                return VResult;
             }
             catch (Exception ex)
             {

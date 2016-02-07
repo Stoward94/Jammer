@@ -127,3 +127,12 @@ div.sli-details-right {
 .widget > .widget-body {
     min-height: 150px;
 }
+
+/* User Notifications Menu*/
+.notif-menu {
+    min-width: 400px;
+    height: 300px;
+}
+.unread {
+    background-color: deepskyblue;
+}

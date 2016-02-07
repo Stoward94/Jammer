@@ -70,6 +70,8 @@
     <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />
     <Compile Include="UserFriend.cs" />
+    <Compile Include="UserNotification.cs" />
+    <Compile Include="UserNotificationType.cs" />
     <Compile Include="UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>

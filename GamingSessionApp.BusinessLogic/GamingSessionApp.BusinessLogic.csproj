@@ -100,6 +100,7 @@
     <Compile Include="HomeLogic.cs" />
     <Compile Include="IBusinessLogic.cs" />
     <Compile Include="KudosLogic.cs" />
+    <Compile Include="NotificationLogic.cs" />
     <Compile Include="PlatformLogic.cs" />
     <Compile Include="ProfileLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\GamingSessionApp.DataAccess\GamingSessionApp.DataAccess.csproj">
       <Project>{E43415FA-AAE2-453D-BC91-35BCBB103F70}</Project>
       <Name>GamingSessionApp.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GamingSessionApp.Helpers\GamingSessionApp.Helpers.csproj">
+      <Project>{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}</Project>
+      <Name>GamingSessionApp.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\GamingSessionApp.Models\GamingSessionApp.Models.csproj">
       <Project>{ae0c33f9-25c5-4d2f-887a-eaa2e5598b31}</Project>

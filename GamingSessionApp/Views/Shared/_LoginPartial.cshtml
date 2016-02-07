@@ -8,10 +8,11 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <img src="@User.GetThumbnail()" width="36" height="36" style="margin-top: 10px;" />
-                
+                <img src="@User.GetThumbnail()" width="36" height="36" style="margin-top: 10px;"/>
+
                 @Html.ActionLink(User.Identity.GetUserName(), "MyProfile", "Profile", null, new {title = "My Profile", @style = "display:inline"})
             </li>
+             @Html.Action("UserMenu", "Profile")
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i></a>
                 <ul class="dropdown-menu">

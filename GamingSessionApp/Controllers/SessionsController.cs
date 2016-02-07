@@ -55,7 +55,9 @@ namespace GamingSessionApp.Controllers
                 PassUserToLogic();
 
                 //Pass the view model to the create logic
-                if (await _sessionLogic.CreateSession(viewModel))
+                ValidationResult result = await _sessionLogic.CreateSession(viewModel);
+
+                if(result.Success)
                     return RedirectToAction("Index");
             }
 
@@ -137,10 +139,10 @@ namespace GamingSessionApp.Controllers
 
             PassUserToLogic();
 
-            if (await _sessionLogic.AddUserToSession(sessionId))
-            {
+            ValidationResult result = await _sessionLogic.AddUserToSession(sessionId);
+
+            if(result.Success)
                 return RedirectToAction("Details", new {id = sessionId});
-            }
 
             return new HttpStatusCodeResult(HttpStatusCode.Conflict);
         }

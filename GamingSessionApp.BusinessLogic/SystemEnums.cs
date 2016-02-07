@@ -24,5 +24,13 @@ namespace GamingSessionApp.BusinessLogic
             Jamming = 3,
             Retired = 4
         }
+
+        public enum UserNotificationTypeEnum
+        {
+            PlayerJoined = 1,
+            PlayerLeft = 2,
+            KudosAdded = 3,
+            Information = 4
+        }
     }
 }

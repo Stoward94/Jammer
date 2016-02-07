@@ -72,5 +72,11 @@ namespace GamingSessionApp.DataAccess
         public DbSet<KudosHistory> KudosHistory { get; set; }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
+        public DbSet<UserNotificationType> UserNotificationTypes { get; set; }
+
+
     }
 }

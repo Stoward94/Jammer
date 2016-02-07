@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
+using GamingSessionApp.Helpers;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Profile;
 using GamingSessionApp.ViewModels.Session;
@@ -39,7 +40,9 @@ namespace GamingSessionApp.BusinessLogic
                         Sessions = x.User.Sessions.Where(s => s.Active).OrderBy(s => s.ScheduledDate).ToList(),
                         //Friends Sessions
                         FriendsSessions = x.Friends.SelectMany(f => f.Friend.User.Sessions)
-                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList()
+                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
+                        //Kudos History
+                        KudosHistory = x.Kudos.History.OrderByDescending(kh => kh.DateAdded).Take(10).ToList()
                     })
                     .FirstOrDefaultAsync();
 
@@ -54,6 +57,11 @@ namespace GamingSessionApp.BusinessLogic
                 {
                     s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                     s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                }
+
+                foreach (var kh in profile.KudosHistory)
+                {
+                    kh.DateAdded = kh.DateAdded.ToTimeZoneTime(GetUserTimeZone());
                 }
 
                 return profile;
@@ -141,6 +149,66 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex, "Unable to add friend: " + userName);
                 return VResult.AddError("Unable to add friend");
+            }
+        }
+
+        public UserMenuViewModel GetUserMenuInformation(string userId)
+        {
+            try
+            {
+                return _profileRepo.Get(x => x.UserId == userId)
+                    .Select(x => new UserMenuViewModel
+                    {
+                        KudosPoints = x.Kudos.Points,
+                        UnseenNotifications = x.Notifications.Count(n => n.Read == false)
+                    }).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to get user menu details for user: " + userId);
+                return null;
+            }
+        }
+
+        public async Task<List<UserNotification>> GetNotifications(string userId)
+        {
+            try
+            {
+                List<UserNotification> model = await _profileRepo.Get(x => x.UserId == userId)
+                    .SelectMany(x => x.Notifications)
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Take(10)
+                    .ToListAsync();
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to fetch users notification: UserId = " + userId);
+                return null;
+            }
+        }
+
+        public async Task UpdateNotifications(string userId, List<Guid> ids)
+        {
+            try
+            {
+                GenericRepository<UserNotification> notifRepo = UoW.Repository<UserNotification>();
+
+                var nofitications = await notifRepo.Get(x => ids.Contains(x.Id))
+                    .ToListAsync();
+
+                foreach (var n in nofitications)
+                {
+                    n.Read = true;
+                    notifRepo.Update(n);
+                }
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error updating nofitication");
             }
         }
     }

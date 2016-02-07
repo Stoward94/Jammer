@@ -1,0 +1,10 @@
+﻿@model List<GamingSessionApp.Models.UserNotification>
+
+<li class="dropdown-header">Notifications</li>
+
+@foreach (var n in Model)
+{
+    <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
+        <a href="/Sessions/Details/@n.SessionId">@n.Body</a>
+    </li>
+}

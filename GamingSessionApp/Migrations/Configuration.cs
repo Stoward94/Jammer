@@ -104,6 +104,17 @@ namespace GamingSessionApp.Migrations
 
             feedMessageTypes.ForEach(c => context.SessionMessageTypes.AddOrUpdate(x => x.Type, new SessionMessageType { Type = c }));
 
+            //Seed the User Notification Types
+            var userNotificationTypes = new List<string>
+            {
+                "Player Joined",
+                "Player Left",
+                "Kudos Added",
+                "Information"
+            };
+
+            userNotificationTypes.ForEach(t => context.UserNotificationTypes.AddOrUpdate(x => x.Name, new UserNotificationType { Name = t }));
+
             context.SaveChanges();
 
             //Seed sample sessions
