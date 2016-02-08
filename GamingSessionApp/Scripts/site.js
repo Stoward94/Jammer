@@ -11,7 +11,7 @@ var fetchUserNotifications = function() {
 
     var ajaxOptions = {
         type: "GET",
-        url: "/Profile/GetNotifications"
+        url: "/Notifications/GetNotifications"
     }
 
     $.ajax(ajaxOptions).success(function(data) {
@@ -19,7 +19,7 @@ var fetchUserNotifications = function() {
             markNotificationAsRead();
         })
         .error(function() {
-            replaceTarget.html("<p>Unable to get you notifications</p>");
+            replaceTarget.html("<p>Unable to get your notifications</p>");
         });
 };
 
@@ -37,7 +37,7 @@ var markNotificationAsRead = function() {
 
     var ajaxOptions = {
         type: "POST",
-        url: "/Profile/UpdateNotifications",
+        url: "/Notifications/UpdateNotifications",
         data: { ids: unreadNotifsIds }
     }
 

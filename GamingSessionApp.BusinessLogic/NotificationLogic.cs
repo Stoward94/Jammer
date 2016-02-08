@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
@@ -45,6 +47,55 @@ namespace GamingSessionApp.BusinessLogic
             catch (Exception ex)
             {
                 LogError(ex);
+            }
+        }
+
+        public async Task<List<UserNotification>> GetNotifications(string userId)
+        {
+            try
+            {
+                UserId = userId;
+
+                List<UserNotification> model = await _notificationRepo.Get(x => x.RecipientId == userId)
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Take(10)
+                    .ToListAsync();
+
+                //Convert times to local timezone
+                foreach (var m in model)
+                {
+                    m.CreatedDate = m.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                }
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to fetch users notification: UserId = " + userId);
+                return null;
+            }
+        }
+
+        public async Task UpdateNotifications(string userId, List<Guid> ids)
+        {
+            try
+            {
+                GenericRepository<UserNotification> notifRepo = UoW.Repository<UserNotification>();
+
+                var nofitications = await notifRepo.Get(x => ids.Contains(x.Id))
+                    .ToListAsync();
+
+                foreach (var n in nofitications)
+                {
+                    n.Read = true;
+                    notifRepo.Update(n);
+                }
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error updating nofitication");
             }
         }
 

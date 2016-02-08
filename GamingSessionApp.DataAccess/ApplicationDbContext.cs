@@ -45,6 +45,13 @@ namespace GamingSessionApp.DataAccess
                        cs.ToTable("SessionMembers");
                    });
 
+            //Fix for 2 navigation properties
+            modelBuilder.Entity<UserMessage>()
+                .HasRequired(p => p.Recipient)
+                .WithMany(m => m.Messages)
+                .HasForeignKey(f => f.RecipientId)
+                .WillCascadeOnDelete(false);
+
             //Overrider the cascade delete issue.
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -77,6 +84,6 @@ namespace GamingSessionApp.DataAccess
 
         public DbSet<UserNotificationType> UserNotificationTypes { get; set; }
 
-
+        public DbSet<UserMessage> UserMessages { get; set; }
     }
 }

@@ -1,0 +1,30 @@
+﻿@model List<GamingSessionApp.ViewModels.Profile.UserFriendViewModel>
+
+<div class="widget widget-red">
+    <h4 class="widget-heading">Friends</h4>
+    <div class="widget-body">
+        @{
+            if (Model.Any())
+            {
+                int i = 1;
+                <table>
+                    @foreach (var f in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@Html.ActionLink(f.DisplayName, "UserProfile", "Profile", new { userName = f.DisplayName }, null)</td>
+                            <td><i class="fa fa-trophy"></i> @f.KudosPoints</td>
+                        </tr>
+                        i++;
+                    }
+                </table>
+            }
+            else
+            {
+                <p>You have no friends.</p>
+                        <p>Best get out there!</p>
+            }
+        }
+    </div>
+</div>
+

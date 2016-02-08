@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.ViewModels.Profile;
+using Microsoft.AspNet.Identity;
 
 namespace GamingSessionApp.Controllers
 {
+    [Route("Profile/[action]")]
     public class ProfileController : BaseController
     {
         private readonly ProfileLogic _profileLogic;
@@ -17,23 +18,31 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<ActionResult> MyProfile()
-        {
-            UserProfileViewModel model = await _profileLogic.GetMyProfile(UserId);
-
-            return View(model);
-        }
-
-        [HttpGet]
+        [AllowAnonymous]
+        [Route("Profile/{userName}")]
         public async Task<ActionResult> UserProfile(string userName)
         {
-            UserProfileViewModel model = await _profileLogic.GetUserProfile(userName);
+            if(userName == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            return View(model);
+            //Is my profile?
+            if (userName == User.Identity.GetUserName())
+            {
+                UserProfileViewModel model = await _profileLogic.GetMyProfile(UserId);
+
+                return View("MyProfile", model);
+            }
+            else
+            {
+                UserProfileViewModel model = await _profileLogic.GetUserProfile(userName);
+
+                if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+                return View("UserProfile", model);
+            }
         }
 
         [HttpPost]
+        //[Route("Profile/AddFriend")]
         public async Task<JsonResult> AddFriend(string userName)
         {
             if(userName == null)
@@ -52,38 +61,11 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public PartialViewResult UserMenu()
         {
             var model = _profileLogic.GetUserMenuInformation(UserId);
 
             return PartialView("_UserMenu", model);
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<PartialViewResult> GetNotifications()
-        {
-            if (Request.IsAjaxRequest())
-            {
-                var model = await _profileLogic.GetNotifications(UserId);
-
-                if (model != null)
-                    return PartialView("_UserNotifications", model);
-            }
-            return null;
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task UpdateNotifications(List<Guid> ids)
-        {
-            if (ids == null) return;
-
-            if (Request.IsAjaxRequest())
-            {
-                await _profileLogic.UpdateNotifications(UserId, ids);
-            }
         }
 
         protected override void Dispose(bool disposing)

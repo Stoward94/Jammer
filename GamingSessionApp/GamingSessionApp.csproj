@@ -211,6 +211,8 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SessionsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -312,9 +314,12 @@
     <Content Include="Views\Profile\UserProfile.cshtml" />
     <Content Include="Views\Shared\_UserMenu.cshtml" />
     <Content Include="Views\Shared\_UserNotifications.cshtml" />
+    <Content Include="Views\Messages\Inbox.cshtml" />
+    <Content Include="Views\Profile\_FriendsWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

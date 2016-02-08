@@ -106,33 +106,7 @@
     <div class="col-md-3">
 
         @* My Friends Widget *@
-        <div class="widget widget-red">
-            <h4 class="widget-heading">Friends</h4>
-            <div class="widget-body">
-                @{
-                    if (Model.Friends.Any())
-                    {
-                        int i = 1;
-                        <table>
-                            @foreach (var friend in Model.Friends)
-                            {
-                                <tr>
-                                    <td>@i</td>
-                                    <td>@friend.DisplayName</td>
-                                    <td>@friend.KudosPoints</td>
-                                </tr>
-                                i++;
-                            }
-                        </table>
-                    }
-                    else
-                    {
-                        <p>You have no friends.</p>
-                        <p>Best get out there!</p>
-                    }
-                }
-            </div>
-        </div>
+        @Html.Partial("_FriendsWidget", Model.Friends)
 
         @if (Model.KudosHistory.Any())
         {

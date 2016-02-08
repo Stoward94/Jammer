@@ -2,6 +2,18 @@
 
 <li><a href="#"><i class="fa fa-trophy"></i> @Model.KudosPoints</a></li>
 
+@* Messages *@
+<li>
+    <a href="/Messages/Inbox" title="Messages">
+        <i class="fa fa-envelope-o"></i>
+        @if (Model.UnreadMessages > 0)
+        {
+            <span id="message-count" class="badge" style="background-color: #3399FF">@Model.UnreadMessages</span>
+        }
+    </a>
+</li>
+
+@* Notifications *@
 <li id="notif-toggle" class="dropdown">
     <a href="#" title="Notifications" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-bell-o"></i>

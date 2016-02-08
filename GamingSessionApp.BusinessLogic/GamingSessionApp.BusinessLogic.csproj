@@ -100,6 +100,7 @@
     <Compile Include="HomeLogic.cs" />
     <Compile Include="IBusinessLogic.cs" />
     <Compile Include="KudosLogic.cs" />
+    <Compile Include="MessageLogic.cs" />
     <Compile Include="NotificationLogic.cs" />
     <Compile Include="PlatformLogic.cs" />
     <Compile Include="ProfileLogic.cs" />

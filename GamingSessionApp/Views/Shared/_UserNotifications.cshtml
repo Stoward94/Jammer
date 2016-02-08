@@ -2,9 +2,16 @@
 
 <li class="dropdown-header">Notifications</li>
 
-@foreach (var n in Model)
+@if (Model.Any())
 {
-    <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
-        <a href="/Sessions/Details/@n.SessionId">@n.Body</a>
-    </li>
+    foreach (var n in Model)
+    {
+        <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
+            <a href="/Sessions/Details/@n.SessionId">@n.Body</a>
+        </li>
+    }
+}
+else
+{
+    <p>You have no notifications</p>
 }

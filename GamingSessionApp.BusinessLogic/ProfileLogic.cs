@@ -25,6 +25,8 @@ namespace GamingSessionApp.BusinessLogic
         {
             try
             {
+                UserId = userId;
+
                 UserProfileViewModel profile = await _profileRepo.Get(x => x.UserId == userId)
                     .Select(x => new UserProfileViewModel
                     {
@@ -96,6 +98,8 @@ namespace GamingSessionApp.BusinessLogic
                     })
                     .FirstOrDefaultAsync();
 
+                if (profile == null) return null;
+
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
                 {
@@ -160,6 +164,7 @@ namespace GamingSessionApp.BusinessLogic
                     .Select(x => new UserMenuViewModel
                     {
                         KudosPoints = x.Kudos.Points,
+                        UnreadMessages = x.Messages.Count(m => m.Read == false),
                         UnseenNotifications = x.Notifications.Count(n => n.Read == false)
                     }).FirstOrDefault();
             }
@@ -167,48 +172,6 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex, "Unable to get user menu details for user: " + userId);
                 return null;
-            }
-        }
-
-        public async Task<List<UserNotification>> GetNotifications(string userId)
-        {
-            try
-            {
-                List<UserNotification> model = await _profileRepo.Get(x => x.UserId == userId)
-                    .SelectMany(x => x.Notifications)
-                    .OrderByDescending(x => x.CreatedDate)
-                    .Take(10)
-                    .ToListAsync();
-
-                return model;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, "Unable to fetch users notification: UserId = " + userId);
-                return null;
-            }
-        }
-
-        public async Task UpdateNotifications(string userId, List<Guid> ids)
-        {
-            try
-            {
-                GenericRepository<UserNotification> notifRepo = UoW.Repository<UserNotification>();
-
-                var nofitications = await notifRepo.Get(x => ids.Contains(x.Id))
-                    .ToListAsync();
-
-                foreach (var n in nofitications)
-                {
-                    n.Read = true;
-                    notifRepo.Update(n);
-                }
-
-                await SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, "Error updating nofitication");
             }
         }
     }

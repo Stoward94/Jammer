@@ -29,5 +29,7 @@ namespace GamingSessionApp.Models
         public ICollection<UserFriend> Friends { get; set; }
 
         public ICollection<UserNotification> Notifications { get; set; }
+
+        public ICollection<UserMessage> Messages { get; set; }
     }
 }

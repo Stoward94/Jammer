@@ -11,7 +11,7 @@ using GamingSessionApp.ViewModels.Home;
 
 namespace GamingSessionApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly HomeLogic _homeLogic;
 
@@ -23,13 +23,13 @@ namespace GamingSessionApp.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ViewResult> Index()
         {
+            _homeLogic.UserId = UserId;
+
             HomeViewModel viewModel = new HomeViewModel
             {
                 OpenSessions = await _homeLogic.GetOpenSessions(),
                 NewSessions = await _homeLogic.GetNewSessions(),
                 RecommendedSessions = await _homeLogic.GetNewSessions()
-
-
             };
 
             return View(viewModel);
@@ -43,6 +43,15 @@ namespace GamingSessionApp.Controllers
             migrator.Update();
 
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _homeLogic.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

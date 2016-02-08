@@ -11,7 +11,8 @@ namespace GamingSessionApp.ViewModels.Profile
     {
         public int KudosPoints { get; set; }
 
+        public int UnreadMessages { get; set; }
+
         public int UnseenNotifications { get; set; }
-        //public List<UserNotification> Notifications { get; set; }
     }
 }
