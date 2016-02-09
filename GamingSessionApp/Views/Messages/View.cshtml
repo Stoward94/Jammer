@@ -1,0 +1,20 @@
+﻿@model GamingSessionApp.ViewModels.Inbox.ViewMessageViewModel
+
+@{
+    ViewBag.Title = "View Message";
+}
+
+<h1>Private Message</h1>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <img src="@Model.SenderImageUrl" title="@Model.SenderName" alt="@Model.SenderName"/>
+        @Html.ActionLink(Model.SenderName, "UserProfile", "Profile", new { userName = Model.SenderName }, null)
+    </div>
+
+    <div class="col-md-9">
+
+    </div>
+
+</div>

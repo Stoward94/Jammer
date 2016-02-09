@@ -56,3 +56,46 @@ function addFriendSuccess(result) {
         alert(result.responseText);
     }
 }
+
+//Delete Message AJAX
+var deleteUserMessage = function (e) {
+
+    e.preventDefault();
+
+    //select element nearest row
+    var link = $(this);
+    var row = link.closest('tr');
+
+    var ajaxOptions = {
+        url: link.attr('href'),
+        type: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "X-HTTP-Method-Override": "DELETE"
+        }
+    };
+
+    //Make the request
+    $.ajax(ajaxOptions).done(function (data) {
+        if (data.success) {
+            row.remove();
+        } else {
+            DisplayError(data.responseText);
+        }
+    });
+}
+
+$('.delete-message').each(function () {
+    $(this).click(deleteUserMessage);
+});
+
+//Display error message
+function DisplayError(message) {
+    var errorBox = $('#error-box');
+    errorBox.html('<strong>Oops!</strong> ' + message).removeClass('hidden');
+
+    setTimeout(function() {
+        errorBox.hide(400);
+    }, 5000);
+
+}

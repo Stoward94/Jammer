@@ -11,20 +11,15 @@
 </p>
 <table class="table">
     <tr>
+        <th></th>
         <th>
             @Html.DisplayNameFor(model => model.SenderName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SentDate)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Subject)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Body)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Read)
+            @Html.DisplayNameFor(model => model.SentDate)
         </th>
         <th></th>
     </tr>
@@ -32,23 +27,29 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.ActionLink(item.SenderName, "UserProfile", "Profile", new { userName = item.SenderName }, null)
+            @if (item.Read)
+            {
+                <i class="fa fa-envelope-o"></i>
+            }
+            else
+            {
+                <i class="fa fa-envelope"></i>
+            }
+        </td>
+        <td>
+            <img src="@item.SenderImageUrl" width="36" height="36" title="@item.SenderName" alt="@item.SenderName" />
+            @Html.ActionLink(item.SenderName, "UserProfile", "Profile", new {userName = item.SenderName}, null)
+        </td>
+        <td>
+            @Html.ActionLink(item.Subject, "View", "Messages", new { id = item.Id }, null)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.SentDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Subject)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Body)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Read)
-        </td>
-        <td>
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            <a class="delete-message" href="/Messages/Delete?id=@item.Id" data-ajax-method="DELETE">
+                <i class="fa fa-trash-o"></i>
+            </a>
         </td>
     </tr>
 }
