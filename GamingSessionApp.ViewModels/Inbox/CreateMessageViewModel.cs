@@ -4,18 +4,19 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace GamingSessionApp.ViewModels.Inbox
 {
     public class CreateMessageViewModel
     {
         [Required]
-        public List<Guid> RecipientIds { get; set; }
+        public string Recipients { get; set; }
 
-        [Required, MaxLength(50, ErrorMessage = "Your can be a maximum of {0} characters")]
+        [Required, MaxLength(50, ErrorMessage = "Your subject can be a maximum of {1} characters")]
         public string Subject { get; set; }
 
-        [Required]
+        [Required, AllowHtml]
         public string Body { get; set; }
     }
 }
