@@ -6,13 +6,23 @@
 
 <h2>Create</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "Messages", FormMethod.Post, new { @id = "create-message-form" })) 
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Recipients, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input id="user-autocomplete" type="text"/>
+                @Html.HiddenFor(m => m.Recipients)
+                @Html.ValidationMessageFor(model => model.Recipients, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
         <div class="form-group">
             @Html.LabelFor(model => model.Subject, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -24,14 +34,14 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Body, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.Body, new { htmlAttributes = new { @class = "form-control rich-text-area" } })
+                @Html.TextAreaFor(model => model.Body, new { @class = "form-control rich-text-area" })
                 @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input id="create-message-btn" type="submit" value="Send" class="btn btn-default" />
             </div>
         </div>
     </div>

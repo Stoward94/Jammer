@@ -85,11 +85,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\EditAccountViewModel.cs" />
     <Compile Include="Home\HomeViewModel.cs" />
     <Compile Include="Home\SessionListItem.cs" />
     <Compile Include="Inbox\CreateMessageViewModel.cs" />
     <Compile Include="Inbox\UserMessagesViewModel.cs" />
+    <Compile Include="Inbox\OutboxMessageViewModel.cs" />
     <Compile Include="Inbox\ViewMessageViewModel.cs" />
+    <Compile Include="Profile\EditProfileViewModel.cs" />
     <Compile Include="Profile\UserFriendViewModel.cs" />
     <Compile Include="Profile\UserMenuViewModel.cs" />
     <Compile Include="Profile\UserProfileViewModel.cs" />

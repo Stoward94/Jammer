@@ -28,6 +28,14 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult> Outbox()
+        {
+            var model = await _messageLogic.GetUserOutbox(UserId);
+
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<ActionResult> View(Guid id)
         {
             if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -37,6 +45,19 @@ namespace GamingSessionApp.Controllers
             if(model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
             return View(model);
+        }
+
+        //View a message you have sent
+        [HttpGet]
+        public async Task<ActionResult> Sent(Guid id)
+        {
+            if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ViewMessageViewModel model = await _messageLogic.GetSentMessage(id, UserId);
+
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            return View("View", model);
         }
 
         [HttpGet]
@@ -54,7 +75,7 @@ namespace GamingSessionApp.Controllers
                 return View(model);
             }
 
-            ValidationResult result = await _messageLogic.CreateMessage(model);
+            ValidationResult result = await _messageLogic.CreateMessage(model, UserId);
 
             if (result.Success)
             {
@@ -63,6 +84,23 @@ namespace GamingSessionApp.Controllers
 
             ModelState.AddModelError("", result.Error);
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> MarkRead(List<Guid> ids)
+        {
+            if(ids.Count < 1)
+                return Json(new { success = false, responseText = "No id provided" });
+
+            ValidationResult result = await _messageLogic.MarkRead(ids, UserId);
+
+            if (result.Success)
+            {
+                return Json(new { success = true, responseText = "Message updated" });
+            }
+
+            return Json(new { success = false, responseText = result.Error });
+
         }
 
         [HttpDelete]

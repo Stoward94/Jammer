@@ -8,7 +8,7 @@ namespace GamingSessionApp.ViewModels.Inbox
 {
     public class ViewMessageViewModel
     {
-        public string SenderImageUrl { get; set; }
+        public string ImageUrl { get; set; }
 
         public string SenderName { get; set; }
 
@@ -17,7 +17,5 @@ namespace GamingSessionApp.ViewModels.Inbox
         public string Subject { get; set; }
 
         public string Body { get; set; }
-
-        public bool Read { get; set; }
     }
 }

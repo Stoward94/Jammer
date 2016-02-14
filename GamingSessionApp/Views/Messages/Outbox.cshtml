@@ -1,0 +1,40 @@
+﻿@model IEnumerable<GamingSessionApp.ViewModels.Inbox.OutboxMessageViewModel>
+
+@{
+    ViewBag.Title = "Outbox";
+}
+
+<h2>Outbox</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(m => m.RecipientName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.Subject)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.SentDate)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <img src="@item.RecipientImageUrl" width="36" height="36" title="@item.RecipientName" alt="@item.RecipientName" />
+            @Html.ActionLink(item.RecipientName, "UserProfile", "Profile", new { userName = item.RecipientName }, null)
+        </td>
+        <td>
+            @Html.ActionLink(item.Subject, "Sent", "Messages", new { id = item.Id }, null)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SentDate)
+        </td>
+    </tr>
+}
+
+</table>

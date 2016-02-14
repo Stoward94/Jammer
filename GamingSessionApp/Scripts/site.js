@@ -1,12 +1,12 @@
 ﻿
 var fetchUserNotifications = function() {
 
-    var replaceTarget = $('#notif-menu');
+    var replaceTarget = $("#notif-menu");
 
     //If we already have notifications return
     if (replaceTarget.children().length > 1) return;
 
-    var loadingSpinner = $('#n-spinner');
+    var loadingSpinner = $("#n-spinner");
     loadingSpinner.show();
 
     var ajaxOptions = {
@@ -28,7 +28,7 @@ var markNotificationAsRead = function() {
     //to the server
     var unreadNotifsIds = [];
 
-    $('.unread').each(function () {
+    $(".unread").each(function () {
         unreadNotifsIds.push($(this).attr("data-id"));
     });
 
@@ -48,8 +48,8 @@ var markNotificationAsRead = function() {
 };
 
 //Notifications dropdown events
-$('#notif-toggle').on('show.bs.dropdown', fetchUserNotifications);
-$('#notif-toggle').on('hidden.bs.dropdown', function () { $('#notif-count').hide(); });
+$("#notif-toggle").on("show.bs.dropdown", fetchUserNotifications);
+$("#notif-toggle").on("hidden.bs.dropdown", function () { $("#notif-count").hide(); });
 
 function addFriendSuccess(result) {
     if (result.success) {
@@ -64,11 +64,11 @@ var deleteUserMessage = function (e) {
 
     //select element nearest row
     var link = $(this);
-    var row = link.closest('tr');
+    var row = link.closest("tr");
 
     var ajaxOptions = {
-        url: link.attr('href'),
-        type: 'POST',
+        url: link.attr("href"),
+        type: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-HTTP-Method-Override": "DELETE"
@@ -85,17 +85,82 @@ var deleteUserMessage = function (e) {
     });
 }
 
-$('.delete-message').each(function () {
+$(".delete-message").each(function () {
     $(this).click(deleteUserMessage);
 });
 
 //Display error message
 function DisplayError(message) {
-    var errorBox = $('#error-box');
-    errorBox.html('<strong>Oops!</strong> ' + message).removeClass('hidden');
+    var errorBox = $("#error-box");
+    errorBox.html("<strong>Oops!</strong> " + message).removeClass("hidden");
 
     setTimeout(function() {
         errorBox.hide(400);
     }, 5000);
 
 }
+
+//TinyMCE initialisation
+tinymce.init({
+    selector: ".rich-text-area",
+    max_width : 700,
+    plugins: "emoticons,autolink,link",
+    toolbar: "undo redo | bold italic | bullist numlist | link | emoticons",
+    menubar: false,
+    statusbar: false,
+    browser_spellcheck: true,
+    default_link_target: "_blank",
+    link_title: false,
+    relative_urls: false
+});
+
+//Create message tag/autocomplete
+$("#user-autocomplete").tagEditor({
+    delimiter: ',',
+    placeholder: 'Username',
+    maxTags: 10,
+    autocomplete: { 'source': "/Profile/GetUsersJson", minLength: 2 }
+});
+
+//Create message, build recipients list
+$("#create-message-btn").click(function (e) {
+    e.preventDefault();
+
+    var usernames = $("#user-autocomplete").tagEditor('getTags')[0].tags;
+    $("#Recipients").val(usernames);
+
+    $("#create-message-form").submit();
+});
+
+//Mark messages as read
+$("#mark-read-btn").click(function () {
+    var ids = [];
+
+    var checkedBoxes = $("input[type=checkbox]:checked");
+
+    checkedBoxes.each(function () {
+        ids.push($(this).attr("data-id"));
+    });
+
+    if (ids.length < 1) {
+        DisplayError("No messages selected. Please select a message first");
+    }
+
+    var ajaxOptions = {
+        url: $(this).attr("data-url"),
+        type: "POST",
+        data: { ids : ids }
+    };
+
+    //Make the request
+    $.ajax(ajaxOptions).done(function (data) {
+        if (data.success) {
+            checkedBoxes.each(function () {
+                var icon = $(this).closest('td').next().find('.fa-envelope');
+                icon.removeClass('fa-envelope').addClass('fa-envelope-o');
+            });
+        } else {
+            DisplayError(data.responseText);
+        }
+    });
+});

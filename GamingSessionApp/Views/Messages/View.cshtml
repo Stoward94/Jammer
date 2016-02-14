@@ -9,12 +9,27 @@
 <div class="row">
 
     <div class="col-md-3">
-        <img src="@Model.SenderImageUrl" title="@Model.SenderName" alt="@Model.SenderName"/>
-        @Html.ActionLink(Model.SenderName, "UserProfile", "Profile", new { userName = Model.SenderName }, null)
+        <div style="text-align: center">
+            <a href="@Url.Action("UserProfile", "Profile", new { userName = Model.SenderName })">
+                <img src="@Model.ImageUrl" title="@Model.SenderName" alt="@Model.SenderName" width="180" height="180" />
+                <br/>
+                @Html.DisplayFor(x => x.SenderName)
+            </a>
+        </div>
+
     </div>
 
     <div class="col-md-9">
-
+        <div class="row">
+            <div class="col-md-9">
+                <h3 style="margin: 5px;">@Html.DisplayFor(x => x.Subject)</h3>
+            </div>
+            <div class="col-md-3" style="text-align: right;"><span><i class="fa fa-calendar"></i> @Html.DisplayFor(x => x.SentDate)</span></div>
+        </div>
+        <div>
+            <hr style="margin-top: 0" />
+            @Html.Raw(Model.Body)
+        </div>
     </div>
 
 </div>
