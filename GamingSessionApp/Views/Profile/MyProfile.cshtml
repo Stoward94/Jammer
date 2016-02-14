@@ -7,17 +7,28 @@
 
 <div class="row" style="margin-bottom:40px">
     <div class="col-md-2">
-        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180"/>
+        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
     </div>
     <div class="col-md-7">
-        <h1>@Model.DisplayName</h1>
-        <h2>Kudos: @Model.KudosPoints</h2>
+        <h1>@Model.DisplayName <small>Kudos: @Model.KudosPoints</small></h1>
+
+        @if (!string.IsNullOrEmpty(Model.XboxUsername))
+        {
+            if (!string.IsNullOrEmpty(Model.XboxUrl))
+            {
+                <a href="@Model.XboxUrl" target="_blank" title="@Model.XboxUsername">@Model.XboxUsername</a>
+            }
+            else
+            {
+                <span>@Model.XboxUsername</span>
+            }
+        }
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-9">
-        
+
         @* My Sessions Widget *@
         <div class="widget">
             <h4 class="widget-heading">My Sessions</h4>

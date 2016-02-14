@@ -11,17 +11,37 @@ namespace GamingSessionApp.Models
 {
     public class UserProfile
     {
+        public UserProfile()
+        {
+            About = string.Empty;
+            Website = string.Empty;
+            XboxUrl = string.Empty;
+            PlayStationUrl = string.Empty;
+            SteamUrl = string.Empty;
+        }
+
         [Key, ForeignKey("User")]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
-        [Required]
+        [Required, MaxLength(256), Index(IsClustered = false, IsUnique = true)]
         public string DisplayName { get; set; }
 
         [Required]
         public string ThumbnailUrl { get; set; }
 
         public string About { get; set; }
+
+        public string Website { get; set; }
+
+        public string XboxGamertag { get; set; }
+        public string XboxUrl { get; set; }
+
+        public string PlayStationNetwork { get; set; }
+        public string PlayStationUrl { get; set; }
+
+        public string SteamName { get; set; }
+        public string SteamUrl { get; set; }
 
         //Users kudos
         public Kudos Kudos { get; set; }

@@ -39,5 +39,20 @@ namespace GamingSessionApp.Helpers
             // Render tag
             return new MvcHtmlString(builder.ToString(TagRenderMode.SelfClosing));
         }
+
+        public static MvcHtmlString SuccessMessage(this HtmlHelper helper, string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return null;
+
+            var builder = new TagBuilder("div");
+            
+            builder.MergeAttribute("class", "alert alert-success");
+            builder.MergeAttribute("role", "alert");
+            builder.SetInnerText(message);
+
+            // Render tag
+            return new MvcHtmlString(builder.ToString());
+        }
     }
 }

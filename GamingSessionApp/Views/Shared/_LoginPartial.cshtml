@@ -5,19 +5,15 @@
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
-        string username = User.Identity.GetUserName();
 
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <img src="@User.GetThumbnail()" width="36" height="36" style="margin-top: 10px;"/>
 
-                @Html.ActionLink(username, "UserProfile", "Profile", new { userName = username }, new {title = "My Profile", @style = "display:inline"})
-            </li>
-             @Html.Action("UserMenu", "Profile")
+            @Html.Action("UserMenu", "Profile")
+
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#">Account Settings</a></li>
+                    <li>@Html.ActionLink("Edit Profile", "Edit", "Profile")</li>
                     <li><a href="#">Another action</a></li>
                     <li><a href="#">Something else here</a></li>
                     <li role="separator" class="divider"></li>

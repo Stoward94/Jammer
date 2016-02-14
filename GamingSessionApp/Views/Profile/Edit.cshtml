@@ -1,0 +1,116 @@
+﻿@model GamingSessionApp.ViewModels.Profile.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+}
+
+<div class="row">
+
+    @* Left hand nav *@
+    <div class="col-md-3">
+        <ul>
+            <li>@Html.ActionLink("Edit Profile", "Edit", "Profile")</li>
+            <li>@Html.ActionLink("Edit Account", "Edit", "Account")</li>
+            <li>Edit Preferences</li>
+        </ul>
+    </div>
+
+    @* Content *@
+    <div class="col-md-9">
+        @using (Html.BeginForm("Edit", "Profile", FormMethod.Post))
+        {
+            <div class="row">
+                @* Image *@
+                <div class="col-md-3 text-center">
+                    <img src="@Model.ImageUrl" width="180" height="180" alt="Profile Picture" title="@Model.DisplayName" />
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.DisplayName, new { @class = "control-label" })
+                        @Html.EditorFor(x => x.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(x => x.DisplayName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.About, new { @class = "control-label" })
+                        @Html.TextAreaFor(x => x.About, new { @class = "form-control rich-text-area" })
+                        @Html.ValidationMessageFor(x => x.About, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+
+
+            <h3>Social</h3>
+            <hr />
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.Website, new { htmlAttributes = new { @class = "form-control", @placeholder = "Website" } })
+                    </div>
+                </div>
+
+                @* Xbox Details *@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.XboxUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "Xbox Gamertag"}})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.XboxUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "Xbox Account Url"}})
+                    </div>
+                </div>
+
+                @* PSN Details *@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.PsnUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "PlayStation Network"}})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.PsnUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "PSN Url"}})
+                    </div>
+                </div>
+
+                @* Steam Details *@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.SteamUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "Steam Id"}})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.EditorFor(x => x.SteamUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "Steam Account Url"}})
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-default pull-right">Save</button>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+@using (Html.BeginForm("ImageUpload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input id="file" name="file" required type="file" accept=".png,.jpg,.jpeg" />
+
+    <button type="submit" class="btn btn-default">Submit</button>
+}

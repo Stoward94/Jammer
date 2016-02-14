@@ -9,6 +9,8 @@ namespace GamingSessionApp.ViewModels.Profile
 {
     public class UserMenuViewModel
     {
+        public string ThumbnailUrl { get; set; }
+
         public int KudosPoints { get; set; }
 
         public int UnreadMessages { get; set; }

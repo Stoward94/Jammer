@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamingSessionApp.ViewModels.Profile
 {
@@ -9,6 +10,18 @@ namespace GamingSessionApp.ViewModels.Profile
         public int KudosPoints { get; set; }
 
         public string ProfileImageUrl { get; set; }
+        
+        public string XboxUsername { get; set; }
+        
+        public string XboxUrl { get; set; }
+        
+        public string PsnUsername { get; set; }
+        
+        public string PsnUrl { get; set; }
+        
+        public string SteamUsername { get; set; }
+        
+        public string SteamUrl { get; set; }
 
         public List<UserFriendViewModel> Friends{ get; set; }
 

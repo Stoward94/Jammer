@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -8,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GamingSessionApp.Models;
+using GamingSessionApp.ViewModels.Account;
 
 namespace GamingSessionApp.Controllers
 {
@@ -15,12 +17,14 @@ namespace GamingSessionApp.Controllers
     public class AccountController : BaseController
     {
         private ApplicationSignInManager _signInManager;
+        private readonly UserLogic _userLogic;
 
         public AccountController()
         {
+            _userLogic = new UserLogic();
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -65,7 +69,6 @@ namespace GamingSessionApp.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    AddClaimCookies(model.UserName);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -157,8 +160,6 @@ namespace GamingSessionApp.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    AddClaimCookies(model.UserName);
-
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -171,6 +172,48 @@ namespace GamingSessionApp.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Edit()
+        {
+            var model = await _userLogic.GetEditAccountModel(UserId);
+
+            if(model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(EditAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.TimeZones = _userLogic.GetTimeZonesList();
+                return View(model);
+            }
+
+            ValidationResult result = await _userLogic.EditAccount(model, UserId);
+
+            if (result.Success)
+            {
+                ViewBag.SuccessMessage = "Your changes have been saved.";
+
+                //Clear fields.
+                model.CurrentPassword = "";
+                model.Password = "";
+                model.ConfirmPassword = "";
+            }
+            else
+            {
+                //Something went wrong
+                ModelState.AddModelError("", result.Error);
+            }
+
+            //Return view
+            model.TimeZones = _userLogic.GetTimeZonesList();
             return View(model);
         }
 
@@ -414,6 +457,8 @@ namespace GamingSessionApp.Controllers
                     _signInManager.Dispose();
                     _signInManager = null;
                 }
+
+                _userLogic.Dispose();
             }
 
             base.Dispose(disposing);
@@ -477,24 +522,6 @@ namespace GamingSessionApp.Controllers
             }
         }
 
-        public void AddClaimCookies(string userName)
-        {
-            UserLogic logic = new UserLogic();
-            ApplicationUser user = logic.GetUser(userName);
-
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity == null)
-                return;
-
-            // check for existing claim and remove it
-            var existingClaim = identity.FindFirst("ThumbnailUrl");
-            if (existingClaim != null)
-                identity.RemoveClaim(existingClaim);
-
-            // add new claim
-            UserManager.AddClaim(user.Id, new Claim("ThumbnailUrl", user.Profile.ThumbnailUrl));
-
-        }
         #endregion
     }
 }
