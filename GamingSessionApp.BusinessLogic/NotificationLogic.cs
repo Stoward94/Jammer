@@ -30,18 +30,16 @@ namespace GamingSessionApp.BusinessLogic
                     Body = $"{user.UserName} has joined the session: {session.Type.Name}"
                 };
 
-                //Load the user to attach the notification
-                UserProfile creator = await UoW.Repository<UserProfile>().Get(x => x.UserId == session.CreatorId)
-                    .Include(x => x.Notifications)
+                //Load the preferences to check whether to add the notification
+                UserPreferences preferences = await UoW.Repository<UserPreferences>()
+                    .Get(x => x.ProfileId == session.CreatorId)
                     .FirstOrDefaultAsync();
 
-                if (creator == null) return;
+                if (preferences == null) return;
 
                 //Attach nofitication
-                creator.Notifications.Add(notification);
+                AddNotification(preferences, notification);
 
-                //Update db
-                UoW.Repository<UserProfile>().Update(creator);
                 await SaveChangesAsync();
             }
             catch (Exception ex)
@@ -49,6 +47,19 @@ namespace GamingSessionApp.BusinessLogic
                 LogError(ex);
             }
         }
+
+        //Adds notification, but first checks against users preferences. 
+        private void AddNotification(UserPreferences prefs, UserNotification notification)
+        {
+            if (prefs == null)
+                throw new Exception("User preferences must be included");
+
+            //If the user doesn't want notifications, just return
+            if (prefs.ReceiveNotifications == false) return;
+
+            //Else add the notification
+            _notificationRepo.Insert(notification);
+        } 
 
         public async Task<List<UserNotification>> GetNotifications(string userId)
         {

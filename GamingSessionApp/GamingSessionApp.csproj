@@ -213,6 +213,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
+    <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SessionsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -364,6 +365,7 @@
     <Content Include="Views\Messages\Outbox.cshtml" />
     <Content Include="Views\Profile\Edit.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\Preferences\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

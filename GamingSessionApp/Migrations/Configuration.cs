@@ -31,13 +31,14 @@ namespace GamingSessionApp.Migrations
                 user = new ApplicationUser
                 {
                     UserName = "Stoward94",
-                    Email = "luke@email.com",
+                    Email = "luke_stoward@hotmail.co.uk",
                     TimeZoneId = "GMT Standard Time",
                     Profile = new UserProfile
                     {
                         DisplayName = "Stoward94",
                         ThumbnailUrl = "/Images/thumbnails/default/001.png",
-                        Kudos = new Kudos()
+                        Kudos = new Kudos(),
+                        Preferences = new UserPreferences()
                     }
                 };
                 um.Create(user, "Password");
@@ -114,6 +115,21 @@ namespace GamingSessionApp.Migrations
             };
 
             userNotificationTypes.ForEach(t => context.UserNotificationTypes.AddOrUpdate(x => x.Name, new UserNotificationType { Name = t }));
+
+            //Seed the session email reminder durations
+            var reminderTimes = new List<EmailReminderTime>
+            {
+                new EmailReminderTime {  Duration = "Session start", Minutes = 0 },
+                new EmailReminderTime {  Duration = "1 mintute", Minutes = 1 },
+                new EmailReminderTime {  Duration = "15 minutes", Minutes = 15 },
+                new EmailReminderTime {  Duration = "30 minutes", Minutes = 30 },
+                new EmailReminderTime {  Duration = "45 minutes", Minutes = 45 },
+                new EmailReminderTime {  Duration = "1 hour", Minutes = 60 },
+                new EmailReminderTime {  Duration = "2 hours", Minutes = 120 },
+                new EmailReminderTime {  Duration = "3 hours", Minutes = 180 }
+            };
+
+            reminderTimes.ForEach(r => context.EmailReminderTimes.AddOrUpdate(m => m.Minutes, r));
 
             context.SaveChanges();
 

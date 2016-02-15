@@ -206,8 +206,8 @@ namespace GamingSessionApp.BusinessLogic
                 GenericRepository<UserProfile> profileRepo = UoW.Repository<UserProfile>();
 
                 List<UserProfile> recipients = await profileRepo.Get(x => usernames.Contains(x.DisplayName))
-                    .Include(x => x.Messages)
                     .Include(x => x.User)
+                    .Include(x => x.Preferences)
                     .ToListAsync();
 
                 if (recipients == null || recipients.Count < 1)
@@ -226,7 +226,7 @@ namespace GamingSessionApp.BusinessLogic
                         RecipientId = r.UserId
                     };
 
-                    r.Messages.Add(message);
+                    _messageRepo.Insert(message);
 
                     profileRepo.Update(r);
                 }
@@ -235,8 +235,7 @@ namespace GamingSessionApp.BusinessLogic
                 await SaveChangesAsync();
 
                 //Send out email!
-                List<ApplicationUser> users = recipients.Select(x => x.User).ToList();
-                await EmailLogic.NewPrivateMessageEmail(users, CurrentUser.UserName, message);
+                await EmailLogic.NewPrivateMessageEmail(recipients, CurrentUser.UserName, message);
 
                 return VResult;
             }

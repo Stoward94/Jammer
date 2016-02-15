@@ -46,6 +46,8 @@ namespace GamingSessionApp.Models
         //Users kudos
         public Kudos Kudos { get; set; }
 
+        public UserPreferences Preferences { get; set; }
+
         public ICollection<UserFriend> Friends { get; set; }
 
         public ICollection<UserNotification> Notifications { get; set; }

@@ -1,0 +1,68 @@
+﻿@model GamingSessionApp.ViewModels.Preferences.EditUserPreferencesViewModel
+@using GamingSessionApp.Helpers;
+
+@{
+    ViewBag.Title = "Edit Preferences";
+}
+
+<div class="row">
+
+    @* Left hand nav *@
+    <div class="col-md-3">
+        <ul>
+            <li>@Html.ActionLink("Edit Profile", "Edit", "Profile")</li>
+            <li>@Html.ActionLink("Edit Account", "Edit", "Account")</li>
+            <li>@Html.ActionLink("Edit Preferences", "Edit", "Preferences")</li>
+        </ul>
+    </div>
+
+    @* Content *@
+    <div class="col-md-9">
+        @using (Html.BeginForm("Edit", "Preferences", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>Your Preferences</h4>
+                <hr />
+
+                @Html.SuccessMessage(ViewBag.SuccessMessage as string)
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiveEmail, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.ReceiveEmail)
+                            @Html.ValidationMessageFor(model => model.ReceiveEmail, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiveNotifications, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.ReceiveNotifications)
+                            @Html.ValidationMessageFor(model => model.ReceiveNotifications, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReminderTimeId, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.ReminderTimeId, Model.ReminderTimes, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ReminderTimeId, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -134,6 +134,7 @@
     <Compile Include="SessionTypeLogic.cs" />
     <Compile Include="SystemEnums.cs" />
     <Compile Include="UserLogic.cs" />
+    <Compile Include="UserPreferencesLogic.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GamingSessionApp.DataAccess\GamingSessionApp.DataAccess.csproj">

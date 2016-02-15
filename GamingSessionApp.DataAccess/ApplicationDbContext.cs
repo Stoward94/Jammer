@@ -86,5 +86,9 @@ namespace GamingSessionApp.DataAccess
         public DbSet<UserNotificationType> UserNotificationTypes { get; set; }
 
         public DbSet<UserMessage> UserMessages { get; set; }
+
+        public DbSet<UserPreferences> UserPreferences { get; set; }
+
+        public DbSet<EmailReminderTime> EmailReminderTimes { get; set; }
     }
 }
