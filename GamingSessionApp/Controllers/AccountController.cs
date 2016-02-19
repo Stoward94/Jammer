@@ -151,6 +151,7 @@ namespace GamingSessionApp.Controllers
                         DisplayName = model.UserName,
                         ThumbnailUrl = "/Images/thumbnails/default/002.png",
                         Kudos = new Kudos(),
+                        Preferences = new UserPreferences()
                     }
                 };
 

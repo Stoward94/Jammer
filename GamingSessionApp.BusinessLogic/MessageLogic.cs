@@ -227,15 +227,14 @@ namespace GamingSessionApp.BusinessLogic
                     };
 
                     _messageRepo.Insert(message);
-
-                    profileRepo.Update(r);
                 }
 
                 //Save changes
                 await SaveChangesAsync();
 
                 //Send out email!
-                await EmailLogic.NewPrivateMessageEmail(recipients, CurrentUser.UserName, message);
+                EmailLogic email = new EmailLogic();
+                await email.NewPrivateMessageEmail(recipients, CurrentUser.UserName, message);
 
                 return VResult;
             }

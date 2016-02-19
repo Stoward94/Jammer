@@ -6,92 +6,129 @@
 
 <h2>Details</h2>
 
-<div>
-    <h4>Session</h4> <span class="label label-info">@Model.Status</span>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(m => m.Duration)
-        </dt>
+<h4>Session</h4> <span class="label label-info">@Model.Status</span>
+<hr />
 
-        <dd>
-            @Html.DisplayFor(m => m.Duration)
-        </dd>
+<div class="row">
+    <div class="col-md-9">
+        @* Details *@
+        <div>
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(m => m.Duration)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.Platform)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.Duration)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.Platform)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Platform)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.Type)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.Platform)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.Type)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Type)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.CreatorName)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.Type)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.CreatorName)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.CreatorName)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.CreatedDate)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.CreatorName)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.CreatedDate)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.CreatedDate)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.ScheduledDate)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.CreatedDate)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.ScheduledDate)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.ScheduledDate)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.GamersRequired)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.ScheduledDate)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.GamersRequired)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.MembersRequired)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.GamersRequired)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.MembersRequired)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.GamersRequired)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.MembersCount)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.Information)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.MembersCount)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.Information)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Information)
+                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(m => m.IsPublic)
-        </dt>
+                <dd>
+                    @Html.DisplayFor(m => m.Information)
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(m => m.IsPublic)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(m => m.IsPublic)
+                </dt>
 
-    </dl>
+                <dd>
+                    @Html.DisplayFor(m => m.IsPublic)
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+    <div class="col-md-3">
+        @* Members *@
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">Members (@Model.MembersCount)</div>
+            <div class="panel-body">
+                <div id="members-div">
+                    <table style="width: 100%">
+                        <tbody>
+                            @foreach (var m in Model.Members)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (m.IsHost)
+                                        {
+                                            <i class="fa fa-user-plus"></i>
+                                        }
+                                    </td>
+                                    <td>@Html.ActionLink(m.DisplayName, "UserProfile", "Profile", new { userName = m.DisplayName }, null)</td>
+                                    <td><i class="fa fa-trophy"></i> @m.Kudos</td>
+                                    <td><a href="#" title="Private Message"><i class="fa fa-envelope-o"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 <p>
     @if (Model.CanJoin)
     {
@@ -102,8 +139,6 @@
     {
         @Html.ActionLink("Leave", "LeaveSession", "Sessions", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
     }
-
-    @Html.ActionLink("Back to List", "Index")
 </p>
 
 <div id="sessionFeed">

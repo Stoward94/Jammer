@@ -25,10 +25,7 @@ namespace GamingSessionApp.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Index()
         {
-            //Pass user to logic
-            _sessionLogic.UserId = UserId;
-
-            List<Session> sessions = await _sessionLogic.GetAll();
+            var sessions = await _sessionLogic.GetSessions(UserId);
             return View(sessions);
         }
 
@@ -40,10 +37,9 @@ namespace GamingSessionApp.Controllers
         [HttpGet]
         public async Task<ViewResult> Create()
         {
-            var viewModel = new CreateSessionVM {CreatorId = UserId};
-            viewModel = await _sessionLogic.PrepareCreateSessionVM(viewModel);
+            var model = await _sessionLogic.PrepareCreateSessionVM(new CreateSessionVM());
 
-            return View(viewModel);
+            return View(model);
         }
 
         [HttpPost]
@@ -52,13 +48,14 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                PassUserToLogic();
-
                 //Pass the view model to the create logic
-                ValidationResult result = await _sessionLogic.CreateSession(viewModel);
+                ValidationResult result = await _sessionLogic.CreateSession(viewModel, UserId);
 
                 if(result.Success)
                     return RedirectToAction("Index");
+
+                //Something went wrong
+                ModelState.AddModelError("", result.Error);
             }
 
             viewModel = await _sessionLogic.PrepareCreateSessionVM(viewModel);
@@ -71,17 +68,15 @@ namespace GamingSessionApp.Controllers
 
         // GET: Sessions/Details/{Guid}
         [HttpGet, AllowAnonymous]
-        public async Task<ActionResult> Details(Guid? id)
+        public async Task<ActionResult> Details(Guid id)
         {
-            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            
+            var model = await _detailsVmLogic.PrepareViewSessionVm(id, UserId);
 
-            PassUserToLogic();
+            if (model == null) return HttpNotFound();
 
-            var viewModel = await _detailsVmLogic.PrepareViewSessionVm(id.Value);
-
-            if (viewModel == null) return HttpNotFound();
-
-            return View(viewModel);
+            return View(model);
         }
 
         #endregion
@@ -103,6 +98,12 @@ namespace GamingSessionApp.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(EditSessionVM viewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                viewModel = await _sessionLogic.PrepareEditSessionVM(viewModel);
+                return View(viewModel);
+            }
+
             if (viewModel.SessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             //Try and update the record
@@ -123,9 +124,9 @@ namespace GamingSessionApp.Controllers
             if(string.IsNullOrEmpty(comment) || sessionId == Guid.Empty)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            PassUserToLogic();
+            ValidationResult result = await _sessionLogic.AddSessionComment(comment, sessionId, UserId);
 
-            if (await _sessionLogic.AddSessionComment(comment, sessionId))
+            if(result.Success)
             {
                 return RedirectToAction("Details", new { id = sessionId });
             }
@@ -136,10 +137,8 @@ namespace GamingSessionApp.Controllers
         public async Task<ActionResult> JoinSession(Guid sessionId)
         {
             if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            PassUserToLogic();
-
-            ValidationResult result = await _sessionLogic.AddUserToSession(sessionId);
+            
+            ValidationResult result = await _sessionLogic.AddUserToSession(UserId, sessionId);
 
             if(result.Success)
                 return RedirectToAction("Details", new {id = sessionId});
@@ -153,7 +152,7 @@ namespace GamingSessionApp.Controllers
 
             PassUserToLogic();
 
-            if (await _sessionLogic.RemoveUserFromSession(sessionId))
+            if (await _sessionLogic.RemoveUserFromSession(UserId, sessionId))
             {
                 return RedirectToAction("Details", new { id = sessionId });
             }

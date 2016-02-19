@@ -11,6 +11,10 @@ namespace GamingSessionApp.ViewModels.Session
         [HiddenInput]
         public Guid Id { get; set; }
 
+        //What is the Id of the creator
+        [Required]
+        public string CreatorId { get; set; }
+
         //Who is the creator of this session
         [Required]
         public string CreatorName { get; set; }
@@ -37,10 +41,10 @@ namespace GamingSessionApp.ViewModels.Session
 
         //# of gamers needed for the session
         [Required]
-        public int GamersRequired { get; set; }
+        public int MembersRequired { get; set; }
 
         //# of gamers registered for session
-        public int SignedGamersCount { get; set; }
+        public int MembersCount { get; set; }
 
         //Description of what the session is about
         [Required, StringLength(5000)]
@@ -54,10 +58,12 @@ namespace GamingSessionApp.ViewModels.Session
         [Required]
         public bool IsPublic { get; set; }
 
+        public bool Active { get; set; }
+
         public List<SessionMessage> Messages { get; set; }
 
         //A collection of the gamers signed to the session
-        public virtual ICollection<ApplicationUser> SignedGamers { get; set; }
+        public virtual ICollection<SessionMemberViewModel> Members { get; set; }
 
 
         // ---- Display Option Variables ---- //

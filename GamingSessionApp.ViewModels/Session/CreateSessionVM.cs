@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
+using GamingSessionApp.Helpers;
 
 namespace GamingSessionApp.ViewModels.Session
 {
@@ -16,12 +12,13 @@ namespace GamingSessionApp.ViewModels.Session
         {
             ScheduledDate = DateTime.UtcNow;
             IsPublic = true;
+            NotifyOnJoin = true;
+            NotifyOnLeave = true;
+            MinRatingScore = 3;
         }
 
-        [Required, HiddenInput]
-        public string CreatorId { get; set; }
-
-        [Required, DataType(DataType.Date), DisplayName("Schedule Date")]
+        
+        [Required, DataType(DataType.Date), DisplayName("Schedule Date"), PresentFutureDate]
         public DateTime ScheduledDate { get; set; }
         
         [Required, DataType(DataType.Time), DisplayName("Start Time")]
@@ -37,7 +34,7 @@ namespace GamingSessionApp.ViewModels.Session
         public SelectList SessionTypeList { get; set; }
 
         [Required, DisplayName("Gamers Needed")]
-        public string GamersRequired { get; set; }
+        public int GamersRequired { get; set; }
         public SelectList GamersRequiredList { get; set; }
 
         [Required, StringLength(5000)]
@@ -52,5 +49,17 @@ namespace GamingSessionApp.ViewModels.Session
 
         [Required, DisplayName("Manually Approve Joining Members")]
         public bool ApproveJoinees { get; set; }
+
+        [Required, DisplayName("Notify me when users join")]
+        public bool NotifyOnJoin { get; set; }
+
+        [Required, DisplayName("Notify me when users leave")]
+        public bool NotifyOnLeave { get; set; }
+
+        [Required, DisplayName("Minimum User Rating")]
+        public int MinRatingScore { get; set; }
+        
+        [DisplayName("Invite User(s)")]
+        public string InviteRecipients { get; set; }
     }
 }

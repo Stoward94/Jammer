@@ -12,7 +12,7 @@ namespace GamingSessionApp.Models
             CreatedDate = DateTime.UtcNow;
             Active = true;
             Messages = new List<SessionMessage>();
-            SignedGamers = new List<ApplicationUser>();
+            Members = new List<UserProfile>();
             StatusId = 1; // Status = Recruiting
         }
 
@@ -22,7 +22,7 @@ namespace GamingSessionApp.Models
         //Who is the creator of this session
         [Required]
         public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
+        public UserProfile Creator { get; set; }
 
         //When the Session was created
         [Required]
@@ -34,24 +34,24 @@ namespace GamingSessionApp.Models
 
         //What status is the session in
         public int StatusId { get; set; }
-        public virtual SessionStatus Status { get; set; }
+        public SessionStatus Status { get; set; }
 
         //Which platform is this session for?
         [Required]
         public int PlatformId { get; set; }
-        public virtual Platform Platform { get; set; }
+        public Platform Platform { get; set; }
         
         //Type of session this session is 'Boosting/Co-op etc.
         [Required]
         public int TypeId { get; set; }
-        public virtual SessionType Type { get; set; }
+        public SessionType Type { get; set; }
 
         //# of gamers needed for the session
         [Required]
-        public int GamersRequired { get; set; }
+        public int MembersRequired { get; set; }
 
         //# of gamers registered for session
-        public int SignedGamersCount => SignedGamers.Count;
+        public int MembersCount => Members.Count;
 
         //Description of what the session is about
         [Required, StringLength(5000)]
@@ -60,18 +60,18 @@ namespace GamingSessionApp.Models
         //Expected duration of the session
         [Required]
         public int DurationId { get; set; }
-        public virtual SessionDuration Duration { get; set; }
+        public SessionDuration Duration { get; set; }
 
         //Is the session active (not yet reached the scheduled start date)
         public bool Active { get; set; }
 
         //Property to the settings object
-        public virtual SessionSettings Settings { get; set; }
+        public SessionSettings Settings { get; set; }
 
         //Navigation property to the session messages
-        public virtual ICollection<SessionMessage> Messages { get; set; }
+        public ICollection<SessionMessage> Messages { get; set; }
 
         //A collection of the gamers signed to the session
-        public virtual ICollection<ApplicationUser> SignedGamers { get; set; }
+        public ICollection<UserProfile> Members { get; set; }
     }
 }

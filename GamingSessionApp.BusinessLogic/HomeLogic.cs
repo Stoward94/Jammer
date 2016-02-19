@@ -36,7 +36,7 @@ namespace GamingSessionApp.BusinessLogic
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Type = s.Type.Name,
-                            GamerCount = s.SignedGamers.Count + "/" + s.GamersRequired,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             Summary = s.Information
                         }).Take(15).ToListAsync();
 
@@ -59,14 +59,14 @@ namespace GamingSessionApp.BusinessLogic
 
                 var newSessions = await query
                         .Where(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
-                        .OrderByDescending(x => x.CreatedDate)
+                        .OrderByDescending(x => x.ScheduledDate)
                         .Select(s => new SessionListItem
                         {
                             ScheduledDate = s.ScheduledDate,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Type = s.Type.Name,
-                            GamerCount = s.SignedGamers.Count + "/" + s.GamersRequired,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             Summary = s.Information
                         }).Take(15).ToListAsync();
 

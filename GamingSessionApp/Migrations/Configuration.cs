@@ -21,6 +21,23 @@ namespace GamingSessionApp.Migrations
 
         protected override void Seed(ApplicationDbContext context)
         {
+            //Seed the session email reminder durations
+            var reminderTimes = new List<EmailReminderTime>
+            {
+                new EmailReminderTime {  Duration = "Session start", Minutes = 0 },
+                new EmailReminderTime {  Duration = "1 mintute", Minutes = 1 },
+                new EmailReminderTime {  Duration = "15 minutes", Minutes = 15 },
+                new EmailReminderTime {  Duration = "30 minutes", Minutes = 30 },
+                new EmailReminderTime {  Duration = "45 minutes", Minutes = 45 },
+                new EmailReminderTime {  Duration = "1 hour", Minutes = 60 },
+                new EmailReminderTime {  Duration = "2 hours", Minutes = 120 },
+                new EmailReminderTime {  Duration = "3 hours", Minutes = 180 }
+            };
+
+            reminderTimes.ForEach(r => context.EmailReminderTimes.AddOrUpdate(m => m.Minutes, r));
+
+            context.SaveChanges();
+
             var user = new ApplicationUser();
 
             //Seed the Master User if required
@@ -57,11 +74,11 @@ namespace GamingSessionApp.Migrations
                 );
 
             //Seed the SessionStatus Statuses
-            context.SessionStatuses.AddOrUpdate(x => x.Status, 
-                new SessionStatus { Status = "Recruiting", Description = "This session is still in need of players to join and play" },
-                new SessionStatus { Status = "Fully Loaded", Description = "This session is currently full, however this may change before the session begins" },
-                new SessionStatus { Status = "Jamming", Description = "This session is actively jamming (reached the start time, but not yet exceeded the expected duration)" },
-                new SessionStatus { Status = "Retired", Description = "This session has now been completed" }
+            context.SessionStatuses.AddOrUpdate(x => x.Name, 
+                new SessionStatus { Name = "Recruiting", Description = "This session is still in need of players to join and play" },
+                new SessionStatus { Name = "Fully Loaded", Description = "This session is currently full, however this may change before the session begins" },
+                new SessionStatus { Name = "Jamming", Description = "This session is actively jamming (reached the start time, but not yet exceeded the expected duration)" },
+                new SessionStatus { Name = "Retired", Description = "This session has now been completed" }
                 );
 
             //Seed the SessionType Descriptions
@@ -111,25 +128,11 @@ namespace GamingSessionApp.Migrations
                 "Player Joined",
                 "Player Left",
                 "Kudos Added",
-                "Information"
+                "Information",
+                "Invitation"
             };
 
             userNotificationTypes.ForEach(t => context.UserNotificationTypes.AddOrUpdate(x => x.Name, new UserNotificationType { Name = t }));
-
-            //Seed the session email reminder durations
-            var reminderTimes = new List<EmailReminderTime>
-            {
-                new EmailReminderTime {  Duration = "Session start", Minutes = 0 },
-                new EmailReminderTime {  Duration = "1 mintute", Minutes = 1 },
-                new EmailReminderTime {  Duration = "15 minutes", Minutes = 15 },
-                new EmailReminderTime {  Duration = "30 minutes", Minutes = 30 },
-                new EmailReminderTime {  Duration = "45 minutes", Minutes = 45 },
-                new EmailReminderTime {  Duration = "1 hour", Minutes = 60 },
-                new EmailReminderTime {  Duration = "2 hours", Minutes = 120 },
-                new EmailReminderTime {  Duration = "3 hours", Minutes = 180 }
-            };
-
-            reminderTimes.ForEach(r => context.EmailReminderTimes.AddOrUpdate(m => m.Minutes, r));
 
             context.SaveChanges();
 
@@ -142,7 +145,7 @@ namespace GamingSessionApp.Migrations
                     PlatformId = 2,
                     CreatorId = user.Id,
                     DurationId = 3,
-                    GamersRequired = 4,
+                    MembersRequired = 4,
                     Information = "This is the first session",
                     ScheduledDate = DateTime.UtcNow.AddDays(12),
                     TypeId = 1,

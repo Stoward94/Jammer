@@ -342,7 +342,7 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_NavigationMenu.cshtml" />
     <Content Include="Views\Sessions\Create.cshtml" />
     <Content Include="Views\Sessions\Details.cshtml" />
     <Content Include="Views\Sessions\Edit.cshtml" />
@@ -369,7 +369,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

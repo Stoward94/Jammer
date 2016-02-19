@@ -10,33 +10,18 @@ using GamingSessionApp.Models;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class SessionTypeLogic : BaseLogic, IBusinessLogic<SessionType>
+    public class SessionTypeLogic : BaseLogic
     {
-        private readonly GenericRepository<SessionType> _sessionTypeRepo;
+        private readonly GenericRepository<SessionType> _typeRepo;
 
         public SessionTypeLogic()
         {
-            _sessionTypeRepo = UoW.Repository<SessionType>();
+            _typeRepo = UoW.Repository<SessionType>();
         }
         
-        public async Task<List<SessionType>> GetAll()
-        {
-            return await _sessionTypeRepo.Get().ToListAsync();
-        }
-
-        public SessionType GetById(object id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<SessionType> GetByIdAsync(object id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<SelectList> GetTypeSelectList()
         {
-            List<SessionType> typeList = await GetAll();
+            List<SessionType> typeList = await _typeRepo.Get().ToListAsync();
 
             return new SelectList(typeList, "Id", "Name");
         }

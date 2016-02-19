@@ -69,8 +69,8 @@ namespace GamingSessionApp.BusinessLogic
 
             if (CurrentUser != null) return _userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(CurrentUser.TimeZoneId);
 
-            //Else return local time zone (non-registered users)
-            return _userTimeZone = TimeZoneInfo.Local;
+            //Else return UTC time zone (non-registered users)
+            return _userTimeZone = TimeZoneInfo.Utc;
         }
 
         public void Dispose()

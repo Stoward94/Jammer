@@ -1,8 +1,11 @@
-﻿@model IEnumerable<GamingSessionApp.ViewModels.Inbox.UserMessagesViewModel>
+﻿@using GamingSessionApp.Helpers
+@model IEnumerable<GamingSessionApp.ViewModels.Inbox.UserMessagesViewModel>
 
 @{
     ViewBag.Title = "Inbox";
 }
+
+@Html.SuccessMessage(ViewBag.SuccessMessage as string)
 
 <h2>Inbox</h2>
 

@@ -15,7 +15,7 @@ using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class SessionLogic : BaseLogic, IBusinessLogic<Session>
+    public class SessionLogic : BaseLogic
     {
 
     #region Variables
@@ -47,17 +47,37 @@ namespace GamingSessionApp.BusinessLogic
 
     #region CRUD Operations
         
-        public async Task<List<Session>> GetAll()
+        public async Task<List<SessionListItemViewModel>> GetSessions(string userId)
         {
+            UserId = userId;
+
             //Get all the sessions that are public and active
-            var sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic && s.Active)
-                .OrderByDescending(x => x.ScheduledDate)
+            List<SessionListItemViewModel> sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic && s.Active)
+                .Select(x => new SessionListItemViewModel
+                {
+                    Id = x.Id,
+                    Creator = x.Creator.DisplayName,
+                    ScheduledDate = x.ScheduledDate.ToString(),
+                    Status = x.Status.Name,
+                    Platform = x.Platform.Name,
+                    Type = x.Type.Name,
+                    RequiredCount = x.MembersRequired,
+                    MembersCount = x.Members.Count,
+                    Duration = x.Duration.Duration
+                })
+                .OrderBy(x => x.ScheduledDate)
+                .Take(20)
                 .ToListAsync();
 
             //Convert the DateTimes to the users time zone
             foreach (var s in sessions)
             {
-                ConvertSessionTimesToTimeZone(s);
+                //Parse string then convert to user timezone
+                DateTime scheduledDate = DateTime.Parse(s.ScheduledDate);
+                scheduledDate = scheduledDate.ToTimeZoneTime(GetUserTimeZone());
+
+                //Create user friendly display time
+                s.ScheduledDate = DateToUserFriendlyString(scheduledDate);
             }
 
             return sessions;
@@ -68,45 +88,70 @@ namespace GamingSessionApp.BusinessLogic
             return _sessionRepo.Get();
         }
 
-        public Session GetById(object id)
-        {
-            return _sessionRepo.GetById(id);
-        }
-        
-        public async Task<Session> GetByIdAsync(object id)
-        {
-            return await _sessionRepo.GetByIdAsync(id);
-        }
-
-        public async Task<ValidationResult> CreateSession(CreateSessionVM viewModel)
+        public async Task<ValidationResult> CreateSession(CreateSessionVM model, string userId)
         {
             try
             {
-                //Map the properties from view model to model
-                Session model = Mapper.Map<CreateSessionVM, Session>(viewModel);
-                model.Settings = Mapper.Map<CreateSessionVM, SessionSettings>(viewModel);
-                
-                //Combine both date and time fields
-                model.ScheduledDate = CombineDateAndTime(model.ScheduledDate, viewModel.ScheduledTime);
+                UserId = userId;
 
-                Session conflictSession = CheckForSessionConflict(model);
+                //Map the properties from the model to the session
+                Session session = new Session
+                {
+                    CreatorId = userId,
+                    PlatformId = model.PlatformId,
+                    TypeId = model.TypeId,
+                    MembersRequired = model.GamersRequired,
+                    Information = model.Information,
+                    DurationId = model.DurationId,
+                    ScheduledDate = CombineDateAndTime(model.ScheduledDate, model.ScheduledTime),
+                    Settings = new SessionSettings()
+                    {
+                        IsPublic = true,
+                        ApproveJoinees = model.ApproveJoinees
+                    }
+                };
+                
+                Session conflictSession = await CheckForSessionConflict(session, userId);
 
                 if (conflictSession != null)
                     return VResult.AddError("This sessions time conflicts with an existing session. " +
                                             "Please pick another date and time.");
 
                 //Convert all dates to UTC format
-                ConvertSessionTimesToUtc(model);
+                ConvertSessionTimesToUtc(session);
 
                 //Add the intial message to the session messages feed
-                _messageLogic.AddSessionCreatedMessage(model);
+                _messageLogic.AddSessionCreatedMessage(session);
+
+                //Load the UserProfile of the creator to add as a member
+                UserProfile creator = await UoW.Repository<UserProfile>().GetByIdAsync(userId);
 
                 //Add the creator as a member of the session
-                model.SignedGamers.Add(CurrentUser);
+                session.Members.Add(creator);
 
                 //Insert the new session into the db
-                _sessionRepo.Insert(model);
+                _sessionRepo.Insert(session);
                 await SaveChangesAsync();
+
+                //Send out invites to users if applicable
+                if (!string.IsNullOrEmpty(model.InviteRecipients))
+                {
+                    List<string> usernames = model.InviteRecipients.Split(',').ToList();
+
+                    List<UserProfile> recipients = await UoW.Repository<UserProfile>()
+                        .Get(x => usernames.Contains(x.DisplayName))
+                        .Include(x => x.User)
+                        .Include(x => x.Preferences)
+                        .ToListAsync();
+
+                    //Send Email
+                    EmailLogic email = new EmailLogic();
+                    await email.SessionInviteEmail(session, creator.DisplayName, recipients);
+
+                    //Send Notification
+                    NotificationLogic notif = new NotificationLogic();
+                    await notif.SessionInviteNotification(session, creator.DisplayName, recipients);
+                }
 
                 return VResult;
             }
@@ -123,7 +168,13 @@ namespace GamingSessionApp.BusinessLogic
             try
             {
                 //Load the session from the db
-                Session model = await GetByIdAsync(viewModel.SessionId);
+                Session model = await _sessionRepo.Get(x => x.Id == viewModel.SessionId)
+                    .Include(x => x.Platform)
+                    .Include(x => x.Status)
+                    .Include(x => x.Type)
+                    .Include(x => x.Duration)
+                    .Include(x => x.Settings)
+                    .FirstOrDefaultAsync();
 
                 //Map the changes (top-tier & 2nd level)
                 Mapper.Map(viewModel, model);
@@ -161,7 +212,7 @@ namespace GamingSessionApp.BusinessLogic
             //Set the default time if we don't already have one
             if (viewModel.ScheduledTime == new DateTime())
                 viewModel.ScheduledTime = SetDefaultSessionTime();
-
+            
             //Add the select lists options
             viewModel.DurationList = await _durationLogic.GetDurationSelectList();
             viewModel.SessionTypeList = await _typeLogic.GetTypeSelectList();
@@ -208,10 +259,10 @@ namespace GamingSessionApp.BusinessLogic
                         CreatorId = x.CreatorId,
                         ScheduledDate = x.ScheduledDate,
                         ScheduledTime = x.ScheduledDate,
-                        Status = x.Status.Status,
+                        Status = x.Status.Name,
                         PlatformId = x.PlatformId,
                         TypeId = x.TypeId,
-                        GamersRequired = x.GamersRequired.ToString(),
+                        GamersRequired = x.MembersRequired.ToString(),
                         Information = x.Information,
                         DurationId = x.DurationId,
                         IsPublic = x.Settings.IsPublic,
@@ -251,15 +302,23 @@ namespace GamingSessionApp.BusinessLogic
         /// <returns>Select list of times</returns>
         private SelectList GetTimeSlots()
         {
-            List<string> times = new List<string>();
+            List<DateTime> times = new List<DateTime>();
 
-            for (int i = 0; i < 24; i++)
-            {
-                times.Add(i + ":00");
-                times.Add(i + ":15");
-                times.Add(i + ":30");
-                times.Add(i + ":45");
-            }
+            times.Add(DateTime.Now);
+            times.Add(DateTime.Now.AddHours(1));
+            times.Add(DateTime.Now.AddHours(2));
+            times.Add(DateTime.Now.AddHours(3));
+            times.Add(DateTime.Now.AddHours(4));
+
+            //for (int i = 0; i < 24; i++)
+            //{
+            //    string hour = i < 10 ? "0" + i : i.ToString();
+
+            //    times.Add(hour + ":00");
+            //    times.Add(hour + ":15");
+            //    times.Add(hour + ":30");
+            //    times.Add(hour + ":45");
+            //}
 
             return new SelectList(times);
         }
@@ -273,7 +332,7 @@ namespace GamingSessionApp.BusinessLogic
             //Anon object used to hold id and value (for the unlimited option)
             var options = new List<object>();
 
-            //Add options 1 - 24
+            //Add options 2 - 24
             for (int i = 2; i < 25; i++)
             {
                 options.Add(new { id = i, value = i });
@@ -293,7 +352,7 @@ namespace GamingSessionApp.BusinessLogic
         private DateTime SetDefaultSessionTime()
         {
             //Add 1 hour to the current time for the user (time zone specific)
-            var time = DateTime.UtcNow.AddHours(1);
+            DateTime time = DateTime.UtcNow.AddHours(1);
             time = time.ToTimeZoneTime(GetUserTimeZone());
 
             var dif = TimeSpan.FromMinutes(15);
@@ -330,9 +389,12 @@ namespace GamingSessionApp.BusinessLogic
             model.CreatedDate = model.CreatedDate.ToTimeZoneTime(timeZone);
             model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(timeZone);
 
-            foreach (var msg in model.Messages)
+            if (model.Messages != null)
             {
-                msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(timeZone);
+                foreach (var msg in model.Messages)
+                {
+                    msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(timeZone);
+                }
             }
         }
 
@@ -342,9 +404,16 @@ namespace GamingSessionApp.BusinessLogic
         /// </summary>
         /// <param name="tSession"></param>
         /// <returns></returns>
-        private Session CheckForSessionConflict(Session tSession)
+        private async Task<Session> CheckForSessionConflict(Session tSession, string userId)
         {
-            foreach (var s in CurrentUser.Sessions.Where(s => s.Active))
+            //Load user
+            List<Session> userSessions = await _sessionRepo.Get(x => x.CreatorId == userId)
+                .Include(x => x.Duration)
+                .Where(x => x.Active)
+                .ToListAsync();
+
+
+            foreach (var s in userSessions)
             {
                 if (tSession.ScheduledDate >= s.ScheduledDate &&
                     tSession.ScheduledDate < s.ScheduledDate.AddMinutes(s.Duration.Minutes))
@@ -365,7 +434,7 @@ namespace GamingSessionApp.BusinessLogic
         private void CheckSessionStatus(Session session)
         {
             //Is the session now full?
-            if (session.SignedGamersCount == session.GamersRequired)
+            if (session.MembersCount == session.MembersRequired)
             {
                 session.StatusId = (int) SessionStatusEnum.FullyLoaded;
             }
@@ -375,37 +444,102 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+        private string DateToUserFriendlyString(DateTime date)
+        {
+            string friendlyDate;
+
+            //DateTime.Now in users time zone
+            DateTime now = DateTime.Now.ToTimeZoneTime(GetUserTimeZone());
+
+            if (date.Day == now.Day)
+            {
+                friendlyDate = "Today";
+            }
+            else if (date.Day == now.Day + 1)
+            {
+                friendlyDate = "Tomorrow";
+            }
+            else
+            {
+                //Date
+                string dayOfWeek = date.ToString("ddd");
+                int dayNumber = date.Day;
+                string month = date.ToString("MMM");
+                string daySuffix;
+
+                //Add day suffix
+                switch (dayNumber)
+                {
+                    case 1:
+                    case 21:
+                    case 31:
+                        daySuffix = "st";
+                        break;
+
+                    case 2:
+                    case 22:
+                        daySuffix = "nd";
+                        break;
+
+                    case 3:
+                    case 23:
+                        daySuffix = "rd";
+                        break;
+
+                    default:
+                        daySuffix = "th";
+                        break;
+
+                }
+
+                friendlyDate = $"{dayOfWeek} {dayNumber}{daySuffix} {month}";
+            }
+
+            //Time
+            string friendlyTime = date.ToString("HH:mm");
+
+            return friendlyDate + " @ " + friendlyTime;
+        }
+
         #endregion
 
-        public async Task<bool> AddSessionComment(string comment, Guid sessionId)
+        public async Task<ValidationResult> AddSessionComment(string comment, Guid sessionId, string userId)
         {
             try
             {
                 //Load the session
-                Session session = await GetByIdAsync(sessionId);
+                Session session = await _sessionRepo.Get(x => x.Id == sessionId)
+                    .Include(x => x.Messages)
+                    .FirstOrDefaultAsync();
 
-                //Update the UserId reference for the message logic
-                _messageLogic.UserId = UserId;
+                if (session == null)
+                    return VResult.AddError("Unable to post your comment at this time. Please try again later.");
                 
                 //Add the message to the session
-                _messageLogic.AddCommentToSession(session, comment);
+                _messageLogic.AddCommentToSession(session, comment, userId);
 
                 _sessionRepo.Update(session);
                 await SaveChangesAsync();
-                return true;
+
+                return VResult;
             }
             catch (Exception ex)
             {
-                LogError(ex, $"Unable to add a comment to sessionId : {sessionId}");
-                return false;
+                LogError(ex, "Unable to add a comment to sessionId : " + sessionId);
+                return VResult.AddError("Unable to post your comment at this time. Please try again later.");
             }
         }
 
-        public async Task<ValidationResult> AddUserToSession(Guid sessionId)
+        public async Task<ValidationResult> AddUserToSession(string userId, Guid sessionId)
         {
             try
             {
-                Session targetSession = await GetByIdAsync(sessionId);
+                UserId = userId;
+
+                Session targetSession = await _sessionRepo.Get(x => x.Id == sessionId)
+                    .Include(x => x.Members)
+                    .Include(x => x.Messages)
+                    .FirstOrDefaultAsync();
 
                 if (targetSession == null)
                     return VResult.AddError("Unable to join this session as this time");
@@ -414,35 +548,39 @@ namespace GamingSessionApp.BusinessLogic
                 if (!targetSession.Active)
                     return VResult.AddError("This session is no longer active");
 
-                 if(targetSession.SignedGamersCount >= targetSession.GamersRequired)
-                    return VResult.AddError("You are unable to join this session as it's full");
+                 if(targetSession.MembersCount >= targetSession.MembersRequired)
+                    return VResult.AddError("You are unable to join this session as it's full. Why not create a new session");
 
                 //Check this user isn't already a member of the session.
-                var existingUser = targetSession.SignedGamers.FirstOrDefault(x => x.Id == CurrentUser.Id);
+                bool existingUser = targetSession.Members.Any(x => x.UserId == userId);
 
                 //If we found a matching user return error;
-                if (existingUser != null)
+                if (existingUser)
                     return VResult.AddError("You are already a member of this session");
 
                 //Check that this session doesn't conflict with the users existing sessions
-                Session conflictSession = CheckForSessionConflict(targetSession);
+                Session conflictSession = await CheckForSessionConflict(targetSession, userId);
 
                 if(conflictSession != null)
                     return VResult.AddError("This sessions time conflicts with another session you have already joined. " +
                                             "You are unable to join this session as a result.");
 
-                targetSession.SignedGamers.Add(CurrentUser);
+
+                //Load the UserProfile of the creator to add as a member
+                UserProfile user = await UoW.Repository<UserProfile>().GetByIdAsync(userId);
+
+                targetSession.Members.Add(user);
 
                 //Check if the status needs updating
                 CheckSessionStatus(targetSession);
 
                 //Add 'User joined' message to session feed
                 _messageLogic.UserId = UserId;
-                _messageLogic.AddUserJoinedMessage(targetSession);
+                _messageLogic.AddUserJoinedMessage(targetSession, user.DisplayName);
 
                 //Send notification to the session owner
                 NotificationLogic nLogic = new NotificationLogic();
-                await nLogic.AddUserJoinedNotification(targetSession, CurrentUser);
+                await nLogic.AddUserJoinedNotification(targetSession, user.DisplayName);
 
                 _sessionRepo.Update(targetSession);
                 await SaveChangesAsync();
@@ -456,25 +594,30 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<bool> RemoveUserFromSession(Guid sessionId)
+        public async Task<bool> RemoveUserFromSession(string userId, Guid sessionId)
         {
             try
             {
-                Session targetSession = await GetByIdAsync(sessionId);
+                Session targetSession = await _sessionRepo.Get(x => x.Id == sessionId)
+                    .Include(x => x.Members)
+                    .Include(x => x.Messages)
+                    .FirstOrDefaultAsync();
 
                 if (targetSession == null) return false;
 
                 if (!targetSession.Active) return false;
 
+                UserProfile user = targetSession.Members.First(x => x.UserId == userId);
+
                 //Remove the user
-                targetSession.SignedGamers.Remove(CurrentUser);
+                targetSession.Members.Remove(user);
 
                 //Check if the status needs updating
                 CheckSessionStatus(targetSession);
 
                 //Add 'User left' message to session feed
                 _messageLogic.UserId = UserId;
-                _messageLogic.AddUserLeftMessage(targetSession);
+                _messageLogic.AddUserLeftMessage(targetSession, user.DisplayName);
 
                 _sessionRepo.Update(targetSession);
                 await SaveChangesAsync();

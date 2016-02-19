@@ -12,6 +12,7 @@ using System.Web.Helpers;
 using System.Web.UI.WebControls;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
+using GamingSessionApp.ViewModels.Home;
 using GamingSessionApp.ViewModels.Profile;
 using Microsoft.AspNet.Identity;
 using Image = System.Drawing.Image;
@@ -51,10 +52,28 @@ namespace GamingSessionApp.BusinessLogic
                             KudosPoints = f.Friend.Kudos.Points
                         }).OrderByDescending(f => f.KudosPoints).ToList(), 
                         //My Sessions
-                        Sessions = x.User.Sessions.Where(s => s.Active).OrderBy(s => s.ScheduledDate).ToList(),
+                        Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
+                        {
+                            ScheduledDate = s.ScheduledDate,
+                            Type = s.Type.Name,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
+                            SessionId = s.Id,
+                            Platform = s.Platform.Name,
+                            Summary = s.Information
+                        }).OrderBy(s => s.ScheduledDate).ToList(),
                         //Friends Sessions
-                        FriendsSessions = x.Friends.SelectMany(f => f.Friend.User.Sessions)
-                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
+                        FriendsSessions = x.Friends.SelectMany(f => f.Friend.Sessions)
+                        .Where(f => f.Active)
+                        .Select(s => new SessionListItem
+                        {
+                            ScheduledDate = s.ScheduledDate,
+                            Type = s.Type.Name,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
+                            SessionId = s.Id,
+                            Platform = s.Platform.Name,
+                            Summary = s.Information
+                        })
+                        .OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
                         //Kudos History
                         KudosHistory = x.Kudos.History.OrderByDescending(kh => kh.DateAdded).Take(10).ToList()
                     })
@@ -69,13 +88,11 @@ namespace GamingSessionApp.BusinessLogic
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
                 {
-                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                     s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
                 }
 
                 foreach (var s in profile.FriendsSessions)
                 {
-                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                     s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
                 }
 
@@ -109,10 +126,28 @@ namespace GamingSessionApp.BusinessLogic
                             KudosPoints = f.Friend.Kudos.Points
                         }).OrderByDescending(f => f.KudosPoints).ToList(),
                         //My Sessions
-                        Sessions = x.User.Sessions.Where(s => s.Active).OrderBy(s => s.ScheduledDate).ToList(),
+                        Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
+                        {
+                            ScheduledDate = s.ScheduledDate,
+                            Type = s.Type.Name,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
+                            SessionId = s.Id,
+                            Platform = s.Platform.Name,
+                            Summary = s.Information
+                        }).OrderBy(s => s.ScheduledDate).ToList(),
                         //Friends Sessions
-                        FriendsSessions = x.Friends.SelectMany(fs => fs.Profile.User.Sessions)
-                        .Where(s => s.Active).OrderBy(fs => fs.ScheduledDate).Take(10).ToList()
+                        FriendsSessions = x.Friends.SelectMany(f => f.Friend.Sessions)
+                        .Where(f => f.Active)
+                        .Select(s => new SessionListItem
+                        {
+                            ScheduledDate = s.ScheduledDate,
+                            Type = s.Type.Name,
+                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
+                            SessionId = s.Id,
+                            Platform = s.Platform.Name,
+                            Summary = s.Information
+                        })
+                        .OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
                     })
                     .FirstOrDefaultAsync();
 
@@ -121,13 +156,11 @@ namespace GamingSessionApp.BusinessLogic
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
                 {
-                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                     s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
                 }
 
                 foreach (var s in profile.FriendsSessions)
                 {
-                    s.CreatedDate = s.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                     s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
                 }
 

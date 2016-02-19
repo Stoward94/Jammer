@@ -1,5 +1,5 @@
 ﻿
-var fetchUserNotifications = function() {
+var fetchUserNotifications = function () {
 
     var replaceTarget = $("#notif-menu");
 
@@ -119,17 +119,11 @@ $("#user-autocomplete").tagEditor({
     delimiter: ',',
     placeholder: 'Username',
     maxTags: 10,
-    autocomplete: { 'source': "/Profile/GetUsersJson", minLength: 2 }
-});
-
-//Create message, build recipients list
-$("#create-message-btn").click(function (e) {
-    e.preventDefault();
-
-    var usernames = $("#user-autocomplete").tagEditor('getTags')[0].tags;
-    $("#Recipients").val(usernames);
-
-    $("#create-message-form").submit();
+    autocomplete: { 'source': "/Profile/GetUsersJson", minLength: 2 },
+    onChange: function (field, editor, tags) {
+        var targetId = field.attr("data-update-target");
+        $(targetId).val(tags);
+    }
 });
 
 //Mark messages as read
@@ -164,3 +158,24 @@ $("#mark-read-btn").click(function () {
         }
     });
 });
+
+//Games search auto complete
+//$("#game-autocomplete").autocomplete({
+//    source: function (request, response) {
+
+//        var auth = "&token=K5hOq_p3hvaQ7IyBpw5CD_Z6EJw-rCuiKsYWVwrRS1U";
+
+//        $.ajax({
+//            url: "https://www.igdb.com/api/v1/games/search?q=" + request.term + auth,
+//            dataType: "jsonp",
+//            success: function (data) {
+//                response($.map(data, function (value, key) {
+//                    return {
+//                        label: value,
+//                        value: key
+//                    };
+//                }));
+//            }
+//        });
+//    }
+//});

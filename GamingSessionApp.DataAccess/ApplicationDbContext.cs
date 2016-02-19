@@ -37,7 +37,7 @@ namespace GamingSessionApp.DataAccess
 
             //Many-to-many for sessions and users
             modelBuilder.Entity<Session>()
-                   .HasMany<ApplicationUser>(s => s.SignedGamers)
+                   .HasMany<UserProfile>(s => s.Members)
                    .WithMany(u => u.Sessions)
                    .Map(cs =>
                    {

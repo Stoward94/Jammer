@@ -17,7 +17,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Recipients, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input id="user-autocomplete" type="text"/>
+                <input id="user-autocomplete" type="text" data-update-target="#Recipients"/>
                 @Html.HiddenFor(m => m.Recipients)
                 @Html.ValidationMessageFor(model => model.Recipients, "", new { @class = "text-danger" })
             </div>

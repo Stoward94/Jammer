@@ -47,17 +47,17 @@
                                 @*-- Session Details --*@
                                 <div class="sli-details-left border-right-blue">
                                     <div class="sli-details-left-image">
-                                        @Html.SessionTypeIcon(session.Type.Name)
+                                        @Html.SessionTypeIcon(session.Type)
                                     </div>
 
-                                    <span><i class="fa fa-user"></i> @session.SignedGamersCount</span>
+                                    <span><i class="fa fa-user"></i> @session.GamerCount</span>
                                 </div>
 
                                 <div class="sli-details-right sli-blue">
-                                    <a href="@Url.Action("Details", "Sessions", new {id = session.Id})">
-                                        @Html.DisplayFor(s => session.Platform.Name) - Tomb Raider Multiplayer session
+                                    <a href="@Url.Action("Details", "Sessions", new {id = session.SessionId})">
+                                        @Html.DisplayFor(s => session.Platform) - Tomb Raider Multiplayer session
                                     </a>
-                                    <p>@Html.DisplayFor(s => session.Information)</p>
+                                    <p>@Html.DisplayFor(s => session.Summary)</p>
                                 </div>
                             </div>
                         }
@@ -89,17 +89,17 @@
                                 @*-- Session Details --*@
                                 <div class="sli-details-left border-right-blue">
                                     <div class="sli-details-left-image">
-                                        @Html.SessionTypeIcon(session.Type.Name)
+                                        @Html.SessionTypeIcon(session.Type)
                                     </div>
 
-                                    <span><i class="fa fa-user"></i> @session.SignedGamersCount</span>
+                                    <span><i class="fa fa-user"></i> @session.GamerCount</span>
                                 </div>
 
                                 <div class="sli-details-right sli-blue">
-                                    <a href="@Url.Action("Details", "Sessions", new {id = session.Id})">
-                                        @Html.DisplayFor(s => session.Platform.Name) - Tomb Raider Multiplayer session
+                                    <a href="@Url.Action("Details", "Sessions", new {id = session.SessionId})">
+                                        @Html.DisplayFor(s => session.Platform) - Tomb Raider Multiplayer session
                                     </a>
-                                    <p>@Html.DisplayFor(s => session.Information)</p>
+                                    <p>@Html.DisplayFor(s => session.Summary)</p>
                                 </div>
                             </div>
                         }

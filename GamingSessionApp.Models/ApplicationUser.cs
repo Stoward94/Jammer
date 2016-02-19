@@ -28,7 +28,7 @@ namespace GamingSessionApp.Models
 
         public UserProfile Profile { get; set; }
 
-        public virtual ICollection<Session> Sessions { get; set; }
+        //public virtual ICollection<Session> Sessions { get; set; }
 
         
         #endregion

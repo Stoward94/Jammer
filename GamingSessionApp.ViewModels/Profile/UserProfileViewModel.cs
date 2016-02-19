@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using GamingSessionApp.ViewModels.Home;
 
 namespace GamingSessionApp.ViewModels.Profile
 {
@@ -25,9 +26,9 @@ namespace GamingSessionApp.ViewModels.Profile
 
         public List<UserFriendViewModel> Friends{ get; set; }
 
-        public List<Models.Session> Sessions { get; set; }
+        public List<SessionListItem> Sessions { get; set; }
 
-        public List<Models.Session> FriendsSessions { get; set; }
+        public List<SessionListItem> FriendsSessions { get; set; }
 
         public List<Models.KudosHistory> KudosHistory { get; set; }
 

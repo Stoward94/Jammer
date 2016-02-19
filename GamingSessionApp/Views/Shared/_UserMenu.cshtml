@@ -5,14 +5,15 @@
     string username = User.Identity.GetUserName();
 }
 
-
 <li>
-    <img src="@Model.ThumbnailUrl" width="36" height="36" style="margin-top: 10px;" />
+    <img src="@Model.ThumbnailUrl" width="36" height="36" alt="@username" title="@username" />
 
-    @Html.ActionLink(username, "UserProfile", "Profile", new { userName = username }, new { title = "My Profile", @style = "display:inline" })
+    <a href="/Profile/@username" title="My Profile" style="display: inline-block">@username
+    <i class="fa fa-trophy" style="margin-left: 5px;"></i> @Model.KudosPoints
+</a>
 </li>
 
-<li><a href="#"><i class="fa fa-trophy"></i> @Model.KudosPoints</a></li>
+@*<li><a href="#"><i class="fa fa-trophy"></i> @Model.KudosPoints</a></li>*@
 
 @* Messages *@
 <li>

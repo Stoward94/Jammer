@@ -43,13 +43,13 @@ namespace GamingSessionApp.BusinessLogic
             session.Messages.Add(message);
         }
 
-        public void AddCommentToSession(Session session, string comment)
+        public void AddCommentToSession(Session session, string comment, string userId)
         {
             try
             {
                 SessionMessage message = new SessionMessage()
                 {
-                    AuthorId = UserId,
+                    AuthorId = userId,
                     Body = comment,
                     MessageNo = (session.Messages.Count + 1),
                     MessageTypeId = (int)SessionMessageTypeEnum.Comment,
@@ -64,14 +64,14 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public void AddUserJoinedMessage(Session session)
+        public void AddUserJoinedMessage(Session session, string username)
         {
             try
             {
                 SessionMessage message = new SessionMessage()
                 {
                     AuthorId = UserId,
-                    Body = $"{CurrentUser.UserName} has joined the session",
+                    Body = $"{username} has joined the session",
                     MessageNo = (session.Messages.Count + 1),
                     MessageTypeId = (int)SessionMessageTypeEnum.PlayerJoined,
                     SessionId = session.Id
@@ -85,14 +85,14 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public void AddUserLeftMessage(Session session)
+        public void AddUserLeftMessage(Session session, string username)
         {
             try
             {
                 SessionMessage message = new SessionMessage()
                 {
                     AuthorId = UserId,
-                    Body = $"{CurrentUser.UserName} has left the session",
+                    Body = $"{username} has left the session",
                     MessageNo = (session.Messages.Count + 1),
                     MessageTypeId = (int)SessionMessageTypeEnum.PlayerLeft,
                     SessionId = session.Id

@@ -24,8 +24,8 @@ textarea {
 }
 
 .navbar-nav > li > a {
-    padding-bottom: 1px;
-    transition: all 0.15s ease-in-out 0s;
+    height: 50px;
+    border-bottom: 3px solid transparent;
 }
 
 .navbar-nav > li > a:hover {

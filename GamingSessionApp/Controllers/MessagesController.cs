@@ -22,6 +22,10 @@ namespace GamingSessionApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Inbox()
         {
+            //Possible success message from redirect
+            if (TempData.ContainsKey("SuccessMessage"))
+                ViewBag.SuccessMessage = TempData["SuccessMessage"].ToString();
+
             var model = await _messageLogic.GetUsersMessages(UserId);
             
             return View(model);
@@ -79,6 +83,7 @@ namespace GamingSessionApp.Controllers
 
             if (result.Success)
             {
+                TempData["SuccessMessage"] = "Your message has been sent.";
                 return RedirectToAction("Inbox", "Messages");
             }
 

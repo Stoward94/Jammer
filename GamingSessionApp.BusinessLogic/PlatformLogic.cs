@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class PlatformLogic : BaseLogic, IBusinessLogic<Platform>
+    public class PlatformLogic : BaseLogic
     {
         private readonly GenericRepository<Platform> _platformRepo;
 
@@ -19,24 +19,9 @@ namespace GamingSessionApp.BusinessLogic
             _platformRepo = UoW.Repository<Platform>();
         }
 
-        public async Task<List<Platform>> GetAll()
-        {
-            return await _platformRepo.Get().ToListAsync();
-        }
-
-        public Platform GetById(object id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Platform> GetByIdAsync(object id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<SelectList> GetPlatformSelectList()
         {
-            List<Platform> typeList = await GetAll();
+            List<Platform> typeList = await _platformRepo.Get().ToListAsync();
 
             return new SelectList(typeList, "Id", "Name");
         }

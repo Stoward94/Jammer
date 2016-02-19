@@ -30,7 +30,8 @@ namespace GamingSessionApp.BusinessLogic
             PlayerJoined = 1,
             PlayerLeft = 2,
             KudosAdded = 3,
-            Information = 4
+            Information = 4,
+            Invitation = 5
         }
     }
 }

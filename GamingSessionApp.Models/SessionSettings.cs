@@ -20,7 +20,7 @@ namespace GamingSessionApp.Models
 
         [Key, ForeignKey("Session")]
         public Guid SessionId { get; set; }
-        public virtual Session Session { get; set; }
+        public  Session Session { get; set; }
 
         //Is the session publicly available
         [Required]

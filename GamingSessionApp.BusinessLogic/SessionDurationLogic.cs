@@ -10,33 +10,18 @@ using GamingSessionApp.Models;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class SessionDurationLogic : BaseLogic, IBusinessLogic<SessionDuration>
+    public class SessionDurationLogic : BaseLogic
     {
-        private readonly GenericRepository<SessionDuration> _sessionDurationRepo;
+        private readonly GenericRepository<SessionDuration> _durationRepo;
 
         public SessionDurationLogic()
         {
-            _sessionDurationRepo = UoW.Repository<SessionDuration>();
-        }
-
-        public async Task<List<SessionDuration>> GetAll()
-        {
-            return await _sessionDurationRepo.Get().ToListAsync();
-        }
-
-        public SessionDuration GetById(object id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<SessionDuration> GetByIdAsync(object id)
-        {
-            throw new NotImplementedException();
+            _durationRepo = UoW.Repository<SessionDuration>();
         }
 
         public async Task<SelectList> GetDurationSelectList()
         {
-            List<SessionDuration> durationList = await GetAll();
+            List<SessionDuration> durationList = await _durationRepo.Get().ToListAsync();
 
             return new SelectList(durationList, "Id", "Duration");
         } 

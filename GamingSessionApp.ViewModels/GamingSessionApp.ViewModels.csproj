@@ -101,12 +101,18 @@
     <Compile Include="Session\CreateSessionVM.cs" />
     <Compile Include="Session\EditSessionVM.cs" />
     <Compile Include="Session\SessionDetailsVM.cs" />
+    <Compile Include="Session\SessionListItemViewModel.cs" />
+    <Compile Include="Session\SessionMemberViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GamingSessionApp.Helpers\GamingSessionApp.Helpers.csproj">
+      <Project>{a49ae404-f16b-4348-97b4-ae0e60ff9be6}</Project>
+      <Name>GamingSessionApp.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GamingSessionApp.Models\GamingSessionApp.Models.csproj">
       <Project>{AE0C33F9-25C5-4D2F-887A-EAA2E5598B31}</Project>
       <Name>GamingSessionApp.Models</Name>

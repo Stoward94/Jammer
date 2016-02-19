@@ -120,7 +120,6 @@
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="EmailLogic.cs" />
     <Compile Include="HomeLogic.cs" />
-    <Compile Include="IBusinessLogic.cs" />
     <Compile Include="KudosLogic.cs" />
     <Compile Include="MessageLogic.cs" />
     <Compile Include="NotificationLogic.cs" />

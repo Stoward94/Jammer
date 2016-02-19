@@ -18,7 +18,7 @@ namespace GamingSessionApp.BusinessLogic
             _notificationRepo = UoW.Repository<UserNotification>();
         }
 
-        public async Task AddUserJoinedNotification(Session session, ApplicationUser user)
+        public async Task AddUserJoinedNotification(Session session, string username)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace GamingSessionApp.BusinessLogic
                     SessionId = session.Id,
                     RecipientId = session.CreatorId,
                     TypeId = (int) UserNotificationTypeEnum.PlayerJoined,
-                    Body = $"{user.UserName} has joined the session: {session.Type.Name}"
+                    Body = $"{username} has joined the session: UPDATE ME!"
                 };
 
                 //Load the preferences to check whether to add the notification
@@ -52,7 +52,7 @@ namespace GamingSessionApp.BusinessLogic
         private void AddNotification(UserPreferences prefs, UserNotification notification)
         {
             if (prefs == null)
-                throw new Exception("User preferences must be included");
+                throw new Exception("User preferences cannot be null");
 
             //If the user doesn't want notifications, just return
             if (prefs.ReceiveNotifications == false) return;
@@ -110,5 +110,30 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+        internal async Task SessionInviteNotification(Session session, string creatorName, List<UserProfile> recipients)
+        {
+            try
+            {
+                foreach (var r in recipients)
+                {
+                    UserNotification notification = new UserNotification
+                    {
+                        SessionId = session.Id,
+                        RecipientId = r.UserId,
+                        TypeId = (int)UserNotificationTypeEnum.Invitation,
+                        Body = $"{creatorName} has invited you to join their new session"
+                    };
+
+                    //Attach nofitication
+                    AddNotification(r.Preferences, notification);
+                }
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error creating session invite notification for session: " + session.Id);
+            }
+        }
     }
 }

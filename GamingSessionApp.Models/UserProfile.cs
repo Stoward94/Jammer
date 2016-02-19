@@ -53,5 +53,8 @@ namespace GamingSessionApp.Models
         public ICollection<UserNotification> Notifications { get; set; }
 
         public ICollection<UserMessage> Messages { get; set; }
+
+        public virtual ICollection<Session> Sessions { get; set; }
+
     }
 }

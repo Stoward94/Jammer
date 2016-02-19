@@ -9,28 +9,10 @@
 
 </head>
 <body>
-    <div class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @*<a class="navbar-brand" href="/" style="padding: 5px">
-                    <img src="~/Media/SiteTitle.png" height="40" width="270" alt="Total Jammer" />
-                </a>*@
 
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
-                    <li><a href="@Url.Action("Index", "Sessions")"><i class="fa fa-gamepad"></i> Sessions</a></li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
-        </div>
-    </div>
+    @* Navigation Menu *@
+    @Html.Partial("_NavigationMenu")
+
     <div class="container body-content">
         <br/>
         <div id="error-box" class="alert alert-danger hidden" role="alert"></div>

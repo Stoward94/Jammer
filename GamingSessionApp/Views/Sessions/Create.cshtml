@@ -59,51 +59,50 @@
                                 @Html.ValidationMessageFor(m => m.ScheduledTime, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        
-                    </fieldset>
 
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.PlatformId, "PlatformId", new {@class = "control-label col-md-2"})
-                        <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.PlatformId, Model.PlatformList, null, new {@class = "form-control"})
-                            @Html.ValidationMessageFor(m => m.PlatformId, "", new {@class = "text-danger"})
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.TypeId, "TypeId", new {@class = "control-label col-md-2"})
-                        <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.TypeId, Model.SessionTypeList, null, new {@class = "form-control"})
-                            @Html.ValidationMessageFor(m => m.TypeId, "", new {@class = "text-danger"})
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Information, new {@class = "control-label col-md-2"})
-                        <div class="col-md-10">
-                            @Html.EditorFor(m => m.Information, new {htmlAttributes = new {@class = "form-control"}})
-                            @Html.ValidationMessageFor(m => m.Information, "", new {@class = "text-danger"})
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.DurationId, "DurationId", new {@class = "control-label col-md-2"})
-                        <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new {@class = "form-control"})
-                            @Html.ValidationMessageFor(m => m.DurationId, "", new {@class = "text-danger"})
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.IsPublic, new {@class = "control-label col-md-2"})
-                        <div class="col-md-10">
-                            <div class="checkbox">
-                                @Html.EditorFor(m => m.IsPublic)
-                                @Html.ValidationMessageFor(m => m.IsPublic, "", new {@class = "text-danger"})
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.PlatformId, "PlatformId", new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.PlatformId, Model.PlatformList, null, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.PlatformId, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                    </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.TypeId, "TypeId", new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.TypeId, Model.SessionTypeList, null, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.TypeId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Information, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(m => m.Information, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.Information, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.DurationId, "DurationId", new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.DurationId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.IsPublic, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <div class="checkbox">
+                                    @Html.EditorFor(m => m.IsPublic)
+                                    @Html.ValidationMessageFor(m => m.IsPublic, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
 
                 @* Requirements tab *@
@@ -114,6 +113,14 @@
                         <div class="col-md-10">
                             @Html.DropDownListFor(m => m.GamersRequired, Model.GamersRequiredList, null, new {@class = "form-control"})
                             @Html.ValidationMessageFor(m => m.GamersRequired, "", new {@class = "text-danger"})
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.MinRatingScore, new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.MinRatingScore, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(m => m.MinRatingScore, "", new {@class = "text-danger"})
                         </div>
                     </div>
 
@@ -131,12 +138,40 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.NotifyOnJoin, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(m => m.NotifyOnJoin)
+                                @Html.ValidationMessageFor(m => m.NotifyOnJoin, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.NotifyOnLeave, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(m => m.NotifyOnLeave)
+                                @Html.ValidationMessageFor(m => m.NotifyOnLeave, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane" id="invitations">4</div>
-            </div>
+                <div role="tabpanel" class="tab-pane" id="invitations">
 
-            @Html.HiddenFor(m => m.CreatorId)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InviteRecipients, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input id="user-autocomplete" type="text" data-update-target="#InviteRecipients"/>
+                            @Html.HiddenFor(m => m.InviteRecipients)
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
