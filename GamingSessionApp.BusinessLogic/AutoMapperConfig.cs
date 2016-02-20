@@ -17,15 +17,7 @@ namespace GamingSessionApp.BusinessLogic
             {
                 #region Session Maps
 
-                //Create Session
-                config.CreateMap<Session, CreateSessionVM>()
-                    .ForMember(dest => dest.DurationList, opt => opt.Ignore())
-                    .ForMember(dest => dest.SessionTypeList, opt => opt.Ignore())
-                    .ForMember(dest => dest.PlatformList, opt => opt.Ignore())
-                    .ForMember(dest => dest.GamersRequiredList, opt => opt.Ignore())
-                    .ForMember(dest => dest.ScheduledTimeList, opt => opt.Ignore())
-                    .ForMember(dest => dest.ScheduledTime, opt => opt.Ignore())
-                    .ReverseMap();
+                
 
                 config.CreateMap<SessionSettings, CreateSessionVM>()
                     .ReverseMap();

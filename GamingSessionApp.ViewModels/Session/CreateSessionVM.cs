@@ -10,20 +10,19 @@ namespace GamingSessionApp.ViewModels.Session
     {
         public CreateSessionVM()
         {
-            ScheduledDate = DateTime.UtcNow;
             IsPublic = true;
             NotifyOnJoin = true;
             NotifyOnLeave = true;
             MinRatingScore = 3;
         }
 
-        
+
         [Required, DataType(DataType.Date), DisplayName("Schedule Date"), PresentFutureDate]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime ScheduledDate { get; set; }
         
         [Required, DataType(DataType.Time), DisplayName("Start Time")]
         public DateTime ScheduledTime { get; set; }
-        public SelectList ScheduledTimeList { get; set; }
 
         [Required, DisplayName("Target Platform")]
         public int PlatformId { get; set; }

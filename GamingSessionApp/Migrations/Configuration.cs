@@ -158,10 +158,14 @@ namespace GamingSessionApp.Migrations
                     Messages = new List<SessionMessage>()
                     {
                         new SessionMessage() { AuthorId = user.Id, Body = "Session Created", MessageNo = 1, MessageTypeId = 1 },
-                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 },
-                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Left", MessageNo = 3, MessageTypeId = 3 }
+                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 }
                     }
                 };
+
+                //Need to load user as profile is null
+                UserProfile profile = context.UserProfiles.First(x => x.UserId == user.Id);
+
+                session.Members.Add(profile);
 
                 context.Sessions.AddOrUpdate(x => x.PlatformId, session);
             }

@@ -20,7 +20,7 @@ namespace GamingSessionApp.Models
         public Guid Id { get; set; }
 
         //Who is the creator of this session
-        [Required]
+        [Required, ForeignKey("Creator")]
         public string CreatorId { get; set; }
         public UserProfile Creator { get; set; }
 

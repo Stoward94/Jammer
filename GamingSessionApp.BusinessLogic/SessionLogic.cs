@@ -110,15 +110,21 @@ namespace GamingSessionApp.BusinessLogic
                         ApproveJoinees = model.ApproveJoinees
                     }
                 };
-                
-                Session conflictSession = await CheckForSessionConflict(session, userId);
+
+                //Convert all dates to UTC format
+                ConvertSessionTimesToUtc(session);
+
+                //Future date check
+                if (session.ScheduledDate < DateTime.UtcNow)
+                    return VResult.AddError("You must schedule the session to be a future date and time.");
+
+               Session conflictSession = await CheckForSessionConflict(session, userId);
 
                 if (conflictSession != null)
                     return VResult.AddError("This sessions time conflicts with an existing session. " +
                                             "Please pick another date and time.");
 
-                //Convert all dates to UTC format
-                ConvertSessionTimesToUtc(session);
+                
 
                 //Add the intial message to the session messages feed
                 _messageLogic.AddSessionCreatedMessage(session);
@@ -206,21 +212,33 @@ namespace GamingSessionApp.BusinessLogic
         /// Prepares the view model used to create a session ready to be passed the view
         /// </summary>
         /// <param name="viewModel"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<CreateSessionVM> PrepareCreateSessionVM(CreateSessionVM viewModel)
+        public async Task<CreateSessionVM> CreateSessionViewModel(CreateSessionVM viewModel, string userId)
         {
-            //Set the default time if we don't already have one
+            UserId = userId;
+
+            //Set start time default if null
             if (viewModel.ScheduledTime == new DateTime())
-                viewModel.ScheduledTime = SetDefaultSessionTime();
-            
+            {
+                //Adds 30 mins from now and rounds up to nearest 30
+                DateTime dt = DateTime.UtcNow.AddMinutes(30).ToTimeZoneTime(GetUserTimeZone());
+                TimeSpan d = TimeSpan.FromMinutes(30);
+
+                viewModel.ScheduledTime = new DateTime(((dt.Ticks + d.Ticks - 1) / d.Ticks) * d.Ticks);
+            }
+
+            //Set start date default if null
+            if (viewModel.ScheduledDate == new DateTime())
+            {
+                viewModel.ScheduledDate = DateTime.UtcNow.AddHours(1).ToTimeZoneTime(GetUserTimeZone());
+            }
+
             //Add the select lists options
             viewModel.DurationList = await _durationLogic.GetDurationSelectList();
             viewModel.SessionTypeList = await _typeLogic.GetTypeSelectList();
             viewModel.PlatformList = await _platformLogic.GetPlatformSelectList();
-
-            //Get the time slots list
-            viewModel.ScheduledTimeList = GetTimeSlots();
-
+            
             //Get the 'how many gamers needed' list options
             viewModel.GamersRequiredList = GetGamersRequiredOptions();
 
@@ -295,34 +313,7 @@ namespace GamingSessionApp.BusinessLogic
     #endregion
 
     #region Helpers
-
-        /// <summary>
-        /// Returns 24 hours worth of times slots rounded to the nearest 15 mins
-        /// </summary>
-        /// <returns>Select list of times</returns>
-        private SelectList GetTimeSlots()
-        {
-            List<DateTime> times = new List<DateTime>();
-
-            times.Add(DateTime.Now);
-            times.Add(DateTime.Now.AddHours(1));
-            times.Add(DateTime.Now.AddHours(2));
-            times.Add(DateTime.Now.AddHours(3));
-            times.Add(DateTime.Now.AddHours(4));
-
-            //for (int i = 0; i < 24; i++)
-            //{
-            //    string hour = i < 10 ? "0" + i : i.ToString();
-
-            //    times.Add(hour + ":00");
-            //    times.Add(hour + ":15");
-            //    times.Add(hour + ":30");
-            //    times.Add(hour + ":45");
-            //}
-
-            return new SelectList(times);
-        }
-
+        
         /// <summary>
         /// Returns a select list of options for the required amount of gamers
         /// </summary>
@@ -344,20 +335,7 @@ namespace GamingSessionApp.BusinessLogic
 
             return new SelectList(options, "id", "value");
         }
-
-        /// <summary>
-        /// Sets the default value for the session time (+1 hour, rounded to the nearest 15 mins)
-        /// </summary>
-        /// <returns></returns>
-        private DateTime SetDefaultSessionTime()
-        {
-            //Add 1 hour to the current time for the user (time zone specific)
-            DateTime time = DateTime.UtcNow.AddHours(1);
-            time = time.ToTimeZoneTime(GetUserTimeZone());
-
-            var dif = TimeSpan.FromMinutes(15);
-            return new DateTime(((time.Ticks + dif.Ticks - 1)/dif.Ticks)*dif.Ticks);
-        }
+        
 
         /// <summary>
         /// Combines the date and time inputs entered when creating a session to form a single DateTime object
@@ -369,7 +347,11 @@ namespace GamingSessionApp.BusinessLogic
         {
             TimeSpan ts = time.TimeOfDay;
 
-            DateTime newDateTime = date + ts;
+            //Quick rounding to nearest 15 mins
+            var totalMinutes = (int)(ts + new TimeSpan(0, 15 / 2, 0)).TotalMinutes;
+            TimeSpan roundedTime = new TimeSpan(0, totalMinutes - totalMinutes % 15, 0);
+
+            DateTime newDateTime = date + roundedTime;
 
             return newDateTime;
         }
@@ -377,8 +359,7 @@ namespace GamingSessionApp.BusinessLogic
         protected void ConvertSessionTimesToUtc(Session model)
         {
             //Convert all dates to UTC format
-            model.CreatedDate = model.CreatedDate.ToUniversalTime();
-            model.ScheduledDate = model.ScheduledDate.ToUniversalTime();
+            model.ScheduledDate = TimeZoneInfo.ConvertTimeToUtc(model.ScheduledDate, GetUserTimeZone());
         }
 
         protected void ConvertSessionTimesToTimeZone(Session model)
@@ -449,7 +430,7 @@ namespace GamingSessionApp.BusinessLogic
             string friendlyDate;
 
             //DateTime.Now in users time zone
-            DateTime now = DateTime.Now.ToTimeZoneTime(GetUserTimeZone());
+            DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
 
             if (date.Day == now.Day)
             {

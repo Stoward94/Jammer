@@ -37,7 +37,7 @@ namespace GamingSessionApp.Controllers
         [HttpGet]
         public async Task<ViewResult> Create()
         {
-            var model = await _sessionLogic.PrepareCreateSessionVM(new CreateSessionVM());
+            var model = await _sessionLogic.CreateSessionViewModel(new CreateSessionVM(), UserId);
 
             return View(model);
         }
@@ -58,7 +58,7 @@ namespace GamingSessionApp.Controllers
                 ModelState.AddModelError("", result.Error);
             }
 
-            viewModel = await _sessionLogic.PrepareCreateSessionVM(viewModel);
+            viewModel = await _sessionLogic.CreateSessionViewModel(viewModel, UserId);
             return View(viewModel);
         }
 
