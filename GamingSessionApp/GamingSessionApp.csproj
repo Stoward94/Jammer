@@ -209,6 +209,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\FeedbackController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -370,6 +371,7 @@
     <Content Include="Views\Profile\Edit.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Preferences\Edit.cshtml" />
+    <Content Include="Views\Feedback\Submit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

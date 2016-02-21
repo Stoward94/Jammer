@@ -54,7 +54,9 @@ namespace GamingSessionApp.Models
 
         public ICollection<UserMessage> Messages { get; set; }
 
-        public virtual ICollection<Session> Sessions { get; set; }
+        public ICollection<Session> Sessions { get; set; }
+
+        public ICollection<SessionFeedback> Feedback { get; set; }
 
     }
 }

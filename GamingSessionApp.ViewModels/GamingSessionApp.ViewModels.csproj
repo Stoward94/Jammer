@@ -86,6 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\EditAccountViewModel.cs" />
+    <Compile Include="Feedback\CreateFeedbackViewModel.cs" />
+    <Compile Include="Feedback\UserFeedback.cs" />
     <Compile Include="Home\HomeViewModel.cs" />
     <Compile Include="Home\SessionListItem.cs" />
     <Compile Include="Inbox\CreateMessageViewModel.cs" />

@@ -53,6 +53,13 @@ namespace GamingSessionApp.DataAccess
                 .HasForeignKey(f => f.RecipientId)
                 .WillCascadeOnDelete(false);
 
+            //Fix for 2 navigation properties
+            modelBuilder.Entity<SessionFeedback>()
+                .HasRequired(x => x.User)
+                .WithMany(x => x.Feedback)
+                .HasForeignKey(x => x.UserId)
+                .WillCascadeOnDelete(false);
+
             //Overrider the cascade delete issue.
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -90,5 +97,7 @@ namespace GamingSessionApp.DataAccess
         public DbSet<UserPreferences> UserPreferences { get; set; }
 
         public DbSet<EmailReminderTime> EmailReminderTimes { get; set; }
+
+        public DbSet<SessionFeedback> SessionFeedback { get; set; }
     }
 }

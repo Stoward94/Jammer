@@ -119,6 +119,7 @@
     <Compile Include="BaseLogic.cs" />
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="EmailLogic.cs" />
+    <Compile Include="FeedbackLogic.cs" />
     <Compile Include="HomeLogic.cs" />
     <Compile Include="KudosLogic.cs" />
     <Compile Include="MessageLogic.cs" />

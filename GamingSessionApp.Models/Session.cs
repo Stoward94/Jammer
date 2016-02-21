@@ -73,5 +73,7 @@ namespace GamingSessionApp.Models
 
         //A collection of the gamers signed to the session
         public ICollection<UserProfile> Members { get; set; }
+
+        public ICollection<SessionFeedback> Feedback { get; set; }
     }
 }

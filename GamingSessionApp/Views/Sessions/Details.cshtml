@@ -139,6 +139,8 @@
     {
         @Html.ActionLink("Leave", "LeaveSession", "Sessions", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
     }
+
+    @Html.ActionLink("Feedback", "Submit", "Feedback", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
 </p>
 
 <div id="sessionFeed">

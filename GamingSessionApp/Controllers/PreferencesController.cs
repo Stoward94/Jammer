@@ -51,5 +51,14 @@ namespace GamingSessionApp.Controllers
             return View(model);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _preferencesLogic.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
     }
 }
