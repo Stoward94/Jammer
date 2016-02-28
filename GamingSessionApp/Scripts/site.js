@@ -1,4 +1,7 @@
-﻿
+﻿// By default validator ignores hidden fields.
+// change the setting here to ignore nothing
+$.validator.setDefaults({ ignore: null });
+
 var fetchUserNotifications = function () {
 
     var replaceTarget = $("#notif-menu");
@@ -179,3 +182,83 @@ $("#mark-read-btn").click(function () {
 //        });
 //    }
 //});
+
+//Session Feedback Tab Ajax
+$('a[data-toggle="tab"][data-ajax-url]').on("shown.bs.tab", function(e) {
+
+    //If we have content return
+    if ($("#feedbackContainer").html().length > 1) return;
+
+    //Show loading spinner
+    var spinner = $('#ajaxLoading').show();
+    
+    var options = {
+        url: $(this).attr("data-ajax-url"),
+        method: "GET",
+        cache: false
+    }
+
+    $.ajax(options)
+        .success(function (data) {
+            spinner.hide();
+            var updateTarget = $('#feedbackContainer');
+            updateTarget.html(data);
+            //Rating glyphicons initialisation
+            $(".rating").each(function () {
+                $(this).rating({
+                    start: 0,
+                    stop: 10,
+                    step: 2,
+                    filled: 'fa fa-star fa-2x',
+                    filledSelected: 'fa fa-star fa-2x',
+                    empty: 'fa fa-star-o fa-2x'
+                });
+            });
+        })
+        .error(function (data) {
+
+        });
+});
+
+//Ajax partial view fetching
+var fetchPartial = function(ajaxOptions, onSuccess, onError) {
+    $.ajax(ajaxOptions)
+        .success(onSuccess(data))
+        .error(onError(data));
+}
+
+//Rating glyphicons initialisation
+$(".rating").each(function () {
+    $(this).rating({
+        start: 0,
+        stop: 10,
+        step: 2,
+        fractions: 2,
+        filled: 'fa fa-star fa-2x',
+        filledSelected: 'fa fa-star fa-2x',
+        empty: 'fa fa-star-o fa-2x',
+        extendSymbol: function (rate) {
+            var title;
+            $(this).tooltip({
+                container: 'body',
+                placement: 'bottom',
+                trigger: 'manual',
+                title: function () {
+                    return title;
+                }
+            });
+            $(this).on('rating.rateenter', function (e, rate) {
+                title = rate;
+                $(this).tooltip('show');
+            })
+            .on('rating.rateleave', function () {
+                $(this).tooltip('hide');
+            });
+        }
+    });
+});
+
+$('.rating').on('change', function () {
+    var label = $(this).next();
+    label.text($(this).val() + " / 10");
+});

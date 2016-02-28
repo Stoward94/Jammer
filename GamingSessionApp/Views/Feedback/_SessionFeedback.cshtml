@@ -1,0 +1,70 @@
+﻿@model GamingSessionApp.ViewModels.Feedback.SessionFeedbackViewModel
+
+@if (Model.SessionCompleted == false)
+{
+    <div class="alert alert-warning" role="alert">
+        This session has not been completed yet. Return here after completing the session to
+        provide your feedback and see the feedback others have left about you.
+    </div>
+
+    return;
+}
+
+@if (Model.CanSubmit)
+{
+    <div class="alert alert-info" role="alert">
+        <i class="fa fa-info-circle fa-lg"></i>
+        You can submit or update your feedback for this session by clicking the button below. You can earn kudos by completing feedback, so don't delay!
+    </div>
+
+    @Html.ActionLink("My Feedback", "Submit", "FeedBack", new { sessionId = Model.SessionId }, new { @class = "btn btn-default" })
+    <hr />
+}
+
+<p>
+    Feedback can be provided for the session once it has been completed. You can amend the feedback you have provided up to <b>1 week</b> after the session has been completed.
+    After this point the feedback submitted will become finalised and you will no longer be able to make further changes.
+</p>
+
+
+<div class="feedback-container">
+    @foreach (var p in Model.Providers)
+    {
+        <section class="feedback-block row">
+
+            <div class="col-sm-12 feedback-heading border-bottom-blue">
+                <h3>
+                    <i class="fa fa-thumbs-o-up"></i>
+                    <a href="@Url.Action("UserProfile", "Profile", new { username = p.Provider })">@p.Provider's </a>
+                    <small>submitted feedback</small>
+                </h3>
+            </div>
+
+            @foreach (var f in p.Feedback)
+            {
+                <section class="feedback-item">
+                    <figure class="col-md-1 col-sm-2 hidden-xs feedback-profile">
+                        <img src="@f.UserThumbnail" width="48" height="48" title="@f.User" alt="Profile Pic" />
+                        <figcaption><i class="fa fa-trophy"></i> @f.Kudos</figcaption>
+                    </figure>
+
+                    <div class="col-md-9 col-sm-8 feedback-content">
+                        <span class="pull-right date-time"><i class="fa fa-clock-o"></i> @Html.DisplayFor(m => f.Submitted)</span>
+                        <h4>@Html.ActionLink(f.User, "UserProfile", "Profile", new { username = f.User }, null)</h4>
+
+                        <p class="feeback-display-pre">
+                            @f.Comments
+                        </p>
+                    </div>
+
+                    <div class="col-sm-2 feedback-rating">
+                        <input type="hidden" class="rating" data-readonly value="@f.Rating" />
+                        <p style="margin: 0">
+                            <i>@f.Rating / 10</i>
+                        </p>
+                    </div>
+                </section>
+            }
+        </section>
+    }
+</div>

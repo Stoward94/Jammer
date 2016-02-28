@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace GamingSessionApp.BusinessLogic
         {
             try
             {
+                UserId = userId;
+
                 //Find and load the session
                 Session session = await UoW.Repository<Session>().Get(x => x.Id == sessionId)
                     .Include(x => x.Members)
@@ -37,8 +40,17 @@ namespace GamingSessionApp.BusinessLogic
 
                 var model = new CreateFeedbackViewModel { SessionId = session.Id };
 
-                //Check that the session has been completed.
-                if (session.StatusId == (int) SessionStatusEnum.Retired)
+                //Calculate session end date and time (+ 30 mins to start time)
+                DateTime endDate = session.ScheduledDate.AddMinutes(30);
+                endDate = endDate.ToTimeZoneTime(GetUserTimeZone());
+                model.SessionEndDate = endDate.ToFullDateString();
+                model.SessionEndTime = endDate.ToShortTimeString();
+
+                //Check if feedback can be submitted
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                //We are within 1 week of session complete
+                if (now > endDate && now < endDate.AddDays(7))
                 {
                     model.CanSubmitFeedback = true;
                 }
@@ -49,7 +61,7 @@ namespace GamingSessionApp.BusinessLogic
                     //Ignore ourselves 
                     if (m.UserId == userId) continue;
 
-                    var feedback = new UserFeedback();
+                    var feedback = new UserFeedbackViewModel();
 
                     //Existing feedback?
                     var existing = session.Feedback.FirstOrDefault(x => x.UserId == m.UserId);
@@ -57,7 +69,8 @@ namespace GamingSessionApp.BusinessLogic
                     if (existing != null)
                     {
                         feedback.UserId = existing.UserId;
-                        feedback.Username = m.DisplayName;
+                        feedback.User = m.DisplayName;
+                        feedback.UserThumbnail = m.ThumbnailUrl;
                         feedback.Comments = existing.Comments;
                         feedback.Rating = existing.Rating;
                     }
@@ -65,10 +78,17 @@ namespace GamingSessionApp.BusinessLogic
                     else
                     {
                         feedback.UserId = m.UserId;
-                        feedback.Username = m.DisplayName;
+                        feedback.UserThumbnail = m.ThumbnailUrl;
+                        feedback.User = m.DisplayName;
                     }
 
                     model.UsersFeeback.Add(feedback);
+                }
+
+                foreach (var u in model.UsersFeeback)
+                {
+                    //Get the 48x48 images instead.
+                    u.UserThumbnail = GetImageUrl(u.UserThumbnail, "48x48");
                 }
 
                 return model;
@@ -90,6 +110,8 @@ namespace GamingSessionApp.BusinessLogic
                 List<SessionFeedback> feedbacks = await _feedbackRepo.Get(x => x.SessionId == model.SessionId)
                     .Where(x => x.OwnerId == userId)
                     .ToListAsync();
+
+                bool isNewFeedback = false;
 
                 foreach (var f in model.UsersFeeback)
                 {
@@ -116,13 +138,20 @@ namespace GamingSessionApp.BusinessLogic
                         };
 
                         _feedbackRepo.Insert(newFeedback);
+
+                        isNewFeedback = true;
                     }
                 }
 
                 await SaveChangesAsync();
 
-                //TODO: Reward user with kudos
-                
+                //Reward user with kudos if new feedback
+                if (isNewFeedback)
+                {
+                    KudosLogic kudos = new KudosLogic();
+                    int kudosPoints = 5*model.UsersFeeback.Count;
+                    await kudos.AddKudosPoints(userId, kudosPoints);
+                }
 
                 return VResult;
             }
@@ -130,6 +159,96 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex, $"Error submitting feedback for session: {model.SessionId} for user : {userId} ");
                 return VResult.AddError("Unable to update your feedback at this time. Please try again later.");
+            }
+        }
+
+        public async Task<SessionFeedbackViewModel> GetSessionFeedback(Guid sessionId, string userId)
+        {
+            try
+            {
+                UserId = userId;
+
+                var model = new SessionFeedbackViewModel { SessionId = sessionId };
+
+                var scheduledDate = await UoW.Repository<Session>().Get(x => x.Id == sessionId)
+                    .Select(x => x.ScheduledDate).FirstAsync();
+
+                //Calculate session end date (+ 30 mins to start time)
+                DateTime endDate = scheduledDate.AddMinutes(30);
+                endDate = endDate.ToTimeZoneTime(GetUserTimeZone());
+
+                //Check if feedback can be submitted
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                //Has the session been completed?
+                if (now < endDate)
+                {
+                    //If not return
+                    model.CanSubmit = false;
+                    return model;
+                }
+
+                //This means the session is complete
+                model.SessionCompleted = true;
+
+                //Are we in the time frame to submit feedback?
+                if (now > endDate && now < endDate.AddDays(7))
+                {
+                    model.CanSubmit = true;
+                }
+                
+                //Load session feedback from database (exclude this users feedback)
+                //Group by the feedback owner, so we display all the feedback each user
+                //has submitted.
+                model.Providers = await _feedbackRepo.Get(x => x.SessionId == sessionId)
+                    .GroupBy(g => g.Owner)
+                    .Select(x => new FeedbackProviderViewModel
+                    {
+                        Provider = x.Key.DisplayName,
+                        Feedback = x.Select(f => new UserFeedbackViewModel
+                        {
+                            User = f.User.DisplayName,
+                            UserThumbnail = f.User.ThumbnailUrl,
+                            Kudos = f.User.Kudos.Points.ToString(),
+                            Comments = f.Comments,
+                            Rating = f.Rating,
+                            Submitted = f.CreatedDate
+                        }).ToList()
+                    })
+                    .OrderBy(x => x.Provider)
+                    .ToListAsync();
+
+                //Has this user already submitted?
+                if (string.IsNullOrEmpty(userId))
+                {
+                    model.CanSubmit = false;
+                }
+
+
+                //Convert the times to the users time zone
+                //and truncate kudos value
+                //and get the 48x48 thumbnail image
+                foreach (var p in model.Providers)
+                {
+                    foreach (var f in p.Feedback)
+                    {
+                        f.Submitted = f.Submitted.ToTimeZoneTime(GetUserTimeZone());
+                        f.UserThumbnail = GetImageUrl(f.UserThumbnail, "48x48");
+
+                        if (f.Kudos.Length > 3)
+                        {
+                            int i = int.Parse(f.Kudos);
+                            f.Kudos = ((double) i/1000).ToString("0.#k");
+                        }
+                    }
+                }
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to get session feedback for session : " + sessionId);
+                return null;
             }
         }
     }

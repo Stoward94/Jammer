@@ -34,5 +34,43 @@ namespace GamingSessionApp.BusinessLogic
 
             return TimeZoneInfo.ConvertTimeFromUtc(time, tzi);
         }
+
+        public static string ToFullDateString(this DateTime date)
+        {
+            string dayOfWeek = date.DayOfWeek.ToString();
+            
+            //Date
+            int dayNumber = date.Day;
+            string daySuffix;
+            string month = date.ToString("MMMM");
+            string year = date.ToString("yyyy");
+
+            //Add day suffix
+            switch (dayNumber)
+            {
+                case 1:
+                case 21:
+                case 31:
+                    daySuffix = "st";
+                    break;
+
+                case 2:
+                case 22:
+                    daySuffix = "nd";
+                    break;
+
+                case 3:
+                case 23:
+                    daySuffix = "rd";
+                    break;
+
+                default:
+                    daySuffix = "th";
+                    break;
+
+            }
+
+            return $"{dayOfWeek} {dayNumber}{daySuffix} {month} {year}";
+        }
     }
 }

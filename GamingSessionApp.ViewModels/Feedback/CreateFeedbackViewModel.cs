@@ -13,7 +13,7 @@ namespace GamingSessionApp.ViewModels.Feedback
         public CreateFeedbackViewModel()
         {
             CanSubmitFeedback = false;
-            UsersFeeback = new List<UserFeedback>();
+            UsersFeeback = new List<UserFeedbackViewModel>();
         }
 
         [Required, HiddenInput]
@@ -21,7 +21,10 @@ namespace GamingSessionApp.ViewModels.Feedback
 
         public bool CanSubmitFeedback { get; set; }
 
+        public string SessionEndDate { get; set; }
+        public string SessionEndTime { get; set; }
+
         [Required]
-        public List<UserFeedback> UsersFeeback { get; set; }
+        public List<UserFeedbackViewModel> UsersFeeback { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -267,6 +268,7 @@ namespace GamingSessionApp.BusinessLogic
                 //Thumbnail path
                 string thumbnailPath = HostingEnvironment.MapPath("~/Images/thumbnails");
                 string imagePath = HostingEnvironment.MapPath("~/Images/180x180");
+                string fortyEightPath = HostingEnvironment.MapPath("~/Images/48x48");
 
                 //Random file name
                 string fileName = Path.GetRandomFileName();
@@ -277,15 +279,25 @@ namespace GamingSessionApp.BusinessLogic
                 //Full image path
                 string imageFullPath = Path.Combine(imagePath, (fileName + extension));
 
+                //48 x 48 image path
+                string fortyEightFullPath = Path.Combine(fortyEightPath, (fileName + extension));
+
                 //Create Thumbnail image
                 Image thumbnailImg = ResizeImage(file, 36, 36);
-
-                thumbnailImg.Save(thumbnailFullPath);
+                Directory.CreateDirectory(imagePath);
                 
                 //Create 180 x 180 image
                 Image largeImage =  ResizeImage(file, 180, 180);
+                Directory.CreateDirectory(imagePath);
 
+                //Create 48 x 48 image
+                Image fortyEightImage = ResizeImage(file, 48, 48);
+                Directory.CreateDirectory(fortyEightPath);
+
+                //Save images
+                thumbnailImg.Save(thumbnailFullPath);
                 largeImage.Save(imageFullPath);
+                fortyEightImage.Save(fortyEightFullPath);
 
 
                 //Now load the old file location
@@ -296,26 +308,33 @@ namespace GamingSessionApp.BusinessLogic
                     return VResult.AddError("Unable to find your user profile, please try again.");
 
 
-                //Delete now old image from disk
-                string oldThumbnailPath = HostingEnvironment.MapPath(user.ThumbnailUrl);
-                string oldFileName = Path.GetFileName(oldThumbnailPath);
-                string oldImagePath = HostingEnvironment.MapPath($"~/Images/180x180/{oldFileName}");
+                //Now delete old image from disk
+                List<string> oldImagePaths = new List<string>();
+
+                string oldFileName = Path.GetFileName(user.ThumbnailUrl);
+
+                //Old image paths
+                oldImagePaths.Add(HostingEnvironment.MapPath(user.ThumbnailUrl));//36x36
+                oldImagePaths.Add(HostingEnvironment.MapPath($"~/Images/180x180/{oldFileName}"));//180x180
+                oldImagePaths.Add(HostingEnvironment.MapPath($"~/Images/48x48/{oldFileName}"));//48x48
 
                 //Now update users thumbnail in DB
                 user.ThumbnailUrl = $"/Images/thumbnails/{fileName}{extension}";
 
                 _profileRepo.Update(user);
-
                 await SaveChangesAsync();
 
-                if (File.Exists(oldThumbnailPath))
+                //Loop and delete each existing image
+                foreach (var path in oldImagePaths)
                 {
-                    File.Delete(oldThumbnailPath);
-                }
+                    //skip default icons
+                    if (path.Contains("default"))
+                        continue;
 
-                if (File.Exists(oldImagePath))
-                {
-                    File.Delete(oldImagePath);
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
                 }
 
                 return VResult;

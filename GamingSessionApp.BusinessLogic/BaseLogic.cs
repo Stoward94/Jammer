@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Elmah;
 using GamingSessionApp.DataAccess;
@@ -32,7 +33,7 @@ namespace GamingSessionApp.BusinessLogic
 
         protected ApplicationUser CurrentUser
         {
-            get { return _applicationUser ?? (_applicationUser = UoW.Repository<ApplicationUser>().GetById(UserId)); }
+            get { return _applicationUser ?? (_applicationUser = UserManager.FindById(UserId)); }//UoW.Repository<ApplicationUser>().GetById(UserId)); }
             set { _applicationUser = value; }
         }
 
@@ -71,6 +72,13 @@ namespace GamingSessionApp.BusinessLogic
 
             //Else return UTC time zone (non-registered users)
             return _userTimeZone = TimeZoneInfo.Utc;
+        }
+
+        protected string GetImageUrl(string profileImageUrl, string targetFolder)
+        {
+            //Get the full image rather than the thumbnail
+            string fileName = Path.GetFileName(profileImageUrl);
+            return$"/Images/{targetFolder}/{fileName}";
         }
 
         public void Dispose()

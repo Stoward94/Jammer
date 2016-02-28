@@ -18,9 +18,18 @@
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
-select,
-textarea {
+select
+/*textarea*/ {
     max-width: 280px;
+}
+
+figcaption {
+    color: gray;
+    margin-top: 5px;
+}
+
+.pre-textarea {
+    white-space: pre-line;
 }
 
 .navbar-nav > li > a {
@@ -32,9 +41,9 @@ textarea {
     border-bottom: 3px solid red;
 }
 
-.fa {
+/*.fa {
     font-size: 18px;
-}
+}*/
 
 .fa-gamepad {
     -webkit-transform: rotate(-40deg);
@@ -45,6 +54,14 @@ textarea {
 }
 
 .fa-clock-o { font-size: 14px; }
+.fa-star, .fa-star-o {
+    color: #e0b611;
+}
+
+.date-time {
+    color: gray;
+    font-size: 12px;
+}
 
 .list-container {
     background: #f0f0f0;
@@ -68,6 +85,11 @@ textarea {
 .border-bottom-orange { border-bottom: 3px solid #FF9933; }
 .border-right-orange { border-right: 3px solid #FF9933;}
 
+/* Ajax Loading Spinner */
+.ajax-spinner {
+    min-height: 300px;
+    background: url(../Media/loader.gif) no-repeat center center;
+}
 
 /*Session List Item styles*/
 

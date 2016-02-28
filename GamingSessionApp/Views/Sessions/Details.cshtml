@@ -9,6 +9,8 @@
 <h4>Session</h4> <span class="label label-info">@Model.Status</span>
 <hr />
 
+
+
 <div class="row">
     <div class="col-md-9">
         @* Details *@
@@ -137,29 +139,42 @@
 
     @if (Model.CanLeave)
     {
-        @Html.ActionLink("Leave", "LeaveSession", "Sessions", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Leave", "LeaveSession", "Sessions", new {sessionId = Model.Id}, new {@class = "btn btn-primary"})
     }
-
-    @Html.ActionLink("Feedback", "Submit", "Feedback", new { sessionId = Model.Id }, new { @class = "btn btn-primary" })
 </p>
 
-<div id="sessionFeed">
-    @foreach (var message in Model.Messages)
-    {
-        <div class="well">
-            <span>#@message.MessageNo: @message.Author.UserName</span>
-            <br/>
-            <br/>
-            @Html.DisplayFor(modelItem => message.Body)
-            <br/>
-            <br/>
-            @Html.DisplayFor(modelItem => message.CreatedDate)
-        </div>
-    }
+@* Variables *@
+@{
+    string feedbackUrl = Url.Action("SessionFeedback", "Feedback", new {sessionId = Model.Id});
+}
 
+@* Nav Tabs *@
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#comments" role="tab" data-toggle="tab">Comments</a>
+    </li>
+    <li role="presentation">
+        <a href="#feedback" role="tab" data-toggle="tab" data-ajax-url="@feedbackUrl">Feedback</a>
+    </li>
+    <li role="presentation">
+        <a href="#messages" role="tab" data-toggle="tab">Messages</a>
+    </li>
+</ul>
+
+@* Tab Panes *@
+<div class="tab-content">
+    
+    @* Comments *@
+    <div role="tabpanel" class="tab-pane active" id="comments">
+        @Html.Partial("_SessionComments", Model)
+    </div>
+
+    @* Feedback *@
+    <div role="tabpanel" class="tab-pane" id="feedback" data-update-id="feedbackContainer" style="padding: 20px;">
+        <div id="ajaxLoading" class="ajax-spinner"></div>
+        <div id="feedbackContainer"></div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="messages">...</div>
 </div>
 
-@if (Model.CanPost)
-{
-    @Html.Partial("_SessionCommentForm", Model.Id)
-}

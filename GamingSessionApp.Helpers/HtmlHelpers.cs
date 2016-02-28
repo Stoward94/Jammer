@@ -45,14 +45,24 @@ namespace GamingSessionApp.Helpers
             if (string.IsNullOrEmpty(message))
                 return null;
 
-            var builder = new TagBuilder("div");
-            
-            builder.MergeAttribute("class", "alert alert-success");
-            builder.MergeAttribute("role", "alert");
-            builder.SetInnerText(message);
+            var span = new TagBuilder("span");
+            span.MergeAttribute("aria-hidden", "true");
+            span.SetInnerText("×");
+
+            var button = new TagBuilder("button");
+            button.MergeAttribute("type", "button");
+            button.MergeAttribute("class", "close");
+            button.MergeAttribute("data-dismiss", "alert");
+            button.MergeAttribute("aria-label", "Close");
+            button.InnerHtml = span.ToString();
+
+            var div = new TagBuilder("div");
+            div.MergeAttribute("class", "alert alert-success alert-dismissible");
+            div.MergeAttribute("role", "alert");
+            div.InnerHtml = button + message;
 
             // Render tag
-            return new MvcHtmlString(builder.ToString());
+            return new MvcHtmlString(div.ToString());
         }
     }
 }

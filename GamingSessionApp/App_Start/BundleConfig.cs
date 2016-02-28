@@ -25,6 +25,7 @@ namespace GamingSessionApp
                       "~/Scripts/tinymce/tinymce.min.js",
                       "~/Scripts/jquery.caret.min.js",
                       "~/Scripts/jquery.tag-editor.min.js",
+                      "~/Scripts/bootstrap-rating.min.js",
                       "~/Scripts/site.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
@@ -32,7 +33,9 @@ namespace GamingSessionApp
                       "~/Content/font-awesome.min.css",
                       "~/Content/jquery-ui-min.css",
                       "~/Content/jquery.tag-editor.css",
-                      "~/Content/site.css"));
+                      "~/Content/bootstrap-rating.css",
+                      "~/Content/site.css",
+                      "~/Content/feedback.css"));
         }
     }
 }

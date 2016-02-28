@@ -1,0 +1,17 @@
+﻿@model GamingSessionApp.ViewModels.Feedback.CreateFeedbackViewModel
+
+<div>
+    <p>
+        Feedback for the session can be submitted after @Model.SessionEndTime on @Model.SessionEndDate.
+        You will be able to amend your submitted feedback up to one week after the sessions scheduled start date.
+    </p>
+</div>
+<div>
+
+    @foreach (var f in Model.UsersFeeback)
+    {
+        <div>@Html.DisplayFor(m => f.Comments, new { htmlAttributes = new { @class = "form-control" } })</div>
+        <div>@Html.DisplayFor(m => f.Rating, new { htmlAttributes = new { @class = "form-control" } })</div>
+    }
+
+</div>

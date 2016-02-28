@@ -20,14 +20,33 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
-        [Route("Submit/{sessionId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SessionFeedback(Guid sessionId)
+        {
+            SessionFeedbackViewModel model = await _feedbackLogic.GetSessionFeedback(sessionId, UserId);
+
+            if (model == null)
+            {
+                ModelState.AddModelError("", "Unable to get session feedback. Please try again later.");
+            }
+
+            //Else return the details view
+            return PartialView("_SessionFeedback", model);
+        }
+
+        [HttpGet]
         public async Task<ActionResult> Submit(Guid sessionId)
         {
             var model = await _feedbackLogic.SubmitFeedbackViewModel(sessionId, UserId);
 
             if (model == null) return HttpNotFound();
 
-            return View(model);
+            //Can submit then return submit view
+            if (model.CanSubmitFeedback)
+                return View(model);
+
+            //Else return the details view
+            return PartialView("_View", model);
         }
 
         [HttpPost]
@@ -47,8 +66,6 @@ namespace GamingSessionApp.Controllers
                     //Something went wrong
                     ModelState.AddModelError("", result.Error);
                 }
-
-                
             }
 
             return View(model);
