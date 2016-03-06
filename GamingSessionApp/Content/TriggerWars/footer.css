@@ -1,0 +1,46 @@
+﻿footer {
+    background: #808080;
+    border-top: 6px solid #5e5e5e;
+    bottom: 0;
+    color: #dcdcdc;
+    min-height: 100px;
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+}
+
+footer ul {
+    list-style: outside none none;
+    padding: 0;
+}
+
+footer li {
+    display: inline-block;
+}
+
+a.facebook, a.twitter, a.youtube {
+    font-size: 2.5em;
+}
+
+a.facebook:hover {
+    color: #3b5998;
+}
+a.twitter:hover {
+    color: #4099FF;
+}
+a.youtube:hover {
+    color: #e52d27;
+}
+
+footer li a {
+    padding: 10px;
+    color: paleturquoise;
+    text-decoration: underline;
+}
+footer a:hover, footer a:focus {
+    color: #fff;
+}
+
+.dash-list li:not(:last-child)::after {
+    content: "|";
+}

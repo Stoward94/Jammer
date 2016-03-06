@@ -11,7 +11,7 @@ namespace GamingSessionApp.ViewModels.Profile
     {
         public string ThumbnailUrl { get; set; }
 
-        public int KudosPoints { get; set; }
+        public string KudosPoints { get; set; }
 
         public int UnreadMessages { get; set; }
 

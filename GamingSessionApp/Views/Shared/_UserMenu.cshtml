@@ -8,17 +8,16 @@
 <li>
     <img src="@Model.ThumbnailUrl" width="36" height="36" alt="@username" title="@username" />
 
-    <a href="/Profile/@username" title="My Profile" style="display: inline-block">@username
+    <a href="/Profile/@username" title="My Profile" style="display: inline-block">
+        @username
     <i class="fa fa-trophy" style="margin-left: 5px;"></i> @Model.KudosPoints
 </a>
 </li>
 
-@*<li><a href="#"><i class="fa fa-trophy"></i> @Model.KudosPoints</a></li>*@
-
 @* Messages *@
 <li>
     <a href="/Messages/Inbox" title="Messages">
-        <i class="fa fa-envelope-o"></i>
+        <i class="fa fa-envelope-o fa-lg"></i>
         @if (Model.UnreadMessages > 0)
         {
             <span id="message-count" class="badge" style="background-color: #3399FF">@Model.UnreadMessages</span>
@@ -28,16 +27,27 @@
 
 @* Notifications *@
 <li id="notif-toggle" class="dropdown">
-    <a href="#" title="Notifications" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-bell-o"></i>
+    @* Cog Icon *@
+    <a href="#" title="Notifications" class="dropdown-toggle" data-toggle="dropdown" role="button">
+        <i class="fa fa-bell-o fa-lg"></i>
         @if (Model.UnseenNotifications > 0)
         {
             <span id="notif-count" class="badge" style="background-color: #3399FF">@Model.UnseenNotifications</span>
         }
     </a>
 
-    <ul id="notif-menu" class="dropdown-menu notif-menu">
-        <li class="dropdown-header">Notifications <i id="n-spinner" class="fa fa-spinner fa-pulse" style="display:none;"></i></li>
-    </ul>
+    @* Dropdown menu *@
+    <div class="dropdown-menu notif-dropdown">
+
+        <div class="notif-menu-header">
+            Notifications <i id="n-spinner" class="fa fa-spinner fa-pulse"></i>
+        </div>
+
+        <ul id="notif-placeholder" class="notif-menu"></ul>
+
+        <div class="notif-footer">
+            <a href="#">See all notitifications</a>
+        </div>
+</div>
 </li>
 

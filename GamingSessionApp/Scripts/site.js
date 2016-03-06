@@ -1,13 +1,21 @@
 ﻿// By default validator ignores hidden fields.
 // change the setting here to ignore nothing
 $.validator.setDefaults({ ignore: null });
+$.ajaxSetup({ cache: false });
+
+//Fix to stop notif menu disappering when clicking inside
+$('.dropdown-menu').click(function (e) {
+    e.stopPropagation();
+});
 
 var fetchUserNotifications = function () {
 
-    var replaceTarget = $("#notif-menu");
+    var replaceTarget = $("#notif-placeholder");
 
     //If we already have notifications return
-    if (replaceTarget.children().length > 1) return;
+    if (replaceTarget.children().length > 1) {
+        return;
+    }
 
     var loadingSpinner = $("#n-spinner");
     loadingSpinner.show();
@@ -18,11 +26,14 @@ var fetchUserNotifications = function () {
     }
 
     $.ajax(ajaxOptions).success(function(data) {
-            replaceTarget.html(data);
+            replaceTarget.replaceWith(data);
             markNotificationAsRead();
         })
         .error(function() {
             replaceTarget.html("<p>Unable to get your notifications</p>");
+        })
+        .always(function () {
+            loadingSpinner.hide();
         });
 };
 
@@ -104,18 +115,27 @@ function DisplayError(message) {
 }
 
 //TinyMCE initialisation
-tinymce.init({
-    selector: ".rich-text-area",
-    max_width : 700,
-    plugins: "emoticons,autolink,link",
-    toolbar: "undo redo | bold italic | bullist numlist | link | emoticons",
-    menubar: false,
-    statusbar: false,
-    browser_spellcheck: true,
-    default_link_target: "_blank",
-    link_title: false,
-    relative_urls: false
-});
+var tinymceInitialise = function(){
+    tinymce.init({
+        selector: ".rich-text-area",
+        max_width : 700,
+        plugins: "emoticons,autolink,link",
+        toolbar: "undo redo | bold italic | bullist numlist | link | emoticons",
+        menubar: false,
+        statusbar: false,
+        browser_spellcheck: true,
+        default_link_target: "_blank",
+        link_title: false,
+        relative_urls: false,
+        setup: function (ed) {
+            ed.on('blur', function (e) {
+                tinyMCE.triggerSave();
+            });
+        }
+    });
+}
+
+tinymceInitialise();
 
 //Create message tag/autocomplete
 $("#user-autocomplete").tagEditor({
@@ -166,19 +186,10 @@ $("#mark-read-btn").click(function () {
 //$("#game-autocomplete").autocomplete({
 //    source: function (request, response) {
 
-//        var auth = "&token=K5hOq_p3hvaQ7IyBpw5CD_Z6EJw-rCuiKsYWVwrRS1U";
+//        var options = { q: request.term };
 
-//        $.ajax({
-//            url: "https://www.igdb.com/api/v1/games/search?q=" + request.term + auth,
-//            dataType: "jsonp",
-//            success: function (data) {
-//                response($.map(data, function (value, key) {
-//                    return {
-//                        label: value,
-//                        value: key
-//                    };
-//                }));
-//            }
+//        window.IGDB.games.search(options, function(data) {
+//            alert(data);
 //        });
 //    }
 //});

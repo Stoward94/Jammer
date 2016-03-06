@@ -212,14 +212,18 @@ namespace GamingSessionApp.BusinessLogic
         {
             try
             {
-                return _profileRepo.Get(x => x.UserId == userId)
+                var menu = _profileRepo.Get(x => x.UserId == userId)
                     .Select(x => new UserMenuViewModel
                     {
                         ThumbnailUrl = x.ThumbnailUrl,
-                        KudosPoints = x.Kudos.Points,
+                        KudosPoints = x.Kudos.Points.ToString(),
                         UnreadMessages = x.Messages.Count(m => m.Read == false),
                         UnseenNotifications = x.Notifications.Count(n => n.Read == false)
                     }).FirstOrDefault();
+
+                menu.KudosPoints = TrimKudos(menu.KudosPoints);
+
+                return menu;
             }
             catch (Exception ex)
             {

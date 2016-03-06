@@ -1,17 +1,29 @@
-﻿@model List<GamingSessionApp.Models.UserNotification>
+﻿@model List<GamingSessionApp.ViewModels.Notifications.UserNotificationViewModel>
+@using GamingSessionApp.Helpers
 
-<li class="dropdown-header">Notifications</li>
-
-@if (Model.Any())
-{
-    foreach (var n in Model)
+<ul id="notif-placeholder"  class="notif-menu">
+    @if (Model.Any())
     {
-        <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
-            <a href="/Sessions/Details/@n.SessionId">@n.Body</a>
-        </li>
+        foreach (var n in Model)
+        {
+            <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
+                <a href="@Url.Action("Details", "Sessions", new { id = n.SessionId })">
+                    <div class="clearfix">
+                        <div class="notif-icon hidden-xs">
+                            @*@Html.NotificationTypeIcon(n.TypeId)*@
+                            <img src="@n.SenderThumbnailUrl" alt="Profile image" width="36" height="36" />
+                        </div>
+                        <div class="notif-body">
+                            <p>@Html.Raw(n.Body)</p>
+                            <span class="date-time-sm pull-right">@n.DisplayDate</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        }
     }
-}
-else
-{
-    <p>You have no notifications</p>
-}
+    else
+    {
+        <li class="notif-empty">You have no notifications</li>
+    }
+</ul>

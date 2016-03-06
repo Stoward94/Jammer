@@ -15,16 +15,22 @@ namespace GamingSessionApp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [ForeignKey("Recipient")]
+        //Who does the notification belong to
+        [Required, ForeignKey("Recipient")]
         public string RecipientId { get; set; }
         public UserProfile Recipient { get; set; }
 
+        //Who resulted in the notification being created? (nullable)
+        [ForeignKey("Referee")]
+        public string RefereeId { get; set; }
+        public UserProfile Referee { get; set; }
+
         public DateTime CreatedDate { get; set; }
 
-        [Required]
+        
         public string Body { get; set; }
         
-        [ForeignKey("Type")]
+        [Required, ForeignKey("Type")]
         public int TypeId { get; set; }
         public UserNotificationType Type { get; set; }
 
@@ -34,7 +40,7 @@ namespace GamingSessionApp.Models
         public Session Session { get; set; }
 
         //If the notification is referring to a comment on a session
-        public int? MessageId { get; set; }
+        public int? CommentId { get; set; }
 
         public bool Read { get; set; }
 

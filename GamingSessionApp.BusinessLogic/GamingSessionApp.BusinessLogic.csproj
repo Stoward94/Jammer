@@ -130,7 +130,7 @@
     <Compile Include="SessionDetailsVmLogic.cs" />
     <Compile Include="SessionDurationLogic.cs" />
     <Compile Include="SessionLogic.cs" />
-    <Compile Include="SessionMessageLogic.cs" />
+    <Compile Include="SessionCommentLogic.cs" />
     <Compile Include="SessionTypeLogic.cs" />
     <Compile Include="SystemEnums.cs" />
     <Compile Include="UserLogic.cs" />

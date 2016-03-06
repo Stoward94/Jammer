@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace GamingSessionApp.Helpers
 {
@@ -63,6 +58,46 @@ namespace GamingSessionApp.Helpers
 
             // Render tag
             return new MvcHtmlString(div.ToString());
+        }
+
+        public static MvcHtmlString NotificationTypeIcon(this HtmlHelper helper, int typeId)
+        {
+            //<img src="~/Media/user-joined-icon.png" width="36" height="36"/>
+            var img = new TagBuilder("img");
+
+            switch (typeId)
+            {
+                case 1: //PlayerJoined
+                    img.MergeAttribute("src", "/Media/user-joined-icon.png");
+                    img.MergeAttribute("alt", "Joined icon");
+                    break;
+                case 2: //PlayerLeft
+                    img.MergeAttribute("src", "/Media/user-left-icon.png");
+                    img.MergeAttribute("alt", "Left icon");
+                    break;
+                case 3: //KudosAdded
+                    img.MergeAttribute("src", "/Media/kudos-added-icon.png");
+                    img.MergeAttribute("alt", "Kudos awarded icon");
+                    break;
+                case 4: //Information
+                    img.MergeAttribute("src", "/Media/info-icon.png");
+                    img.MergeAttribute("alt", "Info icon");
+                    break;
+                case 5: //Invitation
+                    img.MergeAttribute("src", "/Media/invitation-icon.png");
+                    img.MergeAttribute("alt", "Invite icon");
+                    break;
+                case 6: //Comment
+                    img.MergeAttribute("src", "/Media/comment-icon.png");
+                    img.MergeAttribute("alt", "Comment icon");
+                    break;
+            }
+
+            img.MergeAttribute("width", "36");
+            img.MergeAttribute("height", "36");
+
+            // Render tag
+            return new MvcHtmlString(img.ToString(TagRenderMode.SelfClosing));
         }
     }
 }
