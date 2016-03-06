@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using AutoMapper;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Session;
@@ -171,6 +170,7 @@ namespace GamingSessionApp.BusinessLogic
         {
             try
             {
+                throw new NotImplementedException();
                 //Load the session from the db
                 Session model = await _sessionRepo.Get(x => x.Id == viewModel.SessionId)
                     .Include(x => x.Platform)
@@ -181,8 +181,8 @@ namespace GamingSessionApp.BusinessLogic
                     .FirstOrDefaultAsync();
 
                 //Map the changes (top-tier & 2nd level)
-                Mapper.Map(viewModel, model);
-                Mapper.Map(viewModel, model.Settings);
+                //Mapper.Map(viewModel, model);
+                //Mapper.Map(viewModel, model.Settings);
 
                 //Convert all dates to UTC format
                 ConvertSessionTimesToUtc(model);
