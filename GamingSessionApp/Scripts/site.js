@@ -262,3 +262,38 @@ $('.rating').on('change', function () {
     var label = $(this).next();
     label.text($(this).val() + " / 10");
 });
+
+//Post comment ajax handler
+$('#btn-comment-post').click(function() {
+    tinyMCE.triggerSave();
+    var comment = $('#comment').val();
+
+    if (comment.length < 1) {
+        $('#comment-val-msg').show();
+         return;
+    }
+    $('#comment-val-msg').hide();
+    var button = $(this);
+    button.prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-pulse"></i>');
+
+    var form = $(this).closest('form');
+
+    $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            cache: false,
+            data: form.serialize(),
+            success: function (data)
+            {
+                //Insert new comment and clear editor
+                $('.comments-feed').append(data);
+                tinyMCE.activeEditor.setContent('');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $('#comment-val-msg').val("Error posting comment. Please try again later").show();
+            }
+        })
+        .always(function() {
+            button.prop('disabled', false).html('Post');
+        });
+});

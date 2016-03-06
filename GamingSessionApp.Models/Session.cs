@@ -11,7 +11,7 @@ namespace GamingSessionApp.Models
         {
             CreatedDate = DateTime.UtcNow;
             Active = true;
-            Messages = new List<SessionMessage>();
+            Comments = new List<SessionComment>();
             Members = new List<UserProfile>();
             StatusId = 1; // Status = Recruiting
         }
@@ -69,7 +69,7 @@ namespace GamingSessionApp.Models
         public SessionSettings Settings { get; set; }
 
         //Navigation property to the session messages
-        public ICollection<SessionMessage> Messages { get; set; }
+        public ICollection<SessionComment> Comments { get; set; }
 
         //A collection of the gamers signed to the session
         public ICollection<UserProfile> Members { get; set; }

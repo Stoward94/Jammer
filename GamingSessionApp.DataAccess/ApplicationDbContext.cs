@@ -21,13 +21,6 @@ namespace GamingSessionApp.DataAccess
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //one-to-many for Session => SessionMessage
-            modelBuilder.Entity<SessionMessage>()
-                .HasRequired(s => s.Session)
-                .WithMany(s => s.Messages)
-                .HasForeignKey(s => s.SessionId)
-                .WillCascadeOnDelete(false);
-
             //one-to-many for UserProfile => UserFriends
             modelBuilder.Entity<UserFriend>()
                 .HasRequired(s => s.Profile)
@@ -60,6 +53,13 @@ namespace GamingSessionApp.DataAccess
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
 
+            //Fix for 2 navigation properties
+            modelBuilder.Entity<UserNotification>()
+                .HasRequired(x => x.Recipient)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.RecipientId)
+                .WillCascadeOnDelete(false);
+
             //Overrider the cascade delete issue.
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -72,9 +72,9 @@ namespace GamingSessionApp.DataAccess
 
         public DbSet<SessionSettings> SessionSettings { get; set; }
 
-        public DbSet<SessionMessage> SessionMessages { get; set; }
+        public DbSet<SessionComment> SessionComments { get; set; }
 
-        public DbSet<SessionMessageType> SessionMessageTypes { get; set; }
+        public DbSet<SessionCommentType> SessionMessageTypes { get; set; }
 
         public DbSet<SessionDuration> SessionDurations { get; set; }
 

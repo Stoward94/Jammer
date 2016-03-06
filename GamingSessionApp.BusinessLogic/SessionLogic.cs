@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
-using GamingSessionApp.ViewModels.Home;
 using GamingSessionApp.ViewModels.Session;
+using GamingSessionApp.ViewModels.SessionComments;
 using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
@@ -24,7 +22,7 @@ namespace GamingSessionApp.BusinessLogic
         private readonly GenericRepository<Session> _sessionRepo;
 
         //Business Logics
-        private readonly SessionMessageLogic _messageLogic;
+        private readonly SessionCommentLogic _commentLogic;
         private readonly SessionDurationLogic _durationLogic;
         private readonly SessionTypeLogic _typeLogic;
         private readonly PlatformLogic _platformLogic;
@@ -37,7 +35,7 @@ namespace GamingSessionApp.BusinessLogic
         {
             _sessionRepo = UoW.Repository<Session>();
 
-            _messageLogic = new SessionMessageLogic();
+            _commentLogic = new SessionCommentLogic();
             _durationLogic = new SessionDurationLogic();
             _typeLogic = new SessionTypeLogic();
             _platformLogic = new PlatformLogic();
@@ -127,7 +125,7 @@ namespace GamingSessionApp.BusinessLogic
                 
 
                 //Add the intial message to the session messages feed
-                _messageLogic.AddSessionCreatedMessage(session);
+                _commentLogic.AddSessionCreatedComment(session);
 
                 //Load the UserProfile of the creator to add as a member
                 UserProfile creator = await UoW.Repository<UserProfile>().GetByIdAsync(userId);
@@ -156,7 +154,7 @@ namespace GamingSessionApp.BusinessLogic
 
                     //Send Notification
                     NotificationLogic notif = new NotificationLogic();
-                    await notif.SessionInviteNotification(session, creator.DisplayName, recipients);
+                    await notif.SessionInviteNotification(session, creator.UserId, recipients);
                 }
 
                 return VResult;
@@ -370,11 +368,11 @@ namespace GamingSessionApp.BusinessLogic
             model.CreatedDate = model.CreatedDate.ToTimeZoneTime(timeZone);
             model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(timeZone);
 
-            if (model.Messages != null)
+            if (model.Comments != null)
             {
-                foreach (var msg in model.Messages)
+                foreach (var c in model.Comments)
                 {
-                    msg.CreatedDate = msg.CreatedDate.ToTimeZoneTime(timeZone);
+                    c.CreatedDate = c.CreatedDate.ToTimeZoneTime(timeZone);
                 }
             }
         }
@@ -484,33 +482,6 @@ namespace GamingSessionApp.BusinessLogic
 
         #endregion
 
-        public async Task<ValidationResult> AddSessionComment(string comment, Guid sessionId, string userId)
-        {
-            try
-            {
-                //Load the session
-                Session session = await _sessionRepo.Get(x => x.Id == sessionId)
-                    .Include(x => x.Messages)
-                    .FirstOrDefaultAsync();
-
-                if (session == null)
-                    return VResult.AddError("Unable to post your comment at this time. Please try again later.");
-                
-                //Add the message to the session
-                _messageLogic.AddCommentToSession(session, comment, userId);
-
-                _sessionRepo.Update(session);
-                await SaveChangesAsync();
-
-                return VResult;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, "Unable to add a comment to sessionId : " + sessionId);
-                return VResult.AddError("Unable to post your comment at this time. Please try again later.");
-            }
-        }
-
         public async Task<ValidationResult> AddUserToSession(string userId, Guid sessionId)
         {
             try
@@ -519,7 +490,7 @@ namespace GamingSessionApp.BusinessLogic
 
                 Session targetSession = await _sessionRepo.Get(x => x.Id == sessionId)
                     .Include(x => x.Members)
-                    .Include(x => x.Messages)
+                    .Include(x => x.Comments)
                     .FirstOrDefaultAsync();
 
                 if (targetSession == null)
@@ -556,12 +527,12 @@ namespace GamingSessionApp.BusinessLogic
                 CheckSessionStatus(targetSession);
 
                 //Add 'User joined' message to session feed
-                _messageLogic.UserId = UserId;
-                _messageLogic.AddUserJoinedMessage(targetSession, user.DisplayName);
+                //_commentLogic.UserId = UserId;
+                //_commentLogic.AddUserJoinedComment(targetSession, user.DisplayName);
 
                 //Send notification to the session owner
                 NotificationLogic nLogic = new NotificationLogic();
-                await nLogic.AddUserJoinedNotification(targetSession, user.DisplayName);
+                await nLogic.AddUserJoinedNotification(targetSession, user.UserId);
 
                 _sessionRepo.Update(targetSession);
                 await SaveChangesAsync();
@@ -581,7 +552,7 @@ namespace GamingSessionApp.BusinessLogic
             {
                 Session targetSession = await _sessionRepo.Get(x => x.Id == sessionId)
                     .Include(x => x.Members)
-                    .Include(x => x.Messages)
+                    .Include(x => x.Comments)
                     .FirstOrDefaultAsync();
 
                 if (targetSession == null) return false;
@@ -597,8 +568,8 @@ namespace GamingSessionApp.BusinessLogic
                 CheckSessionStatus(targetSession);
 
                 //Add 'User left' message to session feed
-                _messageLogic.UserId = UserId;
-                _messageLogic.AddUserLeftMessage(targetSession, user.DisplayName);
+                //_commentLogic.UserId = UserId;
+                //_commentLogic.AddUserLeftComment(targetSession, user.DisplayName);
 
                 _sessionRepo.Update(targetSession);
                 await SaveChangesAsync();
@@ -615,6 +586,6 @@ namespace GamingSessionApp.BusinessLogic
                 LogError(ex);
                 throw;
             }
-        } 
+        }
     }
 }

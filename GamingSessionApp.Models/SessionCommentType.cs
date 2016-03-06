@@ -1,6 +1,6 @@
 ﻿namespace GamingSessionApp.Models
 {
-    public class SessionMessageType
+    public class SessionCommentType
     {
         public int Id { get; set; }
 

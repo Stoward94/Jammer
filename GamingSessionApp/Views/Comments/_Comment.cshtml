@@ -1,0 +1,24 @@
+﻿@model GamingSessionApp.ViewModels.Session.CommentViewModel
+
+<section class="row">
+    <div class="col-sm-1 hidden-xs pad-r-none">
+        <figure class="figure-center">
+            <img src="@Model.ThumbnailUrl" alt="Profile image" class="img-rounded" width="48" height="48" />
+            <figcaption>
+                <i class="fa fa-trophy"></i> @Model.Kudos
+            </figcaption>
+        </figure>
+    </div>
+
+    <div class="col-sm-11 col-xs-12 comment">
+        <span class="date-time pull-right"><i class="fa fa-clock-o"></i> @Model.CreatedDisplayDate</span>
+        <span class="comment-author">@Html.ActionLink(Model.Author, "UserProfile", "Profile")</span>
+        <div class="comment-body">
+            @Html.Raw(Model.Body)
+        </div>
+    </div>
+
+    <div class="col-xs-12">
+        <hr />
+    </div>
+</section>

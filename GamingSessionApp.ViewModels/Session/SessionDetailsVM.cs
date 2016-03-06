@@ -60,7 +60,7 @@ namespace GamingSessionApp.ViewModels.Session
 
         public bool Active { get; set; }
 
-        public List<SessionMessage> Messages { get; set; }
+        public SessionCommentsViewModel Comments { get; set; }
 
         //A collection of the gamers signed to the session
         public virtual ICollection<SessionMemberViewModel> Members { get; set; }
@@ -69,7 +69,6 @@ namespace GamingSessionApp.ViewModels.Session
         // ---- Display Option Variables ---- //
         public bool CanJoin { get; set; }
         public bool CanLeave { get; set; }
-        public bool CanPost { get; set; }
 
     }
 }

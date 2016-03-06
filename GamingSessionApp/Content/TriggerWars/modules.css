@@ -1,0 +1,124 @@
+﻿
+/**** SESSION COMMENT STYLES ****/
+.comments-feed {
+    margin-top: 30px;
+}
+
+.comment-author {
+    font-size: 1.2em;
+}
+
+.comment {
+    margin-top:10px;
+}
+
+.comment-body {
+    min-height: 100px;
+    padding: 5px 0;
+    color: #393d40;
+}
+
+.figure-center {
+    margin-top: 10px;
+    text-align: center
+}
+
+/**** USER NOTIFICATIONS STYLES ****/
+.notif-dropdown {
+    padding: 0;
+}
+
+.notif-menu {
+    width: 400px;
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    list-style: none;
+    background: #fff;
+}
+
+.notif-menu::-webkit-scrollbar {
+    width:  .5em;
+    height: .5em;
+}
+
+.notif-menu::-webkit-scrollbar-thumb {
+    background: slategray;
+    -ms-scrollbar-face-color: slategray;
+    scrollbar-face-color: slategray;
+}
+
+.notif-menu::-webkit-scrollbar-track {
+    background: #a3b2c2;
+    -ms-scrollbar-track-color: #a3b2c2;
+    scrollbar-track-color: #a3b2c2;
+}
+
+.notif-menu-header, .notif-footer {
+    color: #777;
+    font-size: 12px;
+    border-bottom: 1px solid #d1d1d1;
+    padding: 5px 10px;
+    background: #f7f7f7;
+}
+
+.notif-menu-item > a > div{
+    padding: 10px;
+    font-size: 12px;
+}
+.notif-menu-item {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.notif-menu-item:hover {
+    background:#f1f1f1;
+}
+
+.notif-icon, .notif-body {
+    float:left;
+}
+
+.notif-icon {
+    width: 14%;
+}
+
+.notif-body {
+    width: 86%;
+}
+
+.date-time-sm {
+    color: gray;
+    font-size: 10px;
+}
+
+.notif-footer {
+    width: 100%;
+    border-top:1px solid #d1d1d1;
+    padding: 4px;
+    text-align: center;
+}
+
+.notif-footer > a {
+    color: #777;
+}
+
+.unread {
+    background: #ddf0f6;
+}
+
+.notif-empty {
+    padding: 10px;
+    color: #393d40;
+}
+
+
+/**********************************************
+    MEDIA QUERIES
+**********************************************/
+
+/* XS Only */
+@media (max-width: 767px) {
+    .notif-menu { width: 100%; }
+    .notif-body { width: 100%; }
+}

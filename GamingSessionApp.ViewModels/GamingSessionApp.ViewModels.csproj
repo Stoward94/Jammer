@@ -88,24 +88,27 @@
     <Compile Include="Account\EditAccountViewModel.cs" />
     <Compile Include="Feedback\CreateFeedbackViewModel.cs" />
     <Compile Include="Feedback\FeedbackProviderViewModel.cs" />
-    <Compile Include="Feedback\UserFeedback.cs" />
+    <Compile Include="Feedback\ReceivedFeedbackViewModel.cs" />
     <Compile Include="Home\HomeViewModel.cs" />
     <Compile Include="Home\SessionListItem.cs" />
     <Compile Include="Inbox\CreateMessageViewModel.cs" />
     <Compile Include="Inbox\UserMessagesViewModel.cs" />
     <Compile Include="Inbox\OutboxMessageViewModel.cs" />
     <Compile Include="Inbox\ViewMessageViewModel.cs" />
+    <Compile Include="Notifications\UserNotificationViewModel.cs" />
     <Compile Include="Preferences\EditUserPreferencesViewModel.cs" />
     <Compile Include="Profile\EditProfileViewModel.cs" />
     <Compile Include="Profile\UserFriendViewModel.cs" />
     <Compile Include="Profile\UserMenuViewModel.cs" />
     <Compile Include="Profile\UserProfileViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionComments\PostCommentViewModel.cs" />
     <Compile Include="Session\CreateSessionVM.cs" />
     <Compile Include="Session\EditSessionVM.cs" />
     <Compile Include="Session\SessionDetailsVM.cs" />
     <Compile Include="Session\SessionListItemViewModel.cs" />
     <Compile Include="Session\SessionMemberViewModel.cs" />
+    <Compile Include="Session\SessionCommentsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

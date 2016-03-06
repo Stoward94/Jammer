@@ -120,7 +120,7 @@ namespace GamingSessionApp.Migrations
                 "Invitation"
             };
 
-            feedMessageTypes.ForEach(c => context.SessionMessageTypes.AddOrUpdate(x => x.Type, new SessionMessageType { Type = c }));
+            feedMessageTypes.ForEach(c => context.SessionMessageTypes.AddOrUpdate(x => x.Type, new SessionCommentType { Type = c }));
 
             //Seed the User Notification Types
             var userNotificationTypes = new List<string>
@@ -129,7 +129,8 @@ namespace GamingSessionApp.Migrations
                 "Player Left",
                 "Kudos Added",
                 "Information",
-                "Invitation"
+                "Invitation",
+                "Comment"
             };
 
             userNotificationTypes.ForEach(t => context.UserNotificationTypes.AddOrUpdate(x => x.Name, new UserNotificationType { Name = t }));
@@ -155,10 +156,10 @@ namespace GamingSessionApp.Migrations
                         IsPublic = true,
                         ApproveJoinees = false
                     },
-                    Messages = new List<SessionMessage>()
+                    Comments = new List<SessionComment>()
                     {
-                        new SessionMessage() { AuthorId = user.Id, Body = "Session Created", MessageNo = 1, MessageTypeId = 1 },
-                        new SessionMessage() { AuthorId = user.Id, Body = "Luke Joined", MessageNo = 2, MessageTypeId = 2 }
+                        new SessionComment() { AuthorId = user.Id, Body = "Session Created",CommentTypeId = 1 },
+                        new SessionComment() { AuthorId = user.Id, Body = "Luke Joined", CommentTypeId = 2 }
                     }
                 };
 

@@ -156,17 +156,23 @@
     <li role="presentation">
         <a href="#feedback" role="tab" data-toggle="tab" data-ajax-url="@feedbackUrl">Feedback</a>
     </li>
-    <li role="presentation">
-        <a href="#messages" role="tab" data-toggle="tab">Messages</a>
-    </li>
 </ul>
 
 @* Tab Panes *@
 <div class="tab-content">
     
-    @* Comments *@
+    @* Comments Tab *@
     <div role="tabpanel" class="tab-pane active" id="comments">
-        @Html.Partial("_SessionComments", Model)
+        <div class="row">
+            <div class="col-md-9">
+                @Html.Partial("~/Views/Comments/_SessionComments.cshtml", Model.Comments)
+            </div>
+            <div class="col-md-3">
+                <div style="height: 200px; width: 100%; border: 1px solid gray; margin-top: 40px;">
+                    ADVERT?
+                </div>
+            </div>
+        </div>
     </div>
 
     @* Feedback *@
@@ -174,7 +180,5 @@
         <div id="ajaxLoading" class="ajax-spinner"></div>
         <div id="feedbackContainer"></div>
     </div>
-
-    <div role="tabpanel" class="tab-pane" id="messages">...</div>
 </div>
 

@@ -1,0 +1,30 @@
+﻿@model GamingSessionApp.ViewModels.Session.SessionCommentsViewModel
+
+<div class="comments-feed">
+    @foreach (var c in Model.Comments)
+    {
+        @Html.Partial("~/Views/Comments/_Comment.cshtml", c)
+    }
+</div>
+
+    @if (Model.CanPost)
+    {
+        using (Html.BeginForm("Post", "Comments"))
+        {
+            <div>
+                <div class="form-group">
+                    <textarea id="comment" name="comment" rows="4" placeholder="Enter your comment here" class="form-control rich-text-area"></textarea>
+                </div>
+
+                <span id="comment-val-msg" class="text-danger" hidden>You cannot post nothing! Get typing.</span>
+
+                <div class="pull-right">
+                    <span id="btn-comment-post" class="btn btn-default">Post</span>
+                </div>
+
+                @* Hidden session Id *@
+                <input id="sessionId" name="sessionId" type="hidden" value="@Model.SessionId" />
+            </div>
+        }
+    }
+

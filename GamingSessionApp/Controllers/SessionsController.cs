@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Session;
+using GamingSessionApp.ViewModels.SessionComments;
 
 namespace GamingSessionApp.Controllers
 {
@@ -119,21 +120,7 @@ namespace GamingSessionApp.Controllers
 
         #endregion
 
-        public async Task<ActionResult> PostComment(string comment, Guid sessionId)
-        {
-            if(string.IsNullOrEmpty(comment) || sessionId == Guid.Empty)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            ValidationResult result = await _sessionLogic.AddSessionComment(comment, sessionId, UserId);
-
-            if(result.Success)
-            {
-                return RedirectToAction("Details", new { id = sessionId });
-            }
-
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        }
-
+        
         public async Task<ActionResult> JoinSession(Guid sessionId)
         {
             if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

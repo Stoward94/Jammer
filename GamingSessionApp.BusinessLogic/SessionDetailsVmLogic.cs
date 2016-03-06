@@ -53,7 +53,18 @@ namespace GamingSessionApp.BusinessLogic
                             DisplayName = m.DisplayName,
                             Kudos = m.Kudos.Points
                         }).ToList(),
-                        Messages = x.Messages.ToList(),
+                        Comments = new SessionCommentsViewModel
+                        {
+                            SessionId = x.Id,
+                            Comments = x.Comments.Select(c => new CommentViewModel
+                            {
+                                Author = c.Author.DisplayName,
+                                ThumbnailUrl = c.Author.ThumbnailUrl,
+                                Kudos = c.Author.Kudos.Points.ToString(),
+                                Body = c.Body,
+                                CreatedDate = c.CreatedDate
+                            }).ToList(),
+                        },
                         MembersCount = x.Members.Count(),
                         Status = x.Status.Name,
                         Type = x.Type.Name,
@@ -70,6 +81,20 @@ namespace GamingSessionApp.BusinessLogic
                 model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                 model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
 
+                //Convert comments times to time zone
+                //Get the 48x48 thumbnail
+                //Finally shorthand the kudos value
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                foreach (var c in model.Comments.Comments)
+                {
+                    c.CreatedDate = c.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
+                    c.CreatedDisplayDate = c.CreatedDate.ToMinsAgoTime(now);
+                    c.ThumbnailUrl = GetImageUrl(c.ThumbnailUrl, "48x48");
+                    c.Kudos = TrimKudos(c.Kudos);
+                }
+
+
                 //Is the session joinable? (has room / already joined)
                 model.CanJoin = ShowCanJoinBtn(model);
 
@@ -77,7 +102,7 @@ namespace GamingSessionApp.BusinessLogic
                 model.CanLeave = ShowCanLeaveBtn(model);
 
                 //Can this user post on this session?
-                model.CanPost = ShowPostCommentSection(model);
+                model.Comments.CanPost = ShowPostCommentSection(model);
 
                 return model;
             }

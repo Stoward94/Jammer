@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace GamingSessionApp.Models
 {
-    public class SessionMessage
+    public class SessionComment
     {
-        public SessionMessage()
+        public SessionComment()
         {
             CreatedDate = DateTime.UtcNow;
         }
@@ -18,25 +18,26 @@ namespace GamingSessionApp.Models
         public int Id { get; set; }
 
         //Foreign Key reference to its owning session
-        [ForeignKey("Session")]
+        [Required, ForeignKey("Session")]
         public Guid SessionId { get; set; }
         public virtual Session Session { get; set; }
 
-        //Foreign Key reference to the type of message
-        public int MessageTypeId { get; set; }
-        public virtual SessionMessageType MessageType { get; set; }
+        //Foreign Key reference to the type of comment
+        [Required, ForeignKey("CommentType")]
+        public int CommentTypeId { get; set; }
+        public SessionCommentType CommentType { get; set; }
 
-        [Required]
+        [Required, ForeignKey("Author")]
         public string AuthorId { get; set; }
-        public virtual ApplicationUser Author { get; set; }
+        public UserProfile Author { get; set; }
 
         //When was the message added
         [Required, DisplayFormat(DataFormatString = "{0:dd/MM/yy HH:mm}")]
         public DateTime CreatedDate { get; set; }
 
         //What is the message number
-        [Required]
-        public int MessageNo { get; set; }
+        //[Required]
+        //public int CommentNo { get; set; }
 
         //What does the message say
         [Required, StringLength(2000), MaxLength(2000)]

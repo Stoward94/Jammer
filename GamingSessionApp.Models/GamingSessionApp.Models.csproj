@@ -66,8 +66,8 @@
     <Compile Include="Session.cs" />
     <Compile Include="SessionDuration.cs" />
     <Compile Include="SessionFeedback.cs" />
-    <Compile Include="SessionMessageType.cs" />
-    <Compile Include="SessionMessage.cs" />
+    <Compile Include="SessionCommentType.cs" />
+    <Compile Include="SessionComment.cs" />
     <Compile Include="SessionSettings.cs" />
     <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />
