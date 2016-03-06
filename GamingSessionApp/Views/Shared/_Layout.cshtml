@@ -4,26 +4,69 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="~/Media/favicons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/Media/favicons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/Media/favicons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Media/favicons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/Media/favicons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/Media/favicons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/Media/favicons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/Media/favicons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Media/favicons/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image~/Media/favicons/png" href="~/Media/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image~/Media/favicons/png" href="~/Media/favicons/favicon-194x194.png" sizes="194x194">
+    <link rel="icon" type="image~/Media/favicons/png" href="~/Media/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image~/Media/favicons/png" href="~/Media/favicons/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image~/Media/favicons/png" href="~/Media/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="~/Media/favicons/manifest.json">
+    <link rel="mask-icon" href="~/Media/favicons/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="~/Media/favicons/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
     @Styles.Render("~/Content/css")
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
 <body>
-
+    
     @* Navigation Menu *@
     @Html.Partial("_NavigationMenu")
 
+    @* Body *@
     <div class="container body-content">
-        <br/>
         <div id="error-box" class="alert alert-danger hidden" role="alert"></div>
-        <br/>
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Total Jammer</p>
-        </footer>
     </div>
+
+    @* Footer *@
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 text-center">
+                    <p class="font-16"><b>TriggerWars</b> - Designed and developed by <b>Luke Stoward</b> <i class="fa fa-twitter"></i>
+                    </p>
+                    <p class="font-14">Copyright &copy; @DateTime.Now.Year - TriggerWars </p>
+                    <ul class="dash-list">
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookies Policy</a></li>
+                        <li><a href="#">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <h5><b>STAY CONNECTED</b></h5>
+                    <ul>
+                        <li><a class="facebook" href="#" title="Facebook"><i class="fa fa-facebook-official"></i></a></li>
+                        <li><a class="twitter" href="#" title="Twitter"><i class="fa fa-twitter-square"></i></a></li>
+                        <li><a class="youtube" href="#" title="YouTube"><i class="fa fa-youtube-play"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/scripts")
