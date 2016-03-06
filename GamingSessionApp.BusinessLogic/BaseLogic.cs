@@ -81,6 +81,20 @@ namespace GamingSessionApp.BusinessLogic
             return$"/Images/{targetFolder}/{fileName}";
         }
 
+        /// <summary>
+        /// Creates X,000 to k shorthand
+        /// </summary>
+        /// <param name="kudos"></param>
+        /// <returns></returns>
+        protected string TrimKudos(string kudos)
+        {
+            if (kudos.Length <= 3)
+                return kudos;
+
+            int i = int.Parse(kudos);
+            return ((double)i / 1000).ToString("0.#k");
+        }
+
         public void Dispose()
         {
             UoW.Dispose();

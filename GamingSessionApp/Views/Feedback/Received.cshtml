@@ -1,0 +1,59 @@
+﻿@model IEnumerable<GamingSessionApp.ViewModels.Feedback.ReceivedFeedbackViewModel>
+
+@{
+    ViewBag.Title = "Received";
+}
+
+<h2>My Received</h2>
+
+<div id="feedback-container">
+    @foreach (var s in Model)
+    {
+        <section class="feedback-block row">
+
+            <div class="col-sm-12 feedback-heading border-bottom-blue">
+                <h3>
+                    <a href="@Url.Action("Details", "Sessions", new { id = s.SessionId })">@s.Type</a>
+                </h3>
+            </div>
+
+            @foreach (var f in s.UserFeedback)
+            {
+                <section class="feedback-item">
+                    <figure class="col-md-1 col-sm-2 hidden-xs feedback-profile">
+                        <img src="@f.UserThumbnail" width="48" height="48" title="@f.User" alt="Profile Pic" />
+                        <figcaption>
+                            <i class="fa fa-trophy"></i> @f.Kudos
+                        </figcaption>
+                    </figure>
+
+                    <div class="col-md-9 col-sm-8 feedback-content">
+                        <span class="pull-right date-time"><i class="fa fa-clock-o"></i> @Html.DisplayFor(m => f.SubmittedDisplayDate)</span>
+                        <h4>@Html.ActionLink(f.User, "UserProfile", "Profile", new { username = f.User }, null)</h4>
+
+                        <p class="feeback-display-pre">
+                            @if (string.IsNullOrWhiteSpace(f.Comments))
+                            {
+                                <i>
+                                    <small class="gray">No comment was left</small>
+                                </i>
+                            }
+                            else
+                            {
+                                @f.Comments
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-sm-2 feedback-rating">
+                        <input type="hidden" class="rating" data-readonly value="@f.Rating" />
+                        <p style="margin: 0">
+                            <i>@f.Rating / 10</i>
+                        </p>
+                    </div>
+                </section>
+            }
+
+        </section>
+    }
+</div>

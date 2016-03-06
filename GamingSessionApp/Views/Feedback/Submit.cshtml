@@ -6,62 +6,117 @@
 }
 
 <h1>Session Feedback</h1>
-<hr/>
+<hr />
 
-<p>
-    You are able to provide feedback after <b>@Model.SessionEndTime on @Model.SessionEndDate</b>. You should provide comments and a rating for each user that participated in the session.
-    Your comments and ratings will be publicly visible, so please refrain from submitting anything personal or confidential.
-</p>
+<div class="well well-info">
+    <p>
+        You are able to provide feedback after <b>@Model.SessionEndTime on @Model.SessionEndDate</b>.
+        You can amend the feedback you have provided up to <b>1 week</b> after this date.
+        From then on, your feedback will be locked in and you will be unable to make further changes.
+    </p>
+
+    <p>
+        You should provide comments and a rating for each user that participated in the session.
+        Your comments and ratings will be publicly visible, so please refrain from submitting anything personal or confidential.
+    </p>
+</div>
 
 <div>
     @Html.ActionLink("Session Details", "Details", "Sessions", new { id = Model.SessionId }, null)
 </div>
 
-@Html.SuccessMessage(ViewBag.SuccessMessage as string)
-@Html.ValidationSummary(true, "", new {@class = "text-danger"})
+@* If we can submit use form *@
+@if (Model.CanSubmitFeedback)
+{
 
-<div id="feedbackForm">
-    @using (Html.BeginForm("Submit", "Feedback"))
-    {
-        @Html.AntiForgeryToken()
+    @Html.SuccessMessage(ViewBag.SuccessMessage as string)
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
-        for (int i = 0; i < Model.UsersFeeback.Count; i++)
+    <div>
+        <span><b>Status:</b></span> <span class="label label-success">OPEN</span>
+    </div>
+
+    <div id="feedbackForm">
+        @using (Html.BeginForm("Submit", "Feedback"))
         {
-            <section class="feedback-block">
+            @Html.AntiForgeryToken()
 
-                <div class="col-sm-12 feedback-heading border-bottom-blue">
-                    <img src="@Model.UsersFeeback[i].UserThumbnail" width="48" height="48"/>
-                    <h3 class="feedback-recipient">
-                        @Html.DisplayFor(m => m.UsersFeeback[i].User)
-                    </h3>
-                </div>
+            for (int i = 0; i < Model.UsersFeeback.Count; i++)
+            {
+                <section class="feedback-block">
 
-                <section class="feedback-item">
-                    <div class="col-sm-10 feedback-content">
-                        @Html.LabelFor(m => m.UsersFeeback[i].Comments)
-                        @Html.TextAreaFor(m => m.UsersFeeback[i].Comments, new {@class = "form-control feedback-textarea"})
+                    <div class="col-sm-12 feedback-heading border-bottom-blue">
+                        <img src="@Model.UsersFeeback[i].UserThumbnail" width="48" height="48"/>
+                        <h3 class="feedback-recipient">
+                            @Html.DisplayFor(m => m.UsersFeeback[i].User)
+                        </h3>
                     </div>
 
-                    <div class="col-sm-2 feedback-rating">
-                        @Html.LabelFor(m => m.UsersFeeback[i].Rating)
-                        <br/>
-                        @Html.HiddenFor(m => m.UsersFeeback[i].Rating, new {@class = "rating"})
-                        <p><i class="rating-label">@Model.UsersFeeback[i].Rating / 10</i>
-                        </p>
-                        @Html.ValidationMessageFor(m => m.UsersFeeback[i].Rating, "", new {@class = "text-danger"})
-                    </div>
+                    <section class="feedback-item">
+                        <div class="col-sm-10 feedback-content">
+                            @Html.LabelFor(m => m.UsersFeeback[i].Comments)
+                            @Html.TextAreaFor(m => m.UsersFeeback[i].Comments, new {@class = "form-control feedback-textarea"})
+                        </div>
+
+                        <div class="col-sm-2 feedback-rating">
+                            @Html.LabelFor(m => m.UsersFeeback[i].Rating)
+                            <br/>
+                            @Html.HiddenFor(m => m.UsersFeeback[i].Rating, new {@class = "rating"})
+                            <p>
+                                <i class="rating-label">@Model.UsersFeeback[i].Rating / 10</i>
+                            </p>
+                            @Html.ValidationMessageFor(m => m.UsersFeeback[i].Rating, "", new {@class = "text-danger"})
+                        </div>
+                    </section>
                 </section>
-            </section>
 
-            @Html.HiddenFor(m => m.UsersFeeback[i].UserId)
-            @Html.HiddenFor(m => m.UsersFeeback[i].User)
-            @Html.HiddenFor(m => m.UsersFeeback[i].UserThumbnail)
-        }
-        @Html.HiddenFor(m => m.SessionId)
+                @Html.HiddenFor(m => m.UsersFeeback[i].UserId)
+                @Html.HiddenFor(m => m.UsersFeeback[i].User)
+                @Html.HiddenFor(m => m.UsersFeeback[i].UserThumbnail)
+            }
+            @Html.HiddenFor(m => m.SessionId)
+            @Html.HiddenFor(m => m.SessionEndDate)
+            @Html.HiddenFor(m => m.SessionEndTime)
+            @Html.HiddenFor(m => m.CanSubmitFeedback)
 
-        <div class="form-group text-right">
+            <div class="form-group text-right">
                 <input type="submit" value="Save" class="btn btn-default"/>
                 @Html.ActionLink("Cancel", "Details", "Sessions", new {id = Model.SessionId}, new {@class = "btn btn-danger"})
-        </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div>
+        <span><b>Status:</b></span> <span class="label label-danger">LOCKED</span>
+    </div>
+
+    for (int i = 0; i < Model.UsersFeeback.Count; i++)
+    {
+        <section class="feedback-block">
+            <div class="col-sm-12 feedback-heading border-bottom-blue">
+                <img src="@Model.UsersFeeback[i].UserThumbnail" width="48" height="48" />
+                <h3 class="feedback-recipient">
+                    @Html.DisplayFor(m => m.UsersFeeback[i].User)
+                </h3>
+            </div>
+
+            <section class="feedback-item">
+                <div class="col-sm-10 feedback-content">
+                    @Html.LabelFor(m => m.UsersFeeback[i].Comments)
+                    @Html.TextAreaFor(m => m.UsersFeeback[i].Comments, new { @class = "form-control feedback-textarea", @readonly="true" })
+                </div>
+
+                <div class="col-sm-2 feedback-rating">
+                    @Html.LabelFor(m => m.UsersFeeback[i].Rating)
+                    <br />
+                    @Html.HiddenFor(m => m.UsersFeeback[i].Rating, new { @class = "rating", @data_readonly="true" })
+                    <p>
+                        <i class="rating-label">@Model.UsersFeeback[i].Rating / 10</i>
+                    </p>
+                </div>
+            </section>
+        </section>
     }
-</div>
+}

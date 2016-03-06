@@ -33,7 +33,6 @@ namespace GamingSessionApp.Models
         [Required]
         public int Rating { get; set; }
 
-        [Required]
         public string Comments { get; set; }
 
         //Who provided the feedback

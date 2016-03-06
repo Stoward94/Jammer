@@ -51,5 +51,7 @@ namespace GamingSessionApp.ViewModels.Feedback
 
         [DisplayFormat(DataFormatString = "{0:HH:mm | dd/MM/yy}", ApplyFormatInEditMode = true)]
         public DateTime Submitted { get; set; }
+
+        public string SubmittedDisplayDate { get; set; }
     }
 }

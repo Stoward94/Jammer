@@ -72,5 +72,34 @@ namespace GamingSessionApp.BusinessLogic
 
             return $"{dayOfWeek} {dayNumber}{daySuffix} {month} {year}";
         }
+
+        public static string ToMinsAgoTime(this DateTime time, DateTime now)
+        {
+            TimeSpan diff = now.Subtract(time);
+
+            int mins = (int) diff.TotalMinutes;
+
+            //Seconds ago
+            if (mins < 1)
+                return (int) diff.TotalSeconds + "s ago";
+
+            //Mins ago
+            if (mins < 60)
+                return mins + "m ago";
+
+            int hours = (int) diff.TotalHours;
+
+            //Hours ago
+            if (hours < 24)
+                return hours + "h ago";
+
+            int days = (int) diff.TotalDays;
+
+            //Yesterday
+            if(days < 2)
+                return time.ToString("HH:mm") + " yesterday";
+
+            return time.ToString("HH:mm | dd/MM/yy");
+        }
     }
 }

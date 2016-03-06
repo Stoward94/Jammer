@@ -21,6 +21,12 @@ namespace GamingSessionApp.BusinessLogic
             _feedbackRepo = UoW.Repository<SessionFeedback>();
         }
 
+        /// <summary>
+        /// Gets the submission feeback view model, so the user can create/update feedback
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<CreateFeedbackViewModel> SubmitFeedbackViewModel(Guid sessionId, string userId)
         {
             try
@@ -80,6 +86,7 @@ namespace GamingSessionApp.BusinessLogic
                         feedback.UserId = m.UserId;
                         feedback.UserThumbnail = m.ThumbnailUrl;
                         feedback.User = m.DisplayName;
+                        feedback.Rating = 8; // Default to 8
                     }
 
                     model.UsersFeeback.Add(feedback);
@@ -100,6 +107,12 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+        /// <summary>
+        /// Handles the submission of feedback data for a list of users.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<ValidationResult> SubmitFeedback(CreateFeedbackViewModel model, string userId)
         {
             try
@@ -115,6 +128,9 @@ namespace GamingSessionApp.BusinessLogic
 
                 foreach (var f in model.UsersFeeback)
                 {
+                    //Null checks
+                    f.Comments = f.Comments ?? string.Empty;
+
                     var existing = feedbacks.FirstOrDefault(x => x.UserId == f.UserId);
 
                     //Update existing?
@@ -162,6 +178,12 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+        /// <summary>
+        /// Gets all the feedback submitted for a given session, grouped by feedback owner
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<SessionFeedbackViewModel> GetSessionFeedback(Guid sessionId, string userId)
         {
             try
@@ -233,13 +255,9 @@ namespace GamingSessionApp.BusinessLogic
                     foreach (var f in p.Feedback)
                     {
                         f.Submitted = f.Submitted.ToTimeZoneTime(GetUserTimeZone());
+                        f.SubmittedDisplayDate = f.Submitted.ToMinsAgoTime(now);
                         f.UserThumbnail = GetImageUrl(f.UserThumbnail, "48x48");
-
-                        if (f.Kudos.Length > 3)
-                        {
-                            int i = int.Parse(f.Kudos);
-                            f.Kudos = ((double) i/1000).ToString("0.#k");
-                        }
+                        f.Kudos = TrimKudos(f.Kudos);
                     }
                 }
 
@@ -249,6 +267,62 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex, "Unable to get session feedback for session : " + sessionId);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the received feedback for the user, grouped by session
+        /// </summary>
+        /// <param name="userId">Current user</param>
+        /// <returns></returns>
+        public async Task<List<ReceivedFeedbackViewModel>> GetReceivedFeedback(string userId)
+        {
+            try
+            {
+                UserId = userId;
+
+                //Select all of the users received feeback
+                List<ReceivedFeedbackViewModel> sessionFeedback = await _feedbackRepo.Get(x => x.UserId == userId)
+                    .GroupBy(g => g.Session)
+                    .Select(x => new ReceivedFeedbackViewModel
+                    {
+                        SessionId = x.Key.Id,
+                        ScheduledDate = x.Key.ScheduledDate,
+                        Type = x.Key.Type.Name,
+                        UserFeedback = x.Select(f => new UserFeedbackViewModel { 
+                           User = f.Owner.DisplayName,
+                           UserThumbnail = f.Owner.ThumbnailUrl,
+                           Kudos = f.Owner.Kudos.Points.ToString(),
+                           Comments = f.Comments,
+                           Rating = f.Rating,
+                           Submitted = f.CreatedDate
+                        }).ToList()
+                    })
+                    .OrderBy(x => x.ScheduledDate)
+                    .Take(5)
+                    .ToListAsync();
+
+                //Convert time to time zone
+                //Get 48x48 thumbnail url
+                var now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                foreach (var s in sessionFeedback)
+                {
+                    foreach (var f in s.UserFeedback)
+                    {
+                        f.Submitted = f.Submitted.ToTimeZoneTime(GetUserTimeZone());
+                        f.SubmittedDisplayDate = f.Submitted.ToMinsAgoTime(now);
+                        f.UserThumbnail = GetImageUrl(f.UserThumbnail, "48x48");
+                        f.Kudos = TrimKudos(f.Kudos);
+                    }
+                }
+
+                return sessionFeedback;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to get received feedback for user : " + userId);
+                throw new Exception("Error fetching your feedback", ex);
             }
         }
     }

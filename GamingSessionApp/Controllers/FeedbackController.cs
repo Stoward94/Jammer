@@ -42,11 +42,7 @@ namespace GamingSessionApp.Controllers
             if (model == null) return HttpNotFound();
 
             //Can submit then return submit view
-            if (model.CanSubmitFeedback)
-                return View(model);
-
-            //Else return the details view
-            return PartialView("_View", model);
+            return View(model);
         }
 
         [HttpPost]
@@ -68,6 +64,21 @@ namespace GamingSessionApp.Controllers
                 }
             }
 
+            return View(model);
+        }
+
+        /// <summary>
+        /// Get all the users received feedback
+        /// </summary>
+        /// <returns>List of user feedback</returns>
+        [HttpGet]
+        public async Task<ActionResult> Received()
+        {
+            var model = await _feedbackLogic.GetReceivedFeedback(UserId);
+
+            if (model == null) return HttpNotFound();
+
+            //Can submit then return submit view
             return View(model);
         }
 

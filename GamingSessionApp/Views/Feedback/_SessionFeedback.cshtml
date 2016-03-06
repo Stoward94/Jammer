@@ -14,7 +14,7 @@
 {
     <div class="alert alert-info" role="alert">
         <i class="fa fa-info-circle fa-lg"></i>
-        You can submit or update your feedback for this session by clicking the button below. You can earn kudos by completing feedback, so don't delay!
+        You can submit or update your feedback for this session by clicking the button below. You can earn <b><i class="fa fa-trophy"></i> kudos</b> by completing feedback, so don't delay!
     </div>
 
     @Html.ActionLink("My Feedback", "Submit", "FeedBack", new { sessionId = Model.SessionId }, new { @class = "btn btn-default" })
@@ -25,7 +25,6 @@
     Feedback can be provided for the session once it has been completed. You can amend the feedback you have provided up to <b>1 week</b> after the session has been completed.
     After this point the feedback submitted will become finalised and you will no longer be able to make further changes.
 </p>
-
 
 <div class="feedback-container">
     @foreach (var p in Model.Providers)
@@ -49,11 +48,18 @@
                     </figure>
 
                     <div class="col-md-9 col-sm-8 feedback-content">
-                        <span class="pull-right date-time"><i class="fa fa-clock-o"></i> @Html.DisplayFor(m => f.Submitted)</span>
+                        <span class="pull-right date-time"><i class="fa fa-clock-o"></i> @Html.DisplayFor(m => f.SubmittedDisplayDate)</span>
                         <h4>@Html.ActionLink(f.User, "UserProfile", "Profile", new { username = f.User }, null)</h4>
 
                         <p class="feeback-display-pre">
-                            @f.Comments
+                            @if (string.IsNullOrWhiteSpace(f.Comments))
+                            {
+                                <i><small class="gray">No comment was left</small></i>
+                            }
+                            else
+                            {
+                                @f.Comments
+                            }
                         </p>
                     </div>
 
