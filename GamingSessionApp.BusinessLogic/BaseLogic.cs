@@ -9,19 +9,23 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class BaseLogic
+    public class BaseLogic : IDisposable
     {
-        protected readonly UnitOfWork UoW = new UnitOfWork();
-        public string UserId { get; set; }
+
+        protected readonly UnitOfWork UoW = UnitOfWork.Instance;
+        public string UserId { protected get; set; }
 
         private UserManager<ApplicationUser> _userManager;
         private ApplicationUser _applicationUser;
         private TimeZoneInfo _userTimeZone;
 
+        private static bool _disposed;
+
         protected ValidationResult VResult;
 
         protected BaseLogic()
         {
+            _disposed = false;
             VResult = new ValidationResult();
         }
 
@@ -95,10 +99,30 @@ namespace GamingSessionApp.BusinessLogic
             return ((double)i / 1000).ToString("0.#k");
         }
 
+        #region Dispose
+
         public void Dispose()
         {
-            UoW.Dispose();
+            Dispose(true);
+            //GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    UoW?.Dispose();
+                    //Null the singleton instance
+                    UnitOfWork.Instance = null;
+                    _userManager?.Dispose();
+                }
+            }
+            _disposed = true;
+        }
+
+        #endregion
     }
 
     public class ValidationResult
