@@ -1,0 +1,36 @@
+﻿@using GamingSessionApp.Helpers
+@model  GamingSessionApp.ViewModels.Notifications.AllNotificationsViewModel
+
+@{
+    ViewBag.Title = "My Notifications";
+}
+
+<h2>My Notifications (@Model.TotalCount)</h2>
+<hr/>
+<span>@Model.ShowingText</span>
+<div class="notif-container">
+    @foreach (var n in Model.Notifications)
+    {
+        <a href="@Url.NotificationTypeLink(n)">
+            <div class="row notif-row @(n.Read == false ? "unread" : "")">
+                <div class="col-sm-2">
+                    <img src="@n.SenderThumbnailUrl" alt="Profile image" width="36" height="36" />
+                </div>
+                <div class="col-sm-6">
+                    <p>@Html.Raw(n.Body)</p>
+                </div>
+                <div class="col-sm-2">
+                    @Html.NotificationTypeIcon(n.TypeId)
+                </div>
+                <div class="col-sm-2">
+                    <span class="date-time"><i class="fa fa-clock-o"></i> @n.DisplayDate</span>
+                </div>
+            </div>
+        </a>
+    }
+
+    <div class="pull-right">
+        @Html.PaginationFull(Model.PageSize, Model.PageNo, Model.TotalCount)
+    </div>
+</div>
+

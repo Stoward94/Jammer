@@ -13,7 +13,7 @@ var fetchUserNotifications = function () {
     var replaceTarget = $("#notif-placeholder");
 
     //If we already have notifications return
-    if (replaceTarget.children().length > 1) {
+    if (replaceTarget.html() !== "") {
         return;
     }
 

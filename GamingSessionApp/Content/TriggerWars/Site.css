@@ -9,10 +9,7 @@ html {
 
 
 .body-content {
-    padding-top: 20px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 200px;
+    padding: 20px 15px 200px 15px;
 }
 
 /* Adjust padding to accommodate for footer */
@@ -70,6 +67,10 @@ figcaption {
     white-space: pre-line;
 }
 
+/***************************
+    BOOTSTRAP OVERRIDES
+***************************/
+
 .navbar {
     border-radius: 0;
     border-bottom: 1px solid #e7e7e7;
@@ -90,6 +91,15 @@ figcaption {
 .navbar-nav > li > a:hover {
     border-bottom: 3px solid red;
 }
+
+.dropdown-menu {
+    padding: 0;
+}
+
+.divider {
+    margin: 0 !important;
+}
+
 
 .well-info {
     background: #d8f7ff;

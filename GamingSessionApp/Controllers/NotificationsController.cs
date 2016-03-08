@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 
@@ -18,7 +16,14 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        public async Task<ActionResult> ViewAll(int page = 1)
+        {
+            var model = await _notificationLogic.GetAllForUser(UserId, page);
+
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<PartialViewResult> GetNotifications()
         {
             if (Request.IsAjaxRequest())
@@ -32,7 +37,6 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task UpdateNotifications(List<Guid> ids)
         {
             if (ids == null) return;

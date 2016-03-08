@@ -24,9 +24,6 @@
 }
 
 /**** USER NOTIFICATIONS STYLES ****/
-.notif-dropdown {
-    padding: 0;
-}
 
 .notif-menu {
     width: 400px;
@@ -55,7 +52,7 @@
     scrollbar-track-color: #a3b2c2;
 }
 
-.notif-menu-header, .notif-footer {
+.dd-menu-header, .notif-footer {
     color: #777;
     font-size: 12px;
     border-bottom: 1px solid #d1d1d1;
@@ -71,7 +68,8 @@
     border-bottom: 1px solid #f1f1f1;
 }
 
-.notif-menu-item:hover {
+.notif-menu-item:hover, .dd-menu-item:hover,
+.notif-row:hover {
     background:#f1f1f1;
 }
 
@@ -110,6 +108,38 @@
 .notif-empty {
     padding: 10px;
     color: #393d40;
+}
+
+.notif-row {
+    padding: 20px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/**** SETTINGS DROPDOWN STYLES ****/
+
+.dd-menu {
+    padding: 0!important;
+    list-style: none;
+    background: #fff;
+    min-width: 200px;
+}
+
+.dd-menu-item {
+    padding: 10px;
+}
+
+.dd-menu-item a{
+    text-decoration: none;
+}
+
+.dd-menu-item-icon {
+    float: left;
+    width: 15%
+}
+
+.dd-menu-item-body {
+    float: left;
+    width: 85%        
 }
 
 
