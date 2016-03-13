@@ -34,5 +34,29 @@ namespace GamingSessionApp.BusinessLogic
             Invitation = 5,
             Comment = 6,
         }
+
+        public enum PlatformEnum
+        {
+            Windows = 1,
+            Xbox360 = 2,
+            XboxOne = 3,
+            Ps2 = 4,
+            Ps3 = 5,
+            Ps4 = 6,
+            Wii = 7,
+            WiiU = 8,
+            iOS = 9,
+            Android = 10,
+        }
+
+        public enum SessionTypeEnum
+        {
+            Boosting = 1,
+            Coop = 2,
+            Competitive = 3,
+            ClanMatch = 4,
+            CasualPlay = 5,
+            Achievement = 6
+        }
     }
 }

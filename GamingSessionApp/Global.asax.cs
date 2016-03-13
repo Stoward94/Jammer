@@ -20,9 +20,6 @@ namespace GamingSessionApp
             
             //Unity DI initialisation
             Bootstrapper.Initialise();
-
-            //AutoMapper Registration
-            AutoMapperConfig.RegisterMaps();
         }
     }
 }

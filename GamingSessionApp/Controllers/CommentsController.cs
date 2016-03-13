@@ -22,22 +22,30 @@ namespace GamingSessionApp.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(PostCommentViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                int commentId = await _commentLogic.AddSessionComment(model, UserId);
-
-                if (commentId != 0)
-                {
-                    var newComment = await _commentLogic.LoadComment(commentId, UserId);
-                    if (newComment != null)
-                    {
-                        return PartialView("_Comment", newComment);
-                    }
-                }
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Unable to post your comment at this time.Please try again later");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You cannot post nothing! Get typing");
             }
 
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You cannot post nothing! Get typing");
+            try
+            {
+                var comment = await _commentLogic.AddSessionComment(model, UserId);
+                return PartialView("_Comment", comment);
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError,
+                    "Unable to post your comment at this time.Please try again later");
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _commentLogic.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

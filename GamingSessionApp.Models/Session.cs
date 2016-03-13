@@ -24,6 +24,10 @@ namespace GamingSessionApp.Models
         public string CreatorId { get; set; }
         public UserProfile Creator { get; set; }
 
+        [ForeignKey("Game")]
+        public int GameId { get; set; }
+        public Game Game { get; set; }
+
         //When the Session was created
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -31,6 +35,10 @@ namespace GamingSessionApp.Models
         //Date of when the session is scheduled for
         [Required]
         public DateTime ScheduledDate { get; set; }
+
+        //Date/Time of expected session end time.
+        [Required]
+        public DateTime EndTime { get; set; }
 
         //What status is the session in
         public int StatusId { get; set; }
@@ -75,5 +83,7 @@ namespace GamingSessionApp.Models
         public ICollection<UserProfile> Members { get; set; }
 
         public ICollection<SessionFeedback> Feedback { get; set; }
+
+        public ICollection<SessionGoal> Goals { get; set; }
     }
 }

@@ -52,6 +52,18 @@
       <HintPath>..\packages\Elmah.Mvc.2.1.2\lib\net40\Elmah.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Flurl, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.1.0.10\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Flurl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.Http.0.7.0\lib\net45\Flurl.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IgdbApi, Version=0.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IgdbApi.0.1.1.5\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\IgdbApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -213,6 +225,7 @@
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\FeedbackController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IGDBController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
@@ -279,18 +292,18 @@
     <Content Include="Media\favicons\safari-pinned-tab.svg" />
     <Content Include="fonts\font-awesome\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Media\footer-logos.png" />
     <Content Include="Media\invitation-icon.png" />
     <Content Include="Media\loader.gif" />
-    <Content Include="Media\achievement-icon.png" />
-    <Content Include="Media\boosting-icon.png" />
-    <Content Include="Media\competitive-icon.png" />
     <Content Include="Media\ellipsis.gif" />
     <Content Include="Global.asax" />
     <Content Include="Content\TriggerWars\Site.css" />
     <Content Include="Media\logo-alt.svg" />
     <Content Include="Media\logo-light.svg" />
     <Content Include="Media\Logo.svg" />
+    <Content Include="Media\platform-icon-sprite.png" />
+    <Content Include="Media\search-loader.gif" />
+    <Content Include="Media\type-icons-sm.png" />
+    <Content Include="Media\type-icons.png" />
     <Content Include="Media\user-joined-icon.png" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\bootstrap-rating.min.js" />
@@ -377,7 +390,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -430,9 +445,11 @@
     <Content Include="Views\Feedback\_SessionFeedback.cshtml" />
     <Content Include="Views\Feedback\Received.cshtml" />
     <Content Include="Views\Comments\_Comment.cshtml" />
+    <Content Include="Views\Notifications\ViewAll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\IGDB\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

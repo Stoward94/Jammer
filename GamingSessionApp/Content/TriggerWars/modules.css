@@ -9,7 +9,7 @@
 }
 
 .comment {
-    margin-top:10px;
+    margin-top: 10px;
 }
 
 .comment-body {
@@ -20,7 +20,7 @@
 
 .figure-center {
     margin-top: 10px;
-    text-align: center
+    text-align: center;
 }
 
 /**** USER NOTIFICATIONS STYLES ****/
@@ -36,7 +36,7 @@
 }
 
 .notif-menu::-webkit-scrollbar {
-    width:  .5em;
+    width: .5em;
     height: .5em;
 }
 
@@ -60,21 +60,22 @@
     background: #f7f7f7;
 }
 
-.notif-menu-item > a > div{
+.notif-menu-item > a > div {
     padding: 10px;
     font-size: 12px;
 }
+
 .notif-menu-item {
     border-bottom: 1px solid #f1f1f1;
 }
 
 .notif-menu-item:hover, .dd-menu-item:hover,
 .notif-row:hover {
-    background:#f1f1f1;
+    background: #f1f1f1;
 }
 
 .notif-icon, .notif-body {
-    float:left;
+    float: left;
 }
 
 .notif-icon {
@@ -92,7 +93,7 @@
 
 .notif-footer {
     width: 100%;
-    border-top:1px solid #d1d1d1;
+    border-top: 1px solid #d1d1d1;
     padding: 4px;
     text-align: center;
 }
@@ -118,7 +119,7 @@
 /**** SETTINGS DROPDOWN STYLES ****/
 
 .dd-menu {
-    padding: 0!important;
+    padding: 0 !important;
     list-style: none;
     background: #fff;
     min-width: 200px;
@@ -128,19 +129,197 @@
     padding: 10px;
 }
 
-.dd-menu-item a{
+.dd-menu-item a {
     text-decoration: none;
 }
 
 .dd-menu-item-icon {
     float: left;
-    width: 15%
+    width: 15%;
 }
 
 .dd-menu-item-body {
     float: left;
-    width: 85%        
+    width: 85%;
 }
+
+
+/**********************************************
+    CREATE SESSION STYLES
+**********************************************/
+
+.types {
+    margin-bottom: 20px;
+}
+
+/* Platform icons */
+
+.platform-icon {
+    display: inline-block;
+    width: 64px;
+    height: 70px;
+    position: relative;
+    background: url("../../Media/platform-icon-sprite.png");
+    -webkit-transition: background 0.2s;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.platform-icon::after {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  content: "";
+  background-color: #3399ff;
+  -webkit-transition: height 0.2s;
+          transition: height 0.2s;
+}
+
+.platform-icon:hover::after, .platform-icon.selected::after {
+  height: 3px;
+}
+
+.platform-pc { background-position: 0 0; }
+.platform-pc:hover, .platform-pc.selected { background-position: 0 -5px; }
+
+.platform-xbox { background-position: 0 -70px;}
+.platform-xbox:hover, .platform-xbox.selected { background-position: 0 -75px; }
+
+.platform-xbox-one { background-position: 0 -140px; }
+.platform-xbox-one:hover, .platform-xbox-one.selected { background-position: 0 -145px; }
+
+.platform-ps2 { background-position: 0 -210px; }
+.platform-ps2:hover, .platform-ps2.selected { background-position: 0 -215px; }
+
+.platform-ps3 { background-position: 0 -280px; }
+.platform-ps3:hover, .platform-ps3.selected { background-position: 0 -285px; }
+
+.platform-ps4 { background-position: 0 -350px; }
+.platform-ps4:hover, .platform-ps4.selected { background-position: 0 -355px; }
+
+.platform-wii { background-position: 0 -420px; }
+.platform-wii:hover, .platform-wii.selected { background-position: 0 -425px; }
+
+.platform-wii-u { background-position: 0 -490px; }
+.platform-wii-u:hover, .platform-wii-u.selected { background-position: 0 -495px; }
+
+.platform-ios { background-position: 0 -560px; }
+.platform-ios:hover, .platform-ios.selected { background-position: 0 -565px; }
+
+.platform-android { background-position: 0 -630px; }
+.platform-android:hover, .platform-android.selected { background-position: 0 -635px; }
+
+/* Type icons */
+
+.type-icon {
+    display: inline-block;
+    width: 96px;
+    height: 144px;
+    position: relative;
+    background: url("../../Media/type-icons.png");
+    -webkit-transition: background 0.2s;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.type-icon::after {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  content: "";
+  background-color: orange;
+  -webkit-transition: height 0.2s;
+          transition: height 0.2s;
+}
+
+.type-icon:hover::after, .type-icon.selected::after {
+  height: 5px;
+}
+
+.type-boosting { background-position: 0 0; }
+.type-boosting:hover, .type-boosting.selected { background-position: 0 -5px; }
+
+.type-achievement { background-position: 0 -144px; }
+.type-achievement:hover, .type-achievement.selected { background-position: 0 -149px; }
+
+.type-competitive { background-position: 0 -288px; }
+.type-competitive:hover, .type-competitive.selected { background-position: 0 -293px; }
+
+.type-clan { background-position: 0 -432px; }
+.type-clan:hover, .type-clan.selected { background-position: 0 -437px; }
+
+.type-coop { background-position: 0 -576px; }
+.type-coop:hover, .type-coop.selected { background-position: 0 -581px; }
+
+.type-casual { background-position: 0 -720px; }
+.type-casual:hover, .type-casual.selected { background-position: 0 -725px; }
+
+
+.goals-panel {
+    max-height: 280px;
+    overflow: auto;
+}
+
+#goals-ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.goal-item {
+    margin: 5px 0;
+}
+
+.goal-item input, .goal-item input:active,
+.goal-item input:focus {
+    border: none;
+    border-bottom: 1px solid orange;
+    width: 85%;
+    padding: 3px;
+}
+
+#add-goal {
+    color: darkgoldenrod;
+}
+
+.session-create-btn {
+    border: 2px solid rgb(41, 113, 196);
+    padding: 10px 20px;
+    width: 100%;
+    color: rgb(255, 255, 255);
+    text-transform: capitalize;
+    background: rgb(51, 153, 255);
+    max-width: 400px;
+    font-size: 1.2em;
+}
+
+.session-create-btn:hover {
+    border-color:rgb(36, 99, 172);
+    color: rgb(255, 255, 255);
+    background: rgb(47, 136, 225);
+}
+
+/**********************************************
+    SESSION LIST STYLES
+**********************************************/
+.type-icon-sm {
+    display: inline-block;
+    width: 64px;
+    height: 66px;
+    background: url("../../Media/type-icons-sm.png");
+}
+.type-boosting-sm { background-position: 0 0; }
+.type-achievement-sm { background-position: 0 -66px; }
+.type-competitive-sm { background-position: 0 -132px; }
+.type-clan-sm { background-position: 0 -198px; }
+.type-coop-sm { background-position: 0 -264px; }
+.type-casual-sm { background-position: 0 -330px; }
 
 
 /**********************************************

@@ -13,7 +13,7 @@ namespace GamingSessionApp.ViewModels.Home
 
         public string Platform { get; set; }
 
-        public string Type { get; set; }
+        public int TypeId { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:HH:mm | MMM dd, yyyy}")]
         public DateTime ScheduledDate { get; set; }

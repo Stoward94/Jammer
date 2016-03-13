@@ -63,14 +63,14 @@ namespace GamingSessionApp.Migrations
             }
 
             //Seed the SessionDuration Values
-            context.SessionDurations.AddOrUpdate(d => d.Minutes,
-                new SessionDuration {Duration = "0 - 30 Minutes", Minutes = 30 },
-                new SessionDuration {Duration = "30 - 60 Minutes", Minutes = 60 },
-                new SessionDuration {Duration = "1 - 2 Hours", Minutes = 120 },
-                new SessionDuration {Duration = "2 - 3 Hours", Minutes = 180 },
-                new SessionDuration {Duration = "3 - 4 Hours", Minutes = 240 },
-                new SessionDuration {Duration = "4 - 5 Hours", Minutes = 300 },
-                new SessionDuration {Duration = "5+ hours", Minutes = 301 }
+            context.SessionDurations.AddOrUpdate(d => d.Id,
+                new SessionDuration { Id = 30, Duration = "0 - 30 Minutes", Minutes = 30 },
+                new SessionDuration { Id = 60, Duration = "30 - 60 Minutes", Minutes = 60 },
+                new SessionDuration { Id = 120, Duration = "1 - 2 Hours", Minutes = 120 },
+                new SessionDuration { Id = 180, Duration = "2 - 3 Hours", Minutes = 180 },
+                new SessionDuration { Id = 240, Duration = "3 - 4 Hours", Minutes = 240 },
+                new SessionDuration { Id = 300, Duration = "4 - 5 Hours", Minutes = 300 },
+                new SessionDuration { Id = 301, Duration = "5+ hours", Minutes = 301 }
                 );
 
             //Seed the SessionStatus Statuses
@@ -100,8 +100,9 @@ namespace GamingSessionApp.Migrations
                 "PC",
                 "Xbox 360",
                 "Xbox One",
-                "Play Station 3",
-                "Play Station 4",
+                "PlayStation 2",
+                "PlayStation 3",
+                "PlayStation 4",
                 "Wii",
                 "Wii U",
                 "iOS",

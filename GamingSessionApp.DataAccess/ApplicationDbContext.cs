@@ -66,6 +66,8 @@ namespace GamingSessionApp.DataAccess
             base.OnModelCreating(modelBuilder);
         }
 
+        public DbSet<Game> Games { get; set; }
+
         public DbSet<Session> Sessions { get; set; }
 
         public DbSet<SessionStatus> SessionStatuses { get; set; }
@@ -77,6 +79,8 @@ namespace GamingSessionApp.DataAccess
         public DbSet<SessionCommentType> SessionMessageTypes { get; set; }
 
         public DbSet<SessionDuration> SessionDurations { get; set; }
+
+        public DbSet<SessionGoal> SessionGoals { get; set; }
 
         public DbSet<Platform> Platforms { get; set; }
 

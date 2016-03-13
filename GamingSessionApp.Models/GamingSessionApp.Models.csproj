@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="ApplicationUser.cs" />
     <Compile Include="EmailReminderTime.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Kudos.cs" />
     <Compile Include="KudosHistory.cs" />
     <Compile Include="Platform.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="SessionFeedback.cs" />
     <Compile Include="SessionCommentType.cs" />
     <Compile Include="SessionComment.cs" />
+    <Compile Include="SessionGoal.cs" />
     <Compile Include="SessionSettings.cs" />
     <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />

@@ -52,8 +52,13 @@ namespace GamingSessionApp.Controllers
                 //Pass the view model to the create logic
                 ValidationResult result = await _sessionLogic.CreateSession(viewModel, UserId);
 
-                if(result.Success)
+                if (result.Success)
+                {
+                    if (result.Data != null)
+                        return RedirectToAction("Details", new {id = result.Data});
+
                     return RedirectToAction("Index");
+                }
 
                 //Something went wrong
                 ModelState.AddModelError("", result.Error);

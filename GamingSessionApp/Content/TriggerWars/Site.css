@@ -1,4 +1,5 @@
-﻿body {
+﻿
+body {
     margin:0;
 	min-height: 100%;
     position: relative;
@@ -12,6 +13,9 @@ html {
     padding: 20px 15px 200px 15px;
 }
 
+.ui-autocomplete-loading {
+    background: white url("../../Media/search-loader.gif") 92% center no-repeat;
+  }
 /* Adjust padding to accommodate for footer */
 @media (max-width: 767px) {
   .body-content {
@@ -43,17 +47,38 @@ html {
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select
-/*textarea*/ {
-    max-width: 280px;
-}
-
 figcaption {
     color: gray;
     margin-top: 5px;
 }
+
+.heading-lines {
+  position: relative;
+  overflow: hidden;
+    text-align: center;
+}
+
+.heading-lines span {
+  display: inline-block;
+  vertical-align: baseline;
+  zoom: 1;
+  *display: inline;
+  *vertical-align: auto;
+  position: relative;
+  padding: 0 20px;
+}
+
+.heading-lines span:before,
+.heading-lines span:after {
+    border-top: 1px solid #f1f1f1;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0.6em;
+    width: 100%;
+}
+.heading-lines span:before { right: 100% }
+.heading-lines span:after { left: 100%; }
 
 .margin-none {
     margin:0;
@@ -100,6 +125,61 @@ figcaption {
     margin: 0 !important;
 }
 
+.control-label {
+    color: #5f5f5f;
+}
+
+.form-control, .form-control:focus {
+    border-color: #3399ff;
+    border-radius: 0;
+}
+
+/***************************
+    FORM STYLES
+***************************/
+
+.error-msg {
+    margin: 10px 5px;
+    color: #a94442;
+}
+
+.info-icon {
+    color: #3399FF;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-search, .input-cal, .input-clock,
+i.input-icon-l {
+    position: absolute;
+    right: 10px;
+    top: 30%;
+    z-index: 10;
+    color: #555;
+}
+select.input-icon-l {
+    padding-left: 25px;
+}
+i.input-icon-l {
+    left: 10px;
+    right: 100%;
+}
+
+.search-control {
+    padding-right: 11%;
+}
+
+.byline {
+    font-size: 0.75em;
+    color: gray;
+    display: block;
+}
+
+/*************************/
 
 .well-info {
     background: #d8f7ff;

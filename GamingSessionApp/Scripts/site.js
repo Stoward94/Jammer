@@ -3,6 +3,15 @@
 $.validator.setDefaults({ ignore: null });
 $.ajaxSetup({ cache: false });
 
+$.validator.setDefaults({
+    highlight: function (element) {
+        $(element).closest(".form-group").addClass("has-error");
+    },
+    unhighlight: function (element) {
+        $(element).closest(".form-group").removeClass("has-error");
+    }
+});
+
 //Fix to stop notif menu disappering when clicking inside
 $('.dropdown-menu').click(function (e) {
     e.stopPropagation();
@@ -118,7 +127,8 @@ function DisplayError(message) {
 var tinymceInitialise = function(){
     tinymce.init({
         selector: ".rich-text-area",
-        max_width : 700,
+        max_width: 700,
+        min_height : 150,
         plugins: "emoticons,autolink,link",
         toolbar: "undo redo | bold italic | bullist numlist | link | emoticons",
         menubar: false,
@@ -183,16 +193,32 @@ $("#mark-read-btn").click(function () {
 });
 
 //Games search auto complete
-//$("#game-autocomplete").autocomplete({
-//    source: function (request, response) {
+$("input[data-igdb-ac]").autocomplete({
+    source: function (request, response) {
+    var options = {
+        url: "/IGDB/Search",
+        dataType: "json",
+        data: { q: request.term },
+        method: "GET"
+    };
 
-//        var options = { q: request.term };
-
-//        window.IGDB.games.search(options, function(data) {
-//            alert(data);
-//        });
-//    }
-//});
+    $.ajax(options)
+        .done(function (data) {
+            response(data);
+        });
+    },
+    minLength: 2,
+    select: function (event, ui) {
+        $("input[data-igdb-ac]").val(ui.item.label);
+        $("#IgdbGameId").val(ui.item.id);
+        return false;
+    }
+})
+.autocomplete("instance")._renderItem = function (ul, item) {
+    return $("<li>")
+      .append("<a>" + item.label + "<br><span class='date-time'>Released: " + item.date + "</span></a>")
+      .appendTo(ul);
+};
 
 //Session Feedback Tab Ajax
 $('a[data-toggle="tab"][data-ajax-url]').on("shown.bs.tab", function(e) {

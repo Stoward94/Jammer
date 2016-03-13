@@ -21,23 +21,18 @@ namespace GamingSessionApp.BusinessLogic
         private readonly GenericRepository<Session> _sessionRepo;
 
         //Business Logics
-        private readonly SessionCommentLogic _commentLogic;
+        private SessionCommentLogic _commentLogic;
         private readonly SessionDurationLogic _durationLogic;
-        private readonly SessionTypeLogic _typeLogic;
-        private readonly PlatformLogic _platformLogic;
 
-    #endregion
+        #endregion
 
-    #region Constructor
+        #region Constructor
 
         public SessionLogic()
         {
             _sessionRepo = UoW.Repository<Session>();
-
-            _commentLogic = new SessionCommentLogic();
+            
             _durationLogic = new SessionDurationLogic();
-            _typeLogic = new SessionTypeLogic();
-            _platformLogic = new PlatformLogic();
         }
 
         #endregion
@@ -105,25 +100,64 @@ namespace GamingSessionApp.BusinessLogic
                     {
                         IsPublic = true,
                         ApproveJoinees = model.ApproveJoinees
-                    }
+                    },
+                    Goals = new List<SessionGoal>()
                 };
 
+                //Build the Goals list
+                foreach (var g in model.Goals)
+                {
+                    //Skip blank/empty goals
+                    if (string.IsNullOrWhiteSpace(g)) continue;
+
+                    session.Goals.Add(new SessionGoal {Goal = g});
+                }
+
                 //Convert all dates to UTC format
-                ConvertSessionTimesToUtc(session);
+                session.ScheduledDate = TimeZoneInfo.ConvertTimeToUtc(session.ScheduledDate, GetUserTimeZone());
+                session.EndTime = session.ScheduledDate.AddMinutes(session.DurationId);
 
                 //Future date check
                 if (session.ScheduledDate < DateTime.UtcNow)
                     return VResult.AddError("You must schedule the session to be a future date and time.");
 
-               Session conflictSession = await CheckForSessionConflict(session, userId);
+                //Check if this session conflicts with any of the users sessions.
+                Session conflictSession = await CheckForSessionConflict(session, userId);
 
                 if (conflictSession != null)
-                    return VResult.AddError("This sessions time conflicts with an existing session. " +
-                                            "Please pick another date and time.");
+                {
+                    DateTime conflictDate = conflictSession.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    string time = conflictDate.ToString("HH:mm");
+                    string date = conflictDate.ToShortDateString();
+                    string warningMsg =
+                        $"This sessions time overlaps with your session: {conflictSession.Game.GameTitle} ({conflictSession.Platform.Name}) at {time} on {date}. "
+                         + "Please pick another date or time";
+                    return VResult.AddError(warningMsg);
+                }
+                    
 
-                
+                //Add the game to the session
+                //Check to see if this game exists in my db
+                GameLogic gLogic = new GameLogic();
+                var existingGame = await gLogic.ExistingGame(model.IgdbGameId, model.GameTitle);
+
+                //Either use existing gameId or create a new game.
+                if (existingGame == null)
+                {
+                    session.Game = new Game
+                    {
+                        IgdbGameId = model.IgdbGameId,
+                        GameTitle = model.GameTitle
+                    };
+                }
+                else
+                {
+                    session.GameId = existingGame.Id;
+                }
+
 
                 //Add the intial message to the session messages feed
+                _commentLogic = new SessionCommentLogic();
                 _commentLogic.AddSessionCreatedComment(session);
 
                 //Load the UserProfile of the creator to add as a member
@@ -136,7 +170,7 @@ namespace GamingSessionApp.BusinessLogic
                 _sessionRepo.Insert(session);
                 await SaveChangesAsync();
 
-                //Send out invites to users if applicable
+                //Send out invites to users if any
                 if (!string.IsNullOrEmpty(model.InviteRecipients))
                 {
                     List<string> usernames = model.InviteRecipients.Split(',').ToList();
@@ -152,9 +186,12 @@ namespace GamingSessionApp.BusinessLogic
                     await email.SessionInviteEmail(session, creator.DisplayName, recipients);
 
                     //Send Notification
-                    NotificationLogic notif = new NotificationLogic();
-                    await notif.SessionInviteNotification(session, creator.UserId, recipients);
+                    NotificationLogic nLogic = new NotificationLogic();
+                    await nLogic.SessionInviteNotification(session, creator.UserId, recipients);
                 }
+
+                //Add session Id to VResult data
+                VResult.Data = session.Id;
 
                 return VResult;
             }
@@ -234,8 +271,6 @@ namespace GamingSessionApp.BusinessLogic
 
             //Add the select lists options
             viewModel.DurationList = await _durationLogic.GetDurationSelectList();
-            viewModel.SessionTypeList = await _typeLogic.GetTypeSelectList();
-            viewModel.PlatformList = await _platformLogic.GetPlatformSelectList();
             
             //Get the 'how many gamers needed' list options
             viewModel.GamersRequiredList = GetGamersRequiredOptions();
@@ -252,8 +287,6 @@ namespace GamingSessionApp.BusinessLogic
         {
             //Add the select lists options
             viewModel.DurationList = await _durationLogic.GetDurationSelectList();
-            viewModel.SessionTypeList = await _typeLogic.GetTypeSelectList();
-            viewModel.PlatformList = await _platformLogic.GetPlatformSelectList();
 
             return viewModel;
         } 
@@ -295,8 +328,6 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Add the select lists options
                 viewModel.DurationList = await _durationLogic.GetDurationSelectList();
-                viewModel.SessionTypeList = await _typeLogic.GetTypeSelectList();
-                viewModel.PlatformList = await _platformLogic.GetPlatformSelectList();
 
 
                 return viewModel;
@@ -379,31 +410,27 @@ namespace GamingSessionApp.BusinessLogic
 
         /// <summary>
         /// Checks through the users session to see if the new 
-        /// session conflicts with any of them.
+        /// session conflicts with the duration of them.
         /// </summary>
-        /// <param name="tSession"></param>
+        /// <param name="newSession"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        private async Task<Session> CheckForSessionConflict(Session tSession, string userId)
+        private async Task<Session> CheckForSessionConflict(Session newSession, string userId)
         {
-            //Load user
-            List<Session> userSessions = await _sessionRepo.Get(x => x.CreatorId == userId)
-                .Include(x => x.Duration)
-                .Where(x => x.Active)
-                .ToListAsync();
+            //Calculate the end date/time 
+            DateTime startDate = newSession.ScheduledDate;
+            DateTime endDate = newSession.EndTime;
 
+            //Check for any user session that occurs between this new sessions start time
+            Session conflictSession = await _sessionRepo.Get(x => x.CreatorId == userId)
+                .Where(x => (x.ScheduledDate <= startDate && x.EndTime > startDate)//New session in the middle of existing
+                || (x.ScheduledDate >= startDate && x.EndTime < endDate)//Existing session in the middle of start and end
+                || (x.ScheduledDate >= startDate && x.ScheduledDate < endDate))//Existing session starts during
+                .Include(x => x.Game)
+                .Include(x => x.Platform)
+                .FirstOrDefaultAsync();
 
-            foreach (var s in userSessions)
-            {
-                if (tSession.ScheduledDate >= s.ScheduledDate &&
-                    tSession.ScheduledDate < s.ScheduledDate.AddMinutes(s.Duration.Minutes))
-                {
-                    //Return conflicting session
-                    return tSession;
-                }
-            }
-
-            //If no conflicts return null
-            return null;
+            return conflictSession;
         }
 
         /// <summary>

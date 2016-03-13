@@ -182,5 +182,21 @@ namespace GamingSessionApp.Helpers
 
             return new MvcHtmlString(nav.ToString());
         }
+
+        public static MvcHtmlString InfoPopUp(this HtmlHelper helper, string title, string body, string position)
+        {
+            var span = new TagBuilder("span");
+            span.MergeAttribute("data-toggle", "popover");
+            span.MergeAttribute("title", title);
+            span.MergeAttribute("data-content", body);
+            span.MergeAttribute("data-placement", position);
+
+            var i = new TagBuilder("i");
+            i.AddCssClass("fa fa-question-circle info-icon");
+
+            span.InnerHtml = i.ToString();
+
+            return new MvcHtmlString(span.ToString());
+        }
     }
 }
