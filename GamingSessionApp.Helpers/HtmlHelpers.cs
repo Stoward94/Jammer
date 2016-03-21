@@ -7,35 +7,45 @@ namespace GamingSessionApp.Helpers
 {
     public static class HtmlHelpers
     {
-        public static MvcHtmlString SessionTypeIcon(this HtmlHelper helper, string type)
+        public static MvcHtmlString SessionTypeIconSmall(this HtmlHelper helper, int typeId)
         {
-            var builder = new TagBuilder("img");
+            var div = new TagBuilder("div");
+            div.AddCssClass("type-icon-sm");
 
-            switch (type)
+            string typeName = string.Empty;
+
+            switch (typeId)
             {
-                case "Achievement hunting":
-                    builder.MergeAttribute("src", "/Media/achievement-icon.png");
+                case 1: //Boosting
+                    div.AddCssClass("type-boosting-sm");
+                    typeName = "Boosting";
                     break;
-                case "Boosting":
-                    builder.MergeAttribute("src", "/Media/boosting-icon.png");
+                case 2: //Co-op
+                    div.AddCssClass("type-coop-sm");
+                    typeName = "Co-op";
                     break;
-                case "Competitive":
-                    builder.MergeAttribute("src", "/Media/competitive-icon.png");
+                case 3: //Competitive
+                    div.AddCssClass("type-competitive-sm");
+                    typeName = "Competitive";
                     break;
-                case "Co-op":
-                    builder.MergeAttribute("src", "/Media/coop-icon.png");
+                case 4: //Clan Battle
+                    div.AddCssClass("type-clan-sm");
+                    typeName = "Clan Battle";
+                    break;
+                case 5: //Casual
+                    div.AddCssClass("type-casual-sm");
+                    typeName = "Casual";
+                    break;
+                case 6: //Achievement Hunting
+                    div.AddCssClass("type-achievement-sm");
+                    typeName = "Achievement | Trophy Hunting";
                     break;
             }
 
-
-            builder.MergeAttribute("alt", type);
-            builder.MergeAttribute("title", type);
-            builder.MergeAttribute("class", "img-circle");
-            builder.MergeAttribute("width", "48");
-            builder.MergeAttribute("height", "48");
+            div.MergeAttribute("title", typeName);
 
             // Render tag
-            return new MvcHtmlString(builder.ToString(TagRenderMode.SelfClosing));
+            return new MvcHtmlString(div.ToString());
         }
 
         public static MvcHtmlString SuccessMessage(this HtmlHelper helper, string message)
@@ -198,5 +208,112 @@ namespace GamingSessionApp.Helpers
 
             return new MvcHtmlString(span.ToString());
         }
+
+        public static MvcHtmlString SessionStatusLabel(this HtmlHelper helper, string status, string description, string placement = "right")
+        {
+            var span = new TagBuilder("span");
+            span.AddCssClass("label");
+            span.MergeAttribute("data-toggle", "popover");
+            span.MergeAttribute("title", status);
+            span.MergeAttribute("data-content", description);
+            span.MergeAttribute("data-placement", placement);
+
+            switch (status)
+            {
+                case "Open":
+                    span.AddCssClass("label-success");
+                    break;
+                case "Full":
+                    span.AddCssClass("label-warning");
+                    break;
+                case "In Progress":
+                    span.AddCssClass("label-info");
+                    break;
+                case "Completed":
+                    span.AddCssClass("label-danger");
+                    break;
+
+            }
+
+            span.SetInnerText(status);
+
+            return new MvcHtmlString(span.ToString());
+        }
+
+        public static MvcHtmlString PlatformIcon(this HtmlHelper helper, int platformId, string platform)
+        {
+            var div = new TagBuilder("div");
+            div.AddCssClass("platform-icon");
+            div.MergeAttribute("title", platform);
+
+            switch (platformId)
+            {
+                case 1: //Windows PC
+                    div.AddCssClass("platform-pc");
+                    break;
+                case 2: //Xbox 360
+                    div.AddCssClass("platform-xbox");
+                    break;
+                case 3: //Xbox One
+                    div.AddCssClass("platform-xbox-one");
+                    break;
+                case 4: //PS2
+                    div.AddCssClass("platform-ps2");
+                    break;
+                case 5: //PS3
+                    div.AddCssClass("platform-ps3");
+                    break;
+                case 6: //PS4
+                    div.AddCssClass("platform-ps4");
+                    break;
+                case 7: //Wii
+                    div.AddCssClass("platform-wii");
+                    break;
+                case 8: //Wii U
+                    div.AddCssClass("platform-wii-u");
+                    break;
+                case 9: //iOS
+                    div.AddCssClass("platform-ios");
+                    break;
+                case 10: //Android
+                    div.AddCssClass("platform-android");
+                    break;
+            }
+            
+            return new MvcHtmlString(div.ToString());
+        }
+
+        public static MvcHtmlString SessionTypeIcon(this HtmlHelper helper, int typeId, string type)
+        {
+            var div = new TagBuilder("div");
+            div.AddCssClass("type-icon");
+            div.MergeAttribute("title", type);
+
+            switch (typeId)
+            {
+                case 1: //Boosting
+                    div.AddCssClass("type-boosting");
+                    break;
+                case 2: //Co-op
+                    div.AddCssClass("type-coop");
+                    break;
+                case 3: //Competitive
+                    div.AddCssClass("type-competitive");
+                    break;
+                case 4: //Clan Battle
+                    div.AddCssClass("type-clan");
+                    break;
+                case 5: //Casual
+                    div.AddCssClass("type-casual");
+                    break;
+                case 6: //Achievement Hunting
+                    div.AddCssClass("type-achievement");
+                    break;
+            }
+
+            // Render tag
+            return new MvcHtmlString(div.ToString());
+        }
+
     }
 }

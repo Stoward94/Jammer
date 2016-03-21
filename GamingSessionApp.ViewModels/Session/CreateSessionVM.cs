@@ -67,6 +67,6 @@ namespace GamingSessionApp.ViewModels.Session
         public int MinRatingScore { get; set; }
         
         [DisplayName("Invite User(s)")]
-        public string InviteRecipients { get; set; }
+        public List<string> InviteRecipients { get; set; }
     }
 }

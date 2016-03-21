@@ -17,6 +17,7 @@ namespace GamingSessionApp.Controllers
 
         // Search IGDB Games
         [HttpGet]
+        [AllowAnonymous]
         public async Task<JsonResult> Search(string q)
         {
 

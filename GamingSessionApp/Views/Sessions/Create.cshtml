@@ -213,9 +213,9 @@
                         }
 
                         @Html.InfoPopUp(title, body, "bottom")
-                        
+
                         <div class="form-group">
-                            @Html.HiddenFor(m => m.MinRatingScore, new {@class = "rating"})
+                            @Html.HiddenFor(m => m.MinRatingScore, new { @class = "rating" })
                             <p style="margin: 0">
                                 <i>@Model.MinRatingScore / 10</i>
                             </p>
@@ -287,19 +287,38 @@
                 @Html.ValidationMessageFor(m => m.Information, "", new { @class = "error-msg" })
             </div>
         </div>
+
+        @* Submit Button *@
+        <div class="col-md-12 text-right">
+            <button type="button" class="invite-friends-btn" data-toggle="modal" data-target="#invite-modal">Invite Friends <i class="fa fa-send"></i></button>
+            <button type="submit" class="session-create-btn">Create Session <i class="fa fa-check"></i></button>
+        </div>
     </div>
 
-    @* Submit Button *@
-    <div class="form-group pull-right">
-        <button type="submit" class="session-create-btn">Create Session <i class="fa fa-check"></i></button>
+    <!-- Modal -->
+    <div class="modal fade" id="invite-modal" tabindex="-1" role="dialog" aria-labelledby="invite-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Invite Friends <i class="fa fa-send"></i></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="ajaxLoading" class="ajax-spinner"></div>
+                    <div id="invite-users"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
-}
+
+    }
 
 
 
 @section Scripts
 {
-    <script src="~/Scripts/moment.min.js"></script>
-    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Scripts/session.js"></script>
 }

@@ -92,6 +92,10 @@ figcaption {
     white-space: pre-line;
 }
 
+.inline-block {
+    display: inline-block;
+}
+
 /***************************
     BOOTSTRAP OVERRIDES
 ***************************/
@@ -99,7 +103,7 @@ figcaption {
 .navbar {
     border-radius: 0;
     border-bottom: 1px solid #e7e7e7;
-
+    margin-bottom: 0;    
 }
 
 .navbar-link {
@@ -132,6 +136,10 @@ figcaption {
 .form-control, .form-control:focus {
     border-color: #3399ff;
     border-radius: 0;
+}
+
+.label {
+    font-size: 1em;
 }
 
 /***************************

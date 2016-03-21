@@ -196,8 +196,6 @@ namespace GamingSessionApp.BusinessLogic
                     .Get(x => x.ProfileId == session.CreatorId)
                     .FirstOrDefaultAsync();
 
-                if (preferences == null) return;
-
                 //Attach nofitication
                 AddNotification(preferences, notification);
 

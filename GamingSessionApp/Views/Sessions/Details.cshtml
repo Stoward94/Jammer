@@ -1,151 +1,154 @@
 ﻿@model GamingSessionApp.ViewModels.Session.SessionDetailsVM
+@using GamingSessionApp.Helpers
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+@if (TempData.ContainsKey("ErrorMsg"))
+{
+    <div class="alert alert-danger" role="alert">@Html.Raw(TempData["ErrorMsg"])</div>
+}
 
-<h4>Session</h4> <span class="label label-info">@Model.Status</span>
+<div id="session-details" class="row">
+    <div class="col-md-1 text-center">
+        @Html.PlatformIcon(Model.PlatformId, Model.Platform)
+    </div>
+    <div class="col-md-6">
+        <h2 class="session-heading">@Model.GameTitle</h2>
+        <h4 class="session-sub-heading">Session begins on <b>@Model.ScheduledDisplayDate for @Model.Duration</b></h4>
+        <h5 class="gray">Created by: <b>@Html.ActionLink(Model.CreatorName, "UserProfile", "Profile", new {userName = Model.CreatorName}, null)</b></h5>
+
+        <div style="margin-top: 40px;">
+            <label class="control-label">Status:</label> @Html.SessionStatusLabel(Model.Status, Model.StatusDescription)
+        </div>
+    </div>
+    <div class="col-md-2 text-center">
+        @Html.SessionTypeIcon(Model.TypeId, "")
+    </div>
+    <div class="col-md-3 text-center">
+        <span style="display: block"><i>SHARE THIS SESSION</i></span>
+        <a href="#" class="social-icon icon-facebook facebook">facebook</a>
+        <a href="#" class="social-icon icon-twitter">twitter</a>
+        <a href="#" class="social-icon icon-googleplus">google+</a>
+    </div>
+</div>
+
 <hr />
-
-
 
 <div class="row">
     <div class="col-md-9">
-        @* Details *@
-        <div>
-            <dl class="dl-horizontal">
-                <dt>
-                    @Html.DisplayNameFor(m => m.Duration)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.Duration)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.Platform)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.Platform)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.Type)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.Type)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.CreatorName)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.CreatorName)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.CreatedDate)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.CreatedDate)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.ScheduledDate)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.ScheduledDate)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.MembersRequired)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.MembersRequired)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.MembersCount)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.MembersCount)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.Information)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.Information)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(m => m.IsPublic)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(m => m.IsPublic)
-                </dd>
-
-            </dl>
+        @* Goals *@
+        <div class="session-goals">
+            <div class="border-bottom-orange">
+                <label class="control-label">Objectives & Goals</label>
+            </div>
+            <div class="goals-panel">
+                @if (Model.Goals.Any())
+                {
+                    <ul id="goals-ul">
+                        @foreach (var g in Model.Goals)
+                        {
+                            <li class="goal-item">
+                                <i class="fa fa-gamepad"></i>
+                                @Html.TextBoxFor(m => g)
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p> No objectives or goals have been set for this session </p>
+                }
+            </div>
         </div>
+
+
+
+        @* Details *@
+        <div class="border-bottom-blue">
+            <label class="control-label">Session Details</label>
+        </div>
+        <div class="session-details">
+            @Html.Raw(Model.Information)
+        </div>
+
     </div>
     <div class="col-md-3">
         @* Members *@
+        <div class="border-bottom-red">
+            <label class="control-label"><i class="fa fa-users"></i> Members (@Model.MembersCount/@Model.MembersRequired)</label>
+        </div>
+        <div class="session-members">
+            <ul>
+                @foreach (var m in Model.Members)
+                {
+                    <li>
+                        <div class="clearfix">
+                            <div style="width: 20%; float: left">
+                                <img src="@m.ThumbnailUrl" alt="Profile Pic" width="36" height="36"/>
+                            </div>
+                            <div style="width: 40%; float: left">
+                                @Html.ActionLink(m.DisplayName, "UserProfile", "Profile", new {userName = m.DisplayName}, null)
+                            </div>
+                            <div style="width: 30%; float: left">
+                                <i class="fa fa-trophy"></i> @m.Kudos
+                            </div>
+                            <div style="width: 10%; float: left">
+                                <i class="fa fa-check" style="color: green" title="Confirmed"></i>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
 
-        <div class="panel panel-primary">
-            <div class="panel-heading">Members (@Model.MembersCount)</div>
-            <div class="panel-body">
-                <div id="members-div">
-                    <table style="width: 100%">
-                        <tbody>
-                            @foreach (var m in Model.Members)
-                            {
-                                <tr>
-                                    <td>
-                                        @if (m.IsHost)
-                                        {
-                                            <i class="fa fa-user-plus"></i>
-                                        }
-                                    </td>
-                                    <td>@Html.ActionLink(m.DisplayName, "UserProfile", "Profile", new { userName = m.DisplayName }, null)</td>
-                                    <td><i class="fa fa-trophy"></i> @m.Kudos</td>
-                                    <td><a href="#" title="Private Message"><i class="fa fa-envelope-o"></i></a></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        @Html.LabelFor(m => m.MinUserRating, new { @class = "control-label" })
+
+        @* Rating info popup *@
+        @{
+            string title = "Minimum User Rating";
+            string body = "Only users that meet the minimum user rating can join this session";
+        }
+
+        @Html.InfoPopUp(title, body, "bottom")
+
+        <div class="form-group">
+            @Html.HiddenFor(m => m.MinUserRating, new { @class = "rating", @readonly="" })
+            <p style="margin: 0">
+                <i>@Model.MinUserRating / 10</i>
+            </p>
         </div>
     </div>
 </div>
 
-
-<p>
+<div class="session-actions">
     @if (Model.CanJoin)
     {
-        @Html.ActionLink("Join", "JoinSession", "Sessions", new {sessionId = Model.Id}, new {@class = "btn btn-primary"})
+        <a class="tw-btn join-session-btn" href="@Url.Action("JoinSession", "Sessions", new {sessionId = Model.Id})">
+            <i class="fa fa-thumbs-o-up"></i> Join
+        </a>
     }
 
     @if (Model.CanLeave)
     {
-        @Html.ActionLink("Leave", "LeaveSession", "Sessions", new {sessionId = Model.Id}, new {@class = "btn btn-primary"})
+        <a class="tw-btn leave-session-btn" href="@Url.Action("LeaveSession", "Sessions", new {sessionId = Model.Id})">
+            Leave <i class="fa fa-thumbs-o-down"></i>
+        </a>
     }
-</p>
+
+    @if (Model.CanEdit)
+    {
+        <a class="tw-btn edit-session-btn" href="@Url.Action("Edit", "Sessions", new { id = Model.Id })">
+            Edit Session <i class="fa fa-pencil-square-o"></i>
+        </a>
+    }
+
+</div>
 
 @* Variables *@
 @{
-    string feedbackUrl = Url.Action("SessionFeedback", "Feedback", new {sessionId = Model.Id});
+    string feedbackUrl = Url.Action("SessionFeedback", "Feedback", new { sessionId = Model.Id });
 }
 
 @* Nav Tabs *@
@@ -160,7 +163,7 @@
 
 @* Tab Panes *@
 <div class="tab-content">
-    
+
     @* Comments Tab *@
     <div role="tabpanel" class="tab-pane active" id="comments">
         <div class="row">

@@ -23,15 +23,44 @@ namespace GamingSessionApp.Controllers
 
         #region All Sessions
         
+        //[HttpGet, AllowAnonymous]
+        //public async Task<ActionResult> Index(SessionsFilter filter)
+        //{
+        //    var sessions = await _sessionLogic.GetSessions(UserId, filter);
+            
+        //    //Filter options lists
+        //    ViewData["PlatformsList"] = await _sessionLogic.GetPlatformsList();
+        //    ViewData["TypesList"] = await _sessionLogic.GetTypesList();
+
+        //    return View(sessions);
+        //}
+
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Index()
         {
             var sessions = await _sessionLogic.GetSessions(UserId);
+
+            ViewData["Page"] = 1;
+            
+            //Filter options lists
+            ViewData["PlatformsList"] = await _sessionLogic.GetPlatformsList();
+            ViewData["TypesList"] = await _sessionLogic.GetTypesList();
+
             return View(sessions);
         }
 
+        [HttpGet, AllowAnonymous]
+        public async Task<ActionResult> Filter(SessionsFilter filter)
+        {
+            var sessions = await _sessionLogic.GetSessions(UserId, filter);
+
+            ViewData["Page"] = filter.Page;
+
+            return PartialView("_AllSessions", sessions);
+        }
+
         #endregion
-        
+
         #region Create Session
 
         // GET: Sessions/Create
@@ -90,11 +119,11 @@ namespace GamingSessionApp.Controllers
         #region Edit Session
 
         [HttpGet]
-        public async Task<ActionResult> Edit(Guid? id)
+        public async Task<ActionResult> Edit(Guid id)
         {
-            if (!id.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var viewModel = await _sessionLogic.EditSessionVM(id.Value);
+            var viewModel = await _sessionLogic.EditSessionVM(id, UserId);
 
             if (viewModel == null) return HttpNotFound();
 
@@ -102,21 +131,24 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditSessionVM viewModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                viewModel = await _sessionLogic.PrepareEditSessionVM(viewModel);
-                return View(viewModel);
-            }
+                if (viewModel.SessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            if (viewModel.SessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                //Try and update the record
+                ValidationResult result = await _sessionLogic.EditSession(viewModel, UserId);
 
-            //Try and update the record
-            if (await _sessionLogic.EditSession(viewModel))
-            {
-                //Redirect on success
-                return RedirectToAction("Index");
+                if (result.Success)
+                {
+                    //Redirect on success
+                    return RedirectToAction("Details", new {id = viewModel.SessionId});
+                }
+
+                //Something went wrong
+                ModelState.AddModelError("", result.Error);
             }
 
             viewModel = await _sessionLogic.PrepareEditSessionVM(viewModel);
@@ -132,10 +164,12 @@ namespace GamingSessionApp.Controllers
             
             ValidationResult result = await _sessionLogic.AddUserToSession(UserId, sessionId);
 
-            if(result.Success)
+            if (result.Success)
                 return RedirectToAction("Details", new {id = sessionId});
 
-            return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+            //Add error
+            TempData["ErrorMsg"] = result.Error;
+            return RedirectToAction("Details", new { id = sessionId });
         }
 
         public async Task<ActionResult> LeaveSession(Guid sessionId)

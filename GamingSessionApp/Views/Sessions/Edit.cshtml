@@ -1,95 +1,311 @@
 ﻿@model GamingSessionApp.ViewModels.Session.EditSessionVM
+@using GamingSessionApp.BusinessLogic;
+@using GamingSessionApp.Helpers
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit Session";
 }
-
-<h2>Edit</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>Session</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(m => m.SessionId)
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.CreatorId, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.CreatorId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.CreatorId, "", new { @class = "text-danger" })
+        <div class="col-md-12">
+            Status:
+            @Html.SessionStatusLabel(Model.Status, Model.StatusDescription)
+        </div>
+
+        @* Platforms *@
+        <div class="col-sm-12 platforms">
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <h2 class="heading-lines gray">
+                        <span>Platform</span>
+                    </h2>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1 col-md-offset-1">
+                    <a class="platform-icon platform-pc" title="Windows PC" data-id="@((int) SystemEnums.PlatformEnum.Windows)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-xbox" title="Xbox 360" data-id="@((int) SystemEnums.PlatformEnum.Xbox360)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-xbox-one" title="Xbox One" data-id="@((int) SystemEnums.PlatformEnum.XboxOne)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-ps2" title="PlayStation 2" data-id="@((int) SystemEnums.PlatformEnum.Ps2)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-ps3" title="PlayStation 3" data-id="@((int) SystemEnums.PlatformEnum.Ps3)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-ps4" title="PlayStation 4" data-id="@((int) SystemEnums.PlatformEnum.Ps4)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-wii" title="Wii" data-id="@((int) SystemEnums.PlatformEnum.Wii)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-wii-u" title="Wii U" data-id="@((int) SystemEnums.PlatformEnum.WiiU)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-ios" title="Apple iOS" data-id="@((int) SystemEnums.PlatformEnum.iOS)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-1">
+                    <a class="platform-icon platform-android" title="Android" data-id="@((int) SystemEnums.PlatformEnum.Android)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-md-12">
+                    @Html.ValidationMessageFor(m => m.PlatformId, "", new { @class = "error-msg" })
+                </div>
+                @Html.HiddenFor(m => m.PlatformId)
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.ScheduledDate, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.ScheduledDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.ScheduledDate, "", new { @class = "text-danger" })
+        @* Types *@
+        <div class="col-sm-12 types">
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <h2 class="heading-lines gray">
+                        <span>Type</span>
+                    </h2>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-competitive" title="Competitive" data-id="@((int) SystemEnums.SessionTypeEnum.Competitive)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-achievement" title="Achievement | Trophy Hunting" data-id="@((int) SystemEnums.SessionTypeEnum.Achievement)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-clan" title="Clan Battle" data-id="@((int) SystemEnums.SessionTypeEnum.ClanMatch)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-boosting" title="Boosting" data-id="@((int) SystemEnums.SessionTypeEnum.Boosting)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-coop" title="Co-op" data-id="@((int) SystemEnums.SessionTypeEnum.Coop)">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a class="type-icon type-casual" title="Casual | Friendly" data-id="@((int) SystemEnums.SessionTypeEnum.CasualPlay)">
+                        <span></span>
+                    </a>
+                </div>
+                @Html.ValidationMessageFor(m => m.TypeId, "", new { @class = "error-msg" })
+                @Html.HiddenFor(m => m.TypeId)
             </div>
+            <hr />
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.PlatformId, "PlatformId", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.PlatformId, Model.PlatformList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.PlatformId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div class="col-md-6">
+            @* Game *@
+            <div class="form-group">
+                @Html.LabelFor(m => m.GameTitle, new { @class = "control-label" })
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.TypeId, "TypeId", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.TypeId, Model.SessionTypeList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.TypeId, "", new {@class = "text-danger"})
-            </div>
-        </div>
+                <div class="input-icon">
+                    @Html.TextBoxFor(m => m.GameTitle, new { @class = "form-control search-control", @type = "search", @data_igdb_ac = "", @placeholder = "Search for your game..." })
+                    <i class="fa fa-search input-search" style="font-size: 14px"></i>
+                </div>
+                <small class="byline pull-right">Powered by IGDB.com</small>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.GamersRequired, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.GamersRequired, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.GamersRequired, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.Information, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.Information, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.Information, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(m => m.GameTitle, "", new { @class = "error-msg" })
+                @Html.HiddenFor(m => m.IgdbGameId)
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.DurationId, "DurationId", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.DurationId, "", new { @class = "text-danger" })
+            @* Date/Time *@
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.ScheduledDate, new { @class = "control-label" })
+
+                        <div class="input-icon">
+                            <input id="ScheduledDate" name="ScheduledDate" type="text" class="date-picker form-control input-validation-error"
+                                   value="@Model.ScheduledDate" data-val="true" data-val-required="The Schedule Date field is required.">
+                            <i class="fa fa-calendar input-cal"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ScheduledDate, "", new { @class = "error-msg" })
+
+                    </div>
+
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.ScheduledTime, new { @class = "control-label" })
+
+                        <div class="input-icon">
+                            @Html.EditorFor(m => m.ScheduledTime, new { htmlAttributes = new { @class = "form-control time-picker", @type = "text" } })
+                            <i class="fa fa-clock-o input-clock"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ScheduledTime, "", new { @class = "error-msg" })
+
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.IsPublic, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(m => m.IsPublic)
-                    @Html.ValidationMessageFor(m => m.IsPublic, "", new { @class = "text-danger" })
+            @* Duration *@
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.DurationId, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.DurationId, "", new { @class = "error-msg" })
+                    </div>
+                    <div class="col-md-6">
+                        <div>
+                            <label for="end-time" class="control-label">Predicted End Time</label>
+                            <div class="input-icon">
+                                <input id="end-time" type="text" class="form-control" readonly disabled />
+                                <i class="fa fa-history fa-flip-horizontal input-cal"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    @* Gamers Required *@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GamersRequired, new { @class = "control-label" })
+                            <div class="input-icon">
+                                @Html.DropDownListFor(m => m.GamersRequired, Model.GamersRequiredList, null, new { @class = "form-control input-icon-l" })
+                                <i class="fa fa-users input-icon-l"></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.GamersRequired, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @* Min User Rating *@
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.MinRatingScore, new { @class = "control-label" })
+
+                        @* Rating info popup *@
+                        @{
+                            string title = "Minimum User Rating";
+                            string body = "Only users with the set minimum rating will be able to join your session";
+                        }
+
+                        @Html.InfoPopUp(title, body, "bottom")
+
+                        <div class="form-group">
+                            @Html.HiddenFor(m => m.MinRatingScore, new { @class = "rating" })
+                            <p style="margin: 0">
+                                <i>@Model.MinRatingScore / 10</i>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+        @* Objectives & Goals *@
+        <div class="col-md-6">
+            <div class="border-bottom-orange">
+                <div class="clearfix">
+                    <label class="control-label">Objectives & Goals</label>
+                    <button class="btn btn-default btn-xs pull-right" id="add-goal" title="Add">
+                        Add <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="goals-panel">
+                <ul id="goals-ul">
+                    @* Template used to clone more *@
+                    <li id="goal-template" class="goal-item" hidden>
+                        <i class="fa fa-gamepad"></i>
+                        <input type="text" />
+                        <button type="button" class="close" title="Remove">
+                            <span>&times;</span>
+                        </button>
+                    </li>
+
+                    @* If 'post back' populate goals list *@
+                    @if (Model.Goals != null && Model.Goals.Any())
+                {
+                    for (int i = 0; i < Model.Goals.Count; i++)
+                    {
+                            <li class="goal-item">
+                                <i class="fa fa-gamepad"></i>
+                                @Html.TextBoxFor(m => m.Goals[i], new { @placeholder = "Objective / Goal " + (i + 1) })
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        @* Initial items *@
+                    for (int i = 0; i < 5; i++)
+                    {
+                        <li class="goal-item">
+                            <i class="fa fa-gamepad"></i>
+                            <input id="goals[@i]" name="goals[@i]" type="text" placeholder="Objective / Goal @(i + 1)" />
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </li>
+                        }
+                    }
+                </ul>
+
             </div>
         </div>
+
+        <div class="col-md-12">
+            @* Information *@
+            <div class="form-group">
+                @Html.LabelFor(m => m.Information, new { @class = "control-label" })
+                @Html.TextAreaFor(model => model.Information, new { @class = "form-control rich-text-area" })
+                @Html.ValidationMessageFor(m => m.Information, "", new { @class = "error-msg" })
+            </div>
+        </div>
+
+        @* Submit Button *@
+        <div class="col-md-12 text-right">
+            <button type="submit" class="session-create-btn">Save Changes <i class="fa fa-check"></i></button>
+        </div>
     </div>
+
+    @Html.HiddenFor(m => m.SessionId)
+    @Html.HiddenFor(m => m.IsPublic)
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@section Scripts
+{
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/session.js"></script>
+}

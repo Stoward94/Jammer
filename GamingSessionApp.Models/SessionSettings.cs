@@ -30,5 +30,8 @@ namespace GamingSessionApp.Models
         [Required]
         public bool ApproveJoinees { get; set; }
 
+        [Required]
+        public int MinUserRating { get; set; }
+
     }
 }

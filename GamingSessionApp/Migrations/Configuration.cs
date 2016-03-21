@@ -64,21 +64,21 @@ namespace GamingSessionApp.Migrations
 
             //Seed the SessionDuration Values
             context.SessionDurations.AddOrUpdate(d => d.Id,
-                new SessionDuration { Id = 30, Duration = "0 - 30 Minutes", Minutes = 30 },
-                new SessionDuration { Id = 60, Duration = "30 - 60 Minutes", Minutes = 60 },
-                new SessionDuration { Id = 120, Duration = "1 - 2 Hours", Minutes = 120 },
-                new SessionDuration { Id = 180, Duration = "2 - 3 Hours", Minutes = 180 },
-                new SessionDuration { Id = 240, Duration = "3 - 4 Hours", Minutes = 240 },
-                new SessionDuration { Id = 300, Duration = "4 - 5 Hours", Minutes = 300 },
+                new SessionDuration { Id = 30, Duration = "30 minutes or less", Minutes = 30 },
+                new SessionDuration { Id = 60, Duration = "30 - 60 minutes", Minutes = 60 },
+                new SessionDuration { Id = 120, Duration = "1 - 2 hours", Minutes = 120 },
+                new SessionDuration { Id = 180, Duration = "2 - 3 hours", Minutes = 180 },
+                new SessionDuration { Id = 240, Duration = "3 - 4 hours", Minutes = 240 },
+                new SessionDuration { Id = 300, Duration = "4 - 5 hours", Minutes = 300 },
                 new SessionDuration { Id = 301, Duration = "5+ hours", Minutes = 301 }
                 );
 
             //Seed the SessionStatus Statuses
             context.SessionStatuses.AddOrUpdate(x => x.Name, 
-                new SessionStatus { Name = "Recruiting", Description = "This session is still in need of players to join and play" },
-                new SessionStatus { Name = "Fully Loaded", Description = "This session is currently full, however this may change before the session begins" },
-                new SessionStatus { Name = "Jamming", Description = "This session is actively jamming (reached the start time, but not yet exceeded the expected duration)" },
-                new SessionStatus { Name = "Retired", Description = "This session has now been completed" }
+                new SessionStatus { Name = "Open", Description = "This session is still in need of players to join and play" },
+                new SessionStatus { Name = "Full", Description = "This session is currently full, however this may change before the session begins" },
+                new SessionStatus { Name = "In Progress", Description = "This session is currently in progress (reached the start time, but not yet exceeded the expected duration)" },
+                new SessionStatus { Name = "Completed", Description = "This session has now been completed" }
                 );
 
             //Seed the SessionType Descriptions

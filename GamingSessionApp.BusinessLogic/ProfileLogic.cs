@@ -15,6 +15,7 @@ using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Home;
 using GamingSessionApp.ViewModels.Profile;
+using GamingSessionApp.ViewModels.Shared;
 using Microsoft.AspNet.Identity;
 using Image = System.Drawing.Image;
 
@@ -56,7 +57,7 @@ namespace GamingSessionApp.BusinessLogic
                         Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
                         {
                             ScheduledDate = s.ScheduledDate,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
@@ -68,7 +69,7 @@ namespace GamingSessionApp.BusinessLogic
                         .Select(s => new SessionListItem
                         {
                             ScheduledDate = s.ScheduledDate,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
@@ -130,7 +131,7 @@ namespace GamingSessionApp.BusinessLogic
                         Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
                         {
                             ScheduledDate = s.ScheduledDate,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
@@ -142,7 +143,7 @@ namespace GamingSessionApp.BusinessLogic
                         .Select(s => new SessionListItem
                         {
                             ScheduledDate = s.ScheduledDate,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
@@ -441,6 +442,34 @@ namespace GamingSessionApp.BusinessLogic
             {
                 LogError(ex, "Error updating the profile for user : " + userId);
                 return VResult.AddError("An error occured whilst trying to update your profile. Please try again later.");
+            }
+        }
+
+        public async Task<List<FriendListItem>> GetUsersFriends(string userId)
+        {
+            try
+            {
+                var friends = await _profileRepo.Get(x => x.UserId == userId)
+                    .SelectMany(x => x.Friends.Select(f => new FriendListItem
+                    {
+                        Thumbnail = f.Friend.ThumbnailUrl,
+                        Kudos = f.Friend.Kudos.Points.ToString(),
+                        DisplayName = f.Friend.DisplayName
+                    }))
+                    .OrderBy(x => x.DisplayName)
+                    .ToListAsync();
+
+                foreach (var f in friends)
+                {
+                    f.Kudos = TrimKudos(f.Kudos);
+                }
+
+                return friends;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error fetching users friends for session invite. User :" + userId);
+                throw;
             }
         }
     }

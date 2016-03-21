@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity;
 
 namespace GamingSessionApp.Controllers
 {
-    [Route("Profile/[action]")]
+    //[Route("Profile/[action]")]
     public class ProfileController : BaseController
     {
         private readonly ProfileLogic _profileLogic;
@@ -81,14 +81,15 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> AddFriend(string userName)
+        [Route("Profile/AddFriend")]
+        public async Task<JsonResult> AddFriend(string username)
         {
-            if(userName == null)
+            if(username == null)
                 return Json(new { success = false, responseText = "No user provided" });
 
             _profileLogic.UserId = UserId;
 
-            ValidationResult result = await _profileLogic.AddFriend(userName);
+            ValidationResult result = await _profileLogic.AddFriend(username);
 
             //Return Success
             if (result.Success)
@@ -114,6 +115,15 @@ namespace GamingSessionApp.Controllers
             var users = await _profileLogic.GetUsersJson(term);
 
             return Json(users, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Route("Profile/GetUsersFriends")]
+        public async Task<PartialViewResult> GetUsersFriends()
+        {
+            var friends = await _profileLogic.GetUsersFriends(UserId);
+
+            return PartialView("~/Views/Sessions/_InviteFriendsModal.cshtml", friends);
         }
 
         [HttpPost]

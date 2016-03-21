@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Linq;
 using GamingSessionApp.Models;
 using SendGrid;
 
@@ -12,7 +13,7 @@ namespace GamingSessionApp.BusinessLogic
 {
     public class EmailLogic : BaseLogic
     {
-        private static readonly string FromEmail = "noreply@axelsmash.com";
+        private readonly MailAddress _fromEmail = new MailAddress("noreply@triggerwars.com", "TriggerWars");
         private readonly string BaseUrl;
 
         public EmailLogic()
@@ -29,7 +30,7 @@ namespace GamingSessionApp.BusinessLogic
                 {
                     var email = new SendGridMessage
                     {
-                        From = new MailAddress(FromEmail, "Axel Smash"),
+                        From = _fromEmail,
                         Subject = "New Private Message"
                     };
 
@@ -40,7 +41,7 @@ namespace GamingSessionApp.BusinessLogic
                     body.Append("Head over to your inbox to see it now.\n\n");
                     body.Append($"{BaseUrl}/messages/inbox \n\n");
                     body.Append("=========================================== \n\n");
-                    body.Append("Axel Smash \n");
+                    body.Append("TriggerWars\n");
 
                     email.Text = body.ToString();
                     email.AddTo(r.User.Email);
@@ -72,7 +73,7 @@ namespace GamingSessionApp.BusinessLogic
             await transportWeb.DeliverAsync(email);
         }
 
-        internal async Task SessionInviteEmail(Session session, string creatorName, List<UserProfile> recipients)
+        internal async Task SessionInviteEmail(Guid sessionId, string game, string creatorName, List<UserProfile> recipients)
         {
             try
             {
@@ -80,20 +81,20 @@ namespace GamingSessionApp.BusinessLogic
                 {
                     var email = new SendGridMessage
                     {
-                        From = new MailAddress(FromEmail, "Axel Smash"),
+                        From = _fromEmail,
                         Subject = "Session Invitation"
                     };
 
                     StringBuilder body = new StringBuilder();
 
                     body.Append($"Hi {r.DisplayName},\n\n");
-                    body.Append($"{creatorName} has invited you to join their new session.\n\n");
+                    body.Append($"{creatorName} has invited you to join their new session for \"{game}\"\n\n");
                     body.Append("Click the link below to see the full details of the session.\n\n");
-                    body.Append($"{BaseUrl}/Sessions/Details/{session.Id} \n\n");
+                    body.Append($"{BaseUrl}/Sessions/Details/{sessionId} \n\n");
                     body.Append("Grab your place before someone else does!\n\n");
 
                     body.Append("=========================================== \n\n");
-                    body.Append("Axel Smash \n");
+                    body.Append("TriggerWars\n");
 
                     email.Text = body.ToString();
                     email.AddTo(r.User.Email);
@@ -103,7 +104,46 @@ namespace GamingSessionApp.BusinessLogic
             }
             catch (Exception ex)
             {
-                LogError(ex, "Unable to send session invite email for session : " + session.Id);
+                LogError(ex, "Unable to send session invite email for session : " + sessionId);
+            }
+        }
+
+        //If a session has been updated, notify members
+        internal async Task SessionEditedEmail(Session session, List<UserProfile> recipients, bool gameChanged, bool dateChanged, bool platformChanged, bool typeChanged)
+        {
+            try
+            {
+                var creator = recipients.First(x => x.UserId == session.CreatorId);
+
+                foreach (var r in recipients)
+                {
+                    //Ignore creator
+                    if (r.UserId == creator.UserId) continue;
+
+                    var email = new SendGridMessage
+                    {
+                        From = _fromEmail,
+                        Subject = "Session Updated"
+                    };
+
+                    StringBuilder body = new StringBuilder();
+
+                    body.Append($"Hi {r.DisplayName},\n\n");
+                    body.Append($"{creator.DisplayName} has made changes to their session that you have joined.\n\n");
+                    body.Append("Click the link below to see the full details of the session.\n\n");
+                    body.Append($"{BaseUrl}/Sessions/Details/{session.Id} \n\n");
+                    body.Append("=========================================== \n\n");
+                    body.Append("TriggerWars\n");
+
+                    email.Text = body.ToString();
+                    email.AddTo(r.User.Email);
+
+                    await SendEmail(email, r.Preferences);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to send session edited email for session : " + session.Id);
             }
         }
     }

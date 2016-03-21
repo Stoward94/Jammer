@@ -89,6 +89,8 @@
     <Compile Include="Feedback\CreateFeedbackViewModel.cs" />
     <Compile Include="Feedback\FeedbackProviderViewModel.cs" />
     <Compile Include="Feedback\ReceivedFeedbackViewModel.cs" />
+    <Compile Include="Session\SessionsFilter.cs" />
+    <Compile Include="Shared\FriendListItem.cs" />
     <Compile Include="Home\HomeViewModel.cs" />
     <Compile Include="Home\SessionListItem.cs" />
     <Compile Include="Inbox\CreateMessageViewModel.cs" />

@@ -1,73 +1,124 @@
-﻿@model IEnumerable<GamingSessionApp.ViewModels.Session.SessionListItemViewModel>
+﻿@model GamingSessionApp.ViewModels.Session.AllSessionsViewModel
+@using GamingSessionApp.Helpers
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "All Sessions";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Duration)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Platform)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ScheduledDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequiredCount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MembersCount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Summary)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Duration)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Platform)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ScheduledDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RequiredCount)
-        </td>
-        <td>
-            <span class="label label-info">@Html.DisplayFor(modelItem => item.Status)</span>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MembersCount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Summary)
-        </td>
-        <td>
-            @Html.ActionLink("Details", "Details", new { id = item.Id })
-        </td>
-    </tr>
+@* UTC Date alert *@
+@if (!Request.IsAuthenticated)
+{
+    <div class="alert alert-info text-center">
+        <i class="fa fa-info-circle"></i> All of the sessions dates and times are in UTC format. <b><a href="@Url.Action("Login", "Account")">Log in</a></b> to see sessions in your local time zone.
+    </div>
 }
 
-</table>
+<div class="session-filter">
+    @using (Html.BeginForm("Filter", "Sessions", FormMethod.Get, new { id = "search-filter" }))
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    @* Game Filter *@
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.Label("Game", new { @class = "control-label" })
+                            <div class="input-icon">
+                                @Html.TextBox("Game", null, new { @class = "form-control", @data_igdb_ac = "", @placeholder = "Search game" })
+                                <i class="fa fa-search input-search" style="font-size: 14px"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Platform Filter *@
+                    @if (ViewData.ContainsKey("PlatformsList"))
+                    {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Label("PlatformId", "Platform", new { @class = "control-label" })
+                                @Html.DropDownList("PlatformId", ViewData["PlatformsList"] as SelectList, "All Platforms", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Type Filter -->
+                    @if (ViewData.ContainsKey("TypesList"))
+                    {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Label("TypeId", "Type", new { @class = "control-label" })
+                                @Html.DropDownList("TypeId", ViewData["TypesList"] as SelectList, "All Types", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Date Filter -->
+                    <div class="col-sm-6">
+                        @Html.Label("SpecificDate", "Specific Date", new { @class = "control-label" })
+                        <div class="input-icon">
+                            @Html.TextBox("SpecificDate", null, new { @class = "form-control date-picker", @placeholder = "Filter by date" })
+                            <i class="fa fa-calendar input-cal"></i>
+                        </div>
+                    </div>
+
+                    @* Time Filter *@
+                    <div class="col-sm-6">
+                        @Html.Label("SpecificTime", "Specific Time", new { @class = "control-label" })
+                        <div class="input-icon">
+                            @Html.TextBox("SpecificTime", null, new { @class = "form-control time-picker", @placeholder = "Filter by time" })
+                            <i class="fa fa-calendar input-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Checkboxes *@
+            <div class="col-md-4">
+                <div class="well" style="margin-top: 20px;">
+                    <div class="row">
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBox("MySessions") My Created Sessions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBox("SessionsImIn") Sessions I've Joined
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBox("FreeSpaces") Sessions with free spaces
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Buttons *@
+            <div class="col-md-12" style="margin-top: 20px;">
+                <div class="form-group">
+                    <button id="search-filter-submit" class="btn btn-default">Search <i class="fa fa-search-plus"></i></button>
+                    <a href="@Url.Action("Index", "Sessions")" class="btn btn-danger">Reset</a>
+                </div>
+            </div>
+
+            @Html.Hidden("Page")
+
+        </div>
+    }
+</div>
+
+<div id="sessions-container">
+    @Html.Partial("_AllSessions", Model)
+</div>

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Session;
-using GamingSessionApp.ViewModels.SessionComments;
 using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
@@ -26,7 +26,7 @@ namespace GamingSessionApp.BusinessLogic
 
         #endregion
 
-        #region Constructor
+    #region Constructor
 
         public SessionLogic()
         {
@@ -38,41 +38,166 @@ namespace GamingSessionApp.BusinessLogic
         #endregion
 
     #region CRUD Operations
-        
-        public async Task<List<SessionListItemViewModel>> GetSessions(string userId)
+
+        public async Task<AllSessionsViewModel> GetSessions(string userId, SessionsFilter filter = null)
         {
-            UserId = userId;
-
-            //Get all the sessions that are public and active
-            List<SessionListItemViewModel> sessions = await _sessionRepo.Get().Where(s => s.Settings.IsPublic && s.Active)
-                .Select(x => new SessionListItemViewModel
-                {
-                    Id = x.Id,
-                    Creator = x.Creator.DisplayName,
-                    ScheduledDate = x.ScheduledDate.ToString(),
-                    Status = x.Status.Name,
-                    Platform = x.Platform.Name,
-                    Type = x.Type.Name,
-                    RequiredCount = x.MembersRequired,
-                    MembersCount = x.Members.Count,
-                    Duration = x.Duration.Duration
-                })
-                .OrderBy(x => x.ScheduledDate)
-                .Take(20)
-                .ToListAsync();
-
-            //Convert the DateTimes to the users time zone
-            foreach (var s in sessions)
+            try
             {
-                //Parse string then convert to user timezone
-                DateTime scheduledDate = DateTime.Parse(s.ScheduledDate);
-                scheduledDate = scheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                UserId = userId;
 
-                //Create user friendly display time
-                s.ScheduledDate = DateToUserFriendlyString(scheduledDate);
+                var query = _sessionRepo.Get();
+
+                int numberOfDays = 7;
+                int skip = 0;
+
+                DateTime startDate = DateTime.UtcNow.Date;
+                int timeZoneOffset = GetUserTimeZone().GetUtcOffset(DateTime.UtcNow).Hours;
+                bool useStartDate = true;
+
+                #region Filter
+
+                if (filter != null)
+                {
+                    //Set the skip results value based on the page
+                    skip = (filter.Page - 1)*numberOfDays;
+
+                    //Filter Platform
+                    if (filter.PlatformId != null)
+                    {
+                        query = query.Where(s => s.PlatformId == filter.PlatformId);
+                    }
+
+                    //Filter Game
+                    if (!string.IsNullOrEmpty(filter.Game))
+                    {
+                        query = query.Where(s => s.Game.GameTitle.Contains(filter.Game));
+                    }
+
+                    //Filter Type
+                    if (filter.TypeId != null)
+                    {
+                        query = query.Where(s => s.TypeId == filter.TypeId);
+                    }
+
+                    //Filter sessions im in
+                    if (filter.SessionsImIn)
+                    {
+                        query = query.Where(s => s.Members.Any(m => m.UserId == userId));
+                    }
+
+                    //Filter sessions "i've" created (my sessions)
+                    else if (filter.MySessions)
+                    {
+                        query = query.Where(s => s.CreatorId == userId);
+                    }
+
+                    //Filter sessions with free spaces
+                    if (filter.FreeSpaces)
+                    {
+                        query = query.Where(s => s.Members.Count < s.MembersRequired);
+                    }
+
+                    //Filter by specific date
+                    if (filter.SpecificDate != null)
+                    {
+                        DateTime specificDate;
+                        if (DateTime.TryParseExact(filter.SpecificDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out specificDate))
+                        {
+                            query = query.Where(s => DbFunctions.TruncateTime(DbFunctions.AddHours(s.ScheduledDate, timeZoneOffset)) == specificDate);
+
+                            useStartDate = false;
+                        }
+                    }
+
+                    //Filter by specific time
+                    if (filter.SpecificTime != new DateTime())
+                    {
+                        //Convert filter time to UTC
+                        filter.SpecificTime = TimeZoneInfo.ConvertTimeToUtc(filter.SpecificTime, GetUserTimeZone());
+
+                        query = query.Where(s => DbFunctions.CreateTime(s.ScheduledDate.Hour, s.ScheduledDate.Minute, 0) ==
+                                             DbFunctions.CreateTime(filter.SpecificTime.Hour, filter.SpecificTime.Minute, 0));
+                    }
+                }
+
+                #endregion
+
+                //Use start date unless searching for specific time
+                if (useStartDate)
+                    query = query.Where(s => s.ScheduledDate >= startDate);
+
+                //Get all the sessions that are public and active
+                List<SessionDateGroup> groups = await query.Where(s => s.Settings.IsPublic)
+                    .GroupBy(x => DbFunctions.TruncateTime(DbFunctions.AddHours(x.ScheduledDate, timeZoneOffset)))
+                    .OrderBy(x => x.Key)
+                    .Skip(skip)
+                    .Take(numberOfDays)
+                    .Select(x => new SessionDateGroup
+                    {
+                        ScheduledDate = x.Key.Value,
+                        Sessions = x.Select(s => new SessionListItemViewModel
+                        {
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Game = s.Game.GameTitle,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            ScheduledTime = s.ScheduledDate,
+                            Platform = s.Platform.Name,
+                            PlatformId = s.PlatformId,
+                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
+                            RequiredCount = s.MembersRequired,
+                            MembersCount = s.Members.Count,
+                            Duration = s.Duration.Duration
+                        })
+                            .OrderBy(s => s.ScheduledTime)
+                            .ToList(),
+                    })
+                    .ToListAsync();
+
+                DateTime userNow = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                //Convert the DateTimes to the users time zone
+                foreach (var g in groups)
+                {
+                   //If today
+                    if (g.ScheduledDate.Date == userNow.Date)
+                        g.ScheduledDisplayDate = "Today";
+                    //If tomorrrow
+                    else if (g.ScheduledDate.Date == userNow.Date.AddDays(1))
+                        g.ScheduledDisplayDate = "Tomorrow";
+                    //Else
+                    else
+                        g.ScheduledDisplayDate = g.ScheduledDate.ToFullDateString();
+
+                    foreach (var s in g.Sessions)
+                    {
+                        s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                        s.ScheduledDisplayTime = s.ScheduledTime.ToShortTimeString();
+                    }
+                }
+
+                AllSessionsViewModel viewModel = new AllSessionsViewModel
+                {
+                    Groups = groups,
+                    TotalSessions = groups.Sum(g => g.Sessions.Count)
+                };
+
+                if (groups.Any())
+                {
+                    //Set the start and end date labels
+                    viewModel.StartDisplayDate = groups[0].ScheduledDisplayDate;
+                    viewModel.EndDisplayDate = groups.LastOrDefault()?.ScheduledDisplayDate;
+                }
+
+                return viewModel;
             }
-
-            return sessions;
+            catch (Exception ex)
+            {
+                LogError(ex, "Error getting all sessions");
+                throw;
+            }
         }
 
         public IQueryable<Session> GetAllQueryable()
@@ -99,7 +224,8 @@ namespace GamingSessionApp.BusinessLogic
                     Settings = new SessionSettings()
                     {
                         IsPublic = true,
-                        ApproveJoinees = model.ApproveJoinees
+                        ApproveJoinees = model.ApproveJoinees,
+                        MinUserRating = model.MinRatingScore
                     },
                     Goals = new List<SessionGoal>()
                 };
@@ -131,7 +257,7 @@ namespace GamingSessionApp.BusinessLogic
                     string date = conflictDate.ToShortDateString();
                     string warningMsg =
                         $"This sessions time overlaps with your session: {conflictSession.Game.GameTitle} ({conflictSession.Platform.Name}) at {time} on {date}. "
-                         + "Please pick another date or time";
+                         + "Please pick another date or time.";
                     return VResult.AddError(warningMsg);
                 }
                     
@@ -171,19 +297,17 @@ namespace GamingSessionApp.BusinessLogic
                 await SaveChangesAsync();
 
                 //Send out invites to users if any
-                if (!string.IsNullOrEmpty(model.InviteRecipients))
+                if (model.InviteRecipients != null && model.InviteRecipients.Any())
                 {
-                    List<string> usernames = model.InviteRecipients.Split(',').ToList();
-
                     List<UserProfile> recipients = await UoW.Repository<UserProfile>()
-                        .Get(x => usernames.Contains(x.DisplayName))
+                        .Get(x => model.InviteRecipients.Contains(x.DisplayName))
                         .Include(x => x.User)
                         .Include(x => x.Preferences)
                         .ToListAsync();
 
                     //Send Email
                     EmailLogic email = new EmailLogic();
-                    await email.SessionInviteEmail(session, creator.DisplayName, recipients);
+                    await email.SessionInviteEmail(session.Id, model.GameTitle, creator.DisplayName, recipients);
 
                     //Send Notification
                     NotificationLogic nLogic = new NotificationLogic();
@@ -203,39 +327,118 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<bool> EditSession(EditSessionVM viewModel)
+        public async Task<ValidationResult> EditSession(EditSessionVM viewModel, string userId)
         {
             try
             {
-                throw new NotImplementedException();
+                UserId = userId;
+
                 //Load the session from the db
-                Session model = await _sessionRepo.Get(x => x.Id == viewModel.SessionId)
-                    .Include(x => x.Platform)
-                    .Include(x => x.Status)
-                    .Include(x => x.Type)
-                    .Include(x => x.Duration)
+                Session session = await _sessionRepo.Get(x => x.Id == viewModel.SessionId)
+                    .Include(x => x.Members)
+                    .Include(x => x.Game)
+                    .Include(x => x.Goals)
                     .Include(x => x.Settings)
                     .FirstOrDefaultAsync();
 
-                //Map the changes (top-tier & 2nd level)
-                //Mapper.Map(viewModel, model);
-                //Mapper.Map(viewModel, model.Settings);
+                //Convert viewModel date to UTC
+                var newUtcDate = CombineDateAndTime(viewModel.ScheduledDate, viewModel.ScheduledTime);
+                newUtcDate = TimeZoneInfo.ConvertTimeToUtc(newUtcDate, GetUserTimeZone());
 
-                //Convert all dates to UTC format
-                ConvertSessionTimesToUtc(model);
+                bool gameChanged = session.Game.GameTitle != viewModel.GameTitle;
+                bool dateChanged = session.ScheduledDate != newUtcDate;
+                bool platformChanged = session.PlatformId != viewModel.PlatformId;
+                bool typeChanged = session.TypeId != viewModel.TypeId;
+
+                //If the game has changed look for an existing local record
+                if (gameChanged)
+                {
+                    GameLogic gLogic = new GameLogic();
+                    var existingGame = await gLogic.ExistingGame(viewModel.IgdbGameId, viewModel.GameTitle);
+
+                    //Either use existing gameId or create a new game.
+                    if (existingGame == null)
+                    {
+                        session.Game = new Game
+                        {
+                            IgdbGameId = viewModel.IgdbGameId,
+                            GameTitle = viewModel.GameTitle
+                        };
+                    }
+                    else
+                    {
+                        session.GameId = existingGame.Id;
+                    }
+                }
+
+                //Map properties from view model
+                if (dateChanged)
+                {
+                    session.ScheduledDate = newUtcDate;
+                    session.EndTime = session.ScheduledDate.AddMinutes(viewModel.DurationId);
+                }
+
+                if(platformChanged)
+                    session.PlatformId = viewModel.PlatformId;
+
+                if (typeChanged)
+                    session.TypeId = viewModel.TypeId;
+
+                
+                //Update goals
+                var goalsRepo = UoW.Repository<SessionGoal>();
+                foreach (var g in session.Goals.ToList())
+                {
+                    goalsRepo.Delete(g);
+                }
+                foreach (var g in viewModel.Goals)
+                {
+                    //Skip blank/empty goals
+                    if (string.IsNullOrWhiteSpace(g)) continue;
+                    session.Goals.Add(new SessionGoal { Goal = g });
+                }
+
+                //Update GamersRequired
+                if (viewModel.GamersRequired < session.Members.Count)
+                {
+                    //We have more members that we need
+                    return VResult.AddError("You already have more gamers than you have stated you need to complete this session. " +
+                            $"You must select a minimum of {session.Members.Count} in gamers needed field.");
+                }
+
+                session.MembersRequired = viewModel.GamersRequired;
+                session.Information = viewModel.Information;
+                session.DurationId = viewModel.DurationId;
+                session.Settings.IsPublic = viewModel.IsPublic;
+                session.Settings.MinUserRating = viewModel.MinRatingScore;
 
                 //Update the db
-                _sessionRepo.Update(model);
+                _sessionRepo.Update(session);
                 await SaveChangesAsync();
 
-                //TODO: Email linked members about changes
+                //If anything important has changed
+                if (gameChanged || dateChanged || platformChanged || typeChanged)
+                {
+                    //Email members about changes (ignore creator)
+                    if (session.Members.Count > 1)
+                    {
+                        //Load the members this time with their email preferences
+                        List<UserProfile> members = await _sessionRepo.Get(x => x.Id == viewModel.SessionId)
+                            .SelectMany(x => x.Members)
+                            .Include(x => x.Preferences)
+                            .ToListAsync();
 
-                return true;
+                        EmailLogic eLogic = new EmailLogic();
+                        await eLogic.SessionEditedEmail(session, members, gameChanged, dateChanged, platformChanged, typeChanged);
+                    }
+                }
+
+                return VResult;
             }
             catch (Exception ex)
             {
-                LogError(ex);
-                return false;
+                LogError(ex, "Error updating changes for session " + viewModel.SessionId);
+                return VResult.AddError("Something went wrong when updating your session. Please try again later");
             }
         }
 
@@ -287,6 +490,7 @@ namespace GamingSessionApp.BusinessLogic
         {
             //Add the select lists options
             viewModel.DurationList = await _durationLogic.GetDurationSelectList();
+            viewModel.GamersRequiredList = GetGamersRequiredOptions();
 
             return viewModel;
         } 
@@ -296,27 +500,33 @@ namespace GamingSessionApp.BusinessLogic
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public async Task<EditSessionVM> EditSessionVM(Guid sessionId)
+        public async Task<EditSessionVM> EditSessionVM(Guid sessionId, string userId)
         {
             try
             {
+                UserId = userId;
+
                 //Load and project the session from the db
                 EditSessionVM viewModel = await _sessionRepo.Get(x => x.Id == sessionId)
+                    .Where(x => x.CreatorId == userId) // Additional check so only owner can edit session
                     .Select(x => new EditSessionVM
                     {
+                        Status = x.Status.Name,
+                        StatusDescription = x.Status.Description,
                         SessionId = x.Id,
-                        CreatorId = x.CreatorId,
+                        GameTitle = x.Game.GameTitle,
+                        IgdbGameId = x.Game.IgdbGameId,
                         ScheduledDate = x.ScheduledDate,
                         ScheduledTime = x.ScheduledDate,
-                        Status = x.Status.Name,
                         PlatformId = x.PlatformId,
                         TypeId = x.TypeId,
-                        GamersRequired = x.MembersRequired.ToString(),
+                        Goals = x.Goals.Select(g => g.Goal).ToList(),
+                        GamersRequired = x.MembersRequired,
                         Information = x.Information,
                         DurationId = x.DurationId,
                         IsPublic = x.Settings.IsPublic,
-                        ApproveJoinees = x.Settings.ApproveJoinees
-
+                        ApproveJoinees = x.Settings.ApproveJoinees,
+                        MinRatingScore = x.Settings.MinUserRating
                     }).FirstOrDefaultAsync();
 
                 //Make sure we have found something
@@ -328,13 +538,13 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Add the select lists options
                 viewModel.DurationList = await _durationLogic.GetDurationSelectList();
-
+                viewModel.GamersRequiredList = GetGamersRequiredOptions();
 
                 return viewModel;
             }
             catch (Exception ex)
             {
-                LogError(ex);
+                LogError(ex, "Unable to get edit session vm for session : " + sessionId);
                 throw;
             }
         } 
@@ -507,6 +717,36 @@ namespace GamingSessionApp.BusinessLogic
             return friendlyDate + " @ " + friendlyTime;
         }
 
+        public async Task<SelectList> GetPlatformsList()
+        {
+            try
+            {
+                var platforms = await UoW.Repository<Platform>().Get().ToListAsync();
+
+                return new SelectList(platforms, "Id", "Name");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "GetPlatformList method caused an error");
+                return null;
+            }
+        }
+
+        public async Task<SelectList> GetTypesList()
+        {
+            try
+            {
+                var types = await UoW.Repository<SessionType>().Get().ToListAsync();
+
+                return new SelectList(types, "Id", "Name");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "GetTypesList method caused an error");
+                return null;
+            }
+        }
+
         #endregion
 
         public async Task<ValidationResult> AddUserToSession(string userId, Guid sessionId)
@@ -518,6 +758,7 @@ namespace GamingSessionApp.BusinessLogic
                 Session targetSession = await _sessionRepo.Get(x => x.Id == sessionId)
                     .Include(x => x.Members)
                     .Include(x => x.Comments)
+                    .Include(x => x.Settings)
                     .FirstOrDefaultAsync();
 
                 if (targetSession == null)
@@ -528,7 +769,7 @@ namespace GamingSessionApp.BusinessLogic
                     return VResult.AddError("This session is no longer active");
 
                  if(targetSession.MembersCount >= targetSession.MembersRequired)
-                    return VResult.AddError("You are unable to join this session as it's full. Why not create a new session");
+                    return VResult.AddError("You are unable to join this session as it's full. Why not create a new session?");
 
                 //Check this user isn't already a member of the session.
                 bool existingUser = targetSession.Members.Any(x => x.UserId == userId);
@@ -537,16 +778,27 @@ namespace GamingSessionApp.BusinessLogic
                 if (existingUser)
                     return VResult.AddError("You are already a member of this session");
 
+                //Load the UserProfile of the member wanting to join to add to the session
+                UserProfile user = await UoW.Repository<UserProfile>().GetByIdAsync(userId);
+
+                //Check the user has the minimum rating required
+                if (user.Rating < targetSession.Settings.MinUserRating)
+                    return VResult.AddError("Unfortunately your user rating is lower than the required minimum rating for this session. " +
+                                            "Refer to the <b>\"User rating help\"</b> to learn how to improve your user rating.");
+                    
                 //Check that this session doesn't conflict with the users existing sessions
                 Session conflictSession = await CheckForSessionConflict(targetSession, userId);
 
-                if(conflictSession != null)
-                    return VResult.AddError("This sessions time conflicts with another session you have already joined. " +
-                                            "You are unable to join this session as a result.");
-
-
-                //Load the UserProfile of the creator to add as a member
-                UserProfile user = await UoW.Repository<UserProfile>().GetByIdAsync(userId);
+                if (conflictSession != null)
+                {
+                    DateTime conflictDate = conflictSession.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    string time = conflictDate.ToString("HH:mm");
+                    string date = conflictDate.ToShortDateString();
+                    string warningMsg =
+                        $"This sessions time overlaps with a session you have joined: {conflictSession.Game.GameTitle} ({conflictSession.Platform.Name}) at {time} on {date}. "
+                         + "You are unable to join this session as a result.";
+                    return VResult.AddError(warningMsg);
+                }
 
                 targetSession.Members.Add(user);
 
@@ -554,8 +806,11 @@ namespace GamingSessionApp.BusinessLogic
                 CheckSessionStatus(targetSession);
 
                 //Add 'User joined' message to session feed
-                //_commentLogic.UserId = UserId;
-                //_commentLogic.AddUserJoinedComment(targetSession, user.DisplayName);
+                _commentLogic = new SessionCommentLogic();
+                var comment = _commentLogic.AddUserJoinedComment(targetSession.Id, user.DisplayName, user.UserId);
+
+                if(comment != null)
+                    targetSession.Comments.Add(comment);
 
                 //Send notification to the session owner
                 NotificationLogic nLogic = new NotificationLogic();

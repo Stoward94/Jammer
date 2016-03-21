@@ -36,15 +36,14 @@ namespace GamingSessionApp.BusinessLogic
             SessionComment comment = new SessionComment
             {
                 AuthorId = session.CreatorId,
-                CommentTypeId = (int)SessionMessageTypeEnum.System
+                CommentTypeId = (int) SessionMessageTypeEnum.System,
+                Body = "New session created!"
             };
-
-            comment.Body = "New session created!";
 
             session.Comments.Add(comment);
         }
 
-        public async Task<int> AddSessionComment(PostCommentViewModel model, string userId)
+        public async Task<CommentViewModel> AddSessionComment(PostCommentViewModel model, string userId)
         {
             try
             {
@@ -68,32 +67,33 @@ namespace GamingSessionApp.BusinessLogic
                 nLogic.AddCommentNotification(members, userId, model.SessionId, comment.Id);
 
                 //Return commentId to load the new comment viewModel
-                return comment.Id;
+                return await LoadComment(comment.Id, userId);
             }
             catch (Exception ex)
             {
                 LogError(ex, "Unable to add a comment to sessionId : " + model.SessionId);
-                return 0;
+                throw;
             }
         }
 
-        public void AddUserJoinedComment(Guid sessionId, string username)
+        public SessionComment AddUserJoinedComment(Guid sessionId, string username, string userId)
         {
             try
             {
                 SessionComment comment = new SessionComment()
                 {
-                    AuthorId = UserId,
+                    AuthorId = userId,
                     Body = $"{username} has joined the session",
                     CommentTypeId = (int)SessionMessageTypeEnum.PlayerJoined,
                     SessionId = sessionId
                 };
 
-                _commentRepo.Insert(comment);
+                return comment;
             }
             catch (Exception)
             {
                 //Let the caller catch the exception
+                return null;
             }
         }
 
@@ -134,7 +134,8 @@ namespace GamingSessionApp.BusinessLogic
                     })
                     .FirstOrDefaultAsync();
 
-                if (comment == null) return null;
+                if (comment == null)
+                    throw new NullReferenceException("comment");
 
                 //Convert comments times to time zone
                 //Get the 48x48 thumbnail
@@ -150,7 +151,7 @@ namespace GamingSessionApp.BusinessLogic
             catch (Exception ex)
             {
                 LogError(ex, "Unable to load comment : " + commentId);
-                return null;
+                throw;
             }
         }
     }

@@ -1,0 +1,112 @@
+﻿@model GamingSessionApp.ViewModels.Session.AllSessionsViewModel
+@using GamingSessionApp.Helpers
+
+@*Sessions*@
+@if (Model.Groups.Any())
+{
+    <div style="margin: 10px 0">
+        @if (Model.Groups.Count == 1)
+        {
+            <span class="gray">Showing <b>@Model.TotalSessions @(Model.TotalSessions == 1 ? "session" : "sessions")</b> on <b>@Model.StartDisplayDate</b></span>
+        }
+        else
+        {
+            <span class="gray">Showing <b>@Model.TotalSessions sessions</b> between <b>@Model.StartDisplayDate - @Model.EndDisplayDate</b></span>
+        }
+    </div>
+
+    //Nav
+    <nav>
+        <ul class="pager">
+            @if ((int) ViewData["Page"] != 1)
+            {
+                <li class="previous">
+                    <a href="@Url.Action("Filter")" data-page="@((int) ViewData["Page"] - 1)"><span aria-hidden="true" class="hidden-xs">&larr;</span> Previous</a>
+                </li>
+            }
+            @if ((int) ViewData["Page"] != 1)
+            {
+                <li class="today">
+                    <a href="@Url.Action("Filter")" data-page="1">Today</a>
+                </li>
+            }
+
+            @if (Model.Groups.Count >= 7)
+            {
+                <li class="next">
+                    <a href="@Url.Action("Filter")" data-page="@((int) ViewData["Page"] + 1)">Next <span aria-hidden="true" class="hidden-xs">&rarr;</span></a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    //Sessions
+    foreach (var group in Model.Groups)
+    {
+        <div>
+            <h4 class="session-group-heading">
+                <i class="fa fa-calendar"></i> @group.ScheduledDisplayDate
+            </h4>
+        </div>
+
+        <div class="session-group-table">
+            <div class="thead">
+                <div class="th width-10">Platform</div>
+                <div class="th width-20">Game</div>
+                <div class="th width-10 hidden-xs">Type</div>
+                <div class="th width-10">Start</div>
+                <div class="th width-10 hidden-xs">Duration</div>
+                <div class="th width-10">Members</div>
+                <div class="th width-20 hidden-xs">Status</div>
+                <div class="th width-10 hidden-xs">Host</div>
+            </div>
+
+            @foreach (var s in group.Sessions)
+            {
+                <a class="tr" href="@Url.Action("Details", "Sessions", new {id = s.Id})">
+                    <div class="tc">@Html.PlatformIcon(s.PlatformId, s.Platform)</div>
+                    <div class="tc">@s.Game</div>
+                    <div class="tc hidden-xs">@Html.SessionTypeIconSmall(s.TypeId)</div>
+                    <div class="tc" title="@s.ScheduledTime">@s.ScheduledDisplayTime</div>
+                    <div class="tc hidden-xs">@s.Duration</div>
+                    <div class="tc">@s.MembersCount/@s.RequiredCount</div>
+                    <div class="tc hidden-xs">
+                        @Html.SessionStatusLabel(s.Status, s.StatusDescription, "left")
+                    </div>
+                    <div class="tc hidden-xs">@s.Creator</div>
+                </a>
+            }
+        </div>
+    }
+
+    //Nav
+    <nav>
+        <ul class="pager">
+            @if ((int) ViewData["Page"] != 1)
+            {
+                <li class="previous">
+                    <a href="@Url.Action("Filter")" data-page="@((int) ViewData["Page"] - 1)"><span aria-hidden="true" class="hidden-xs">&larr;</span> Previous</a>
+                </li>
+            }
+            @if ((int) ViewData["Page"] != 1)
+            {
+                <li class="today">
+                    <a href="@Url.Action("Filter")" data-page="1">Today</a>
+                </li>
+            }
+            @if (Model.Groups.Count >= 7)
+            {
+                <li class="next">
+                    <a href="@Url.Action("Filter")" data-page="@((int) ViewData["Page"] + 1)">Next <span aria-hidden="true" class="hidden-xs">&rarr;</span></a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+else
+{
+    <div class="no-sessions">
+        <i class="fa fa-cogs"></i> 
+        <span>No sessions match your search criteria. Try refining your search or <a href="@Url.Action("Create", "Sessions")">create your own session</a></span>
+    </div>
+}

@@ -27,12 +27,14 @@ namespace GamingSessionApp
                       "~/Scripts/jquery.tag-editor.min.js",
                       "~/Scripts/bootstrap-rating.min.js",
                       "~/Scripts/igdb.jquery.js",
+                      "~/Scripts/moment.min.js",
+                      "~/Scripts/bootstrap-datetimepicker.min.js",
                       "~/Scripts/site.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.min.css",
-                      "~/Content/jquery-ui-min.css",
+                      "~/Content/jquery-ui.min.css",
                       "~/Content/jquery.tag-editor.css",
                       "~/Content/bootstrap-rating.css",
                       "~/Content/TriggerWars/site.css",

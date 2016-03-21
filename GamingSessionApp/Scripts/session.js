@@ -1,24 +1,4 @@
 ﻿
-//Global opt in for bootstrap popovers
-$('[data-toggle="popover"]').popover({
-    trigger: "hover",
-    viewport: "#viewport"
-});
-
-//Initialise datetime picker
-$(".date-picker").datetimepicker({
-    format: "DD/MM/YYYY",
-    useCurrent: false,
-    minDate: new Date().setHours(0, 0, 0, 0)
-});
-
-$(".time-picker").datetimepicker({
-    format: "HH:mm",
-    stepping: 15,
-    useCurrent: false
-});
-
-
 //Click events on session platform
 $("a.platform-icon").click(function () {
     //Hide any other active platform
@@ -65,7 +45,7 @@ var calculateEndDate = function () {
 
     var duration = $("#DurationId").val();
     if (duration === "301") {
-        $("#end-time").text("Unlimited");
+        $("#end-time").val("Unlimited");
         return;
     }
 
@@ -118,3 +98,30 @@ $("#add-goal").click(function () {
     copy.appendTo("#goals-ul");
     return false;
 });
+
+
+//Invite Friends Modal, fetch friends ajax
+$('#invite-modal').on('show.bs.modal', function (e) {
+    
+    var options = {
+        url: "/Profile/GetUsersFriends",
+        method: "GET"
+    }
+
+    var updateTarget = $("#invite-users");
+
+    //If we have content return
+    if (updateTarget.html().length > 1) return;
+
+    //Show loading spinner
+    var spinner = $('#ajaxLoading').show();
+
+    $.ajax(options)
+        .success(function (data) {
+            spinner.hide();
+            updateTarget.replaceWith(data);
+        })
+        .error(function () {
+            updateTarget.text("Oops: Unable to get your friends. Please try again later.");
+        });
+})

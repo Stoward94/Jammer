@@ -37,20 +37,26 @@ namespace GamingSessionApp.BusinessLogic
                     .Select(x => new SessionDetailsVM
                     {
                         Id = x.Id,
+                        Status = x.Status.Name,
+                        StatusDescription = x.Status.Description,
                         CreatorId = x.CreatorId,
                         CreatorName = x.Creator.DisplayName,
-                        CreatedDate = x.CreatedDate,
+                        GameTitle = x.Game.GameTitle,
+                        ScheduledDate = x.ScheduledDate,
                         Duration = x.Duration.Duration,
+                        PlatformId = x.PlatformId,
+                        Platform = x.Platform.Name,
+                        TypeId = x.TypeId,
                         MembersRequired = x.MembersRequired,
                         IsPublic = x.Settings.IsPublic,
                         Information = x.Information,
-                        Platform = x.Platform.Name,
-                        ScheduledDate = x.ScheduledDate,
+                        Goals = x.Goals.Select(g => g.Goal).ToList(),
                         Members = x.Members.Select(m => new SessionMemberViewModel
                         {
                             UserId = m.UserId,
+                            ThumbnailUrl = m.ThumbnailUrl,
                             DisplayName = m.DisplayName,
-                            Kudos = m.Kudos.Points
+                            Kudos = m.Kudos.Points.ToString()
                         }).ToList(),
                         Comments = new SessionCommentsViewModel
                         {
@@ -64,9 +70,8 @@ namespace GamingSessionApp.BusinessLogic
                                 CreatedDate = c.CreatedDate
                             }).ToList(),
                         },
+                        MinUserRating = x.Settings.MinUserRating,
                         MembersCount = x.Members.Count(),
-                        Status = x.Status.Name,
-                        Type = x.Type.Name,
                         Active = x.Active
                     })
                     .FirstOrDefaultAsync();
@@ -74,16 +79,24 @@ namespace GamingSessionApp.BusinessLogic
                 if (model == null) return null;
 
                 //Mark the correct member as host
-                model.Members.First(m => m.UserId == model.CreatorId).IsHost = true;
+                model.Members.First(m => m.DisplayName == model.CreatorName).IsHost = true;
+                model.Members = model.Members.OrderByDescending(x => x.IsHost).ToList();
 
                 //Convert the DateTimes to the users time zone
-                model.CreatedDate = model.CreatedDate.ToTimeZoneTime(GetUserTimeZone());
                 model.ScheduledDate = model.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
 
+                //Convert to user friendly display date
+                model.ScheduledDisplayDate = model.ScheduledDate.ToFullDateTimeString();
+                
                 //Convert comments times to time zone
                 //Get the 48x48 thumbnail
                 //Finally shorthand the kudos value
                 DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                foreach (var m in model.Members)
+                {
+                    m.Kudos = TrimKudos(m.Kudos);
+                }
 
                 foreach (var c in model.Comments.Comments)
                 {
@@ -103,11 +116,14 @@ namespace GamingSessionApp.BusinessLogic
                 //Can this user post on this session?
                 model.Comments.CanPost = ShowPostCommentSection(model);
 
+                //Can Edit
+                model.CanEdit = model.Active && model.CreatorId == userId;
+
                 return model;
             }
             catch (Exception ex)
             {
-                LogError(ex);
+                LogError(ex, "Error getting session details view model for session : " + sessionId);
                 throw;
             }
         }

@@ -18,6 +18,7 @@ namespace GamingSessionApp.Models
             XboxUrl = string.Empty;
             PlayStationUrl = string.Empty;
             SteamUrl = string.Empty;
+            Rating = 5;
         }
 
         [Key, ForeignKey("User")]
@@ -31,6 +32,9 @@ namespace GamingSessionApp.Models
         public string ThumbnailUrl { get; set; }
 
         public string About { get; set; }
+
+        [Required]
+        public double Rating { get; set; }
 
         public string Website { get; set; }
 

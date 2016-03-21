@@ -302,6 +302,7 @@
     <Content Include="Media\Logo.svg" />
     <Content Include="Media\platform-icon-sprite.png" />
     <Content Include="Media\search-loader.gif" />
+    <Content Include="Media\social-media-icons.png" />
     <Content Include="Media\type-icons-sm.png" />
     <Content Include="Media\type-icons.png" />
     <Content Include="Media\user-joined-icon.png" />
@@ -446,6 +447,8 @@
     <Content Include="Views\Feedback\Received.cshtml" />
     <Content Include="Views\Comments\_Comment.cshtml" />
     <Content Include="Views\Notifications\ViewAll.cshtml" />
+    <Content Include="Views\Sessions\_InviteFriendsModal.cshtml" />
+    <Content Include="Views\Sessions\_AllSessions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

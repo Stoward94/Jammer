@@ -35,7 +35,7 @@ namespace GamingSessionApp.BusinessLogic
             return TimeZoneInfo.ConvertTimeFromUtc(time, tzi);
         }
 
-        public static string ToFullDateString(this DateTime date)
+        public static string ToFullDateString(this DateTime date, bool showYear = false)
         {
             string dayOfWeek = date.DayOfWeek.ToString();
             
@@ -70,7 +70,20 @@ namespace GamingSessionApp.BusinessLogic
 
             }
 
-            return $"{dayOfWeek} {dayNumber}{daySuffix} {month} {year}";
+            string dateString = $"{dayOfWeek} {dayNumber}{daySuffix} {month}";
+
+            if (showYear)
+                dateString += " " + year;
+
+            return dateString;
+        }
+
+        public static string ToFullDateTimeString(this DateTime date)
+        {
+            string dateString = date.ToFullDateString();
+            string timeString = date.ToShortTimeString();
+
+            return dateString + " at " + timeString;
         }
 
         public static string ToMinsAgoTime(this DateTime time, DateTime now)

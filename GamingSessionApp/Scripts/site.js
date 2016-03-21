@@ -12,6 +12,15 @@ $.validator.setDefaults({
     }
 });
 
+//Global opt in for bootstrap popovers
+var popOverSettings = {
+    trigger: "hover",
+    viewport: "#viewport",
+    selector: '[data-toggle="popover"]'
+}
+
+$('body').popover(popOverSettings);
+
 //Fix to stop notif menu disappering when clicking inside
 $('.dropdown-menu').click(function (e) {
     e.stopPropagation();
@@ -74,11 +83,34 @@ var markNotificationAsRead = function() {
 $("#notif-toggle").on("show.bs.dropdown", fetchUserNotifications);
 $("#notif-toggle").on("hidden.bs.dropdown", function () { $("#notif-count").hide(); });
 
-function addFriendSuccess(result) {
-    if (result.success) {
-        alert(result.responseText);
-    }
-}
+
+//Add Friend Ajax
+$('#add-friend-btn').click(function(e) {
+    e.preventDefault();
+    var btn = $(this).prop('disabled', true);
+    var spinner = btn.children("i").show();
+
+    var form = btn.closest("form");
+
+    $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method"),
+        data: form.serialize
+    }).success(function (data) {
+        if (data.success) {
+            alert("Friend Added");
+        }
+        else {
+            DisplayError(data.responseText);
+        }
+        btn.hide();
+
+    }).error(function () {
+        DisplayError("Error adding friend. Please try again later");
+    }).done(function() {
+        spinner.hide();
+    });
+});
 
 //Delete Message AJAX
 var deleteUserMessage = function (e) {
@@ -334,3 +366,62 @@ $('#btn-comment-post').click(function() {
             button.prop('disabled', false).html('Post');
         });
 });
+
+//Initialise datetime picker
+$(".date-picker").datetimepicker({
+    format: "DD/MM/YYYY",
+    useCurrent: false,
+    minDate: new Date().setHours(0, 0, 0, 0)
+});
+
+$(".time-picker").datetimepicker({
+    format: "HH:mm",
+    stepping: 15,
+    useCurrent: false
+});
+
+//Sessions Search next/previous controls
+$("#search-filter-submit").click(function (e) {
+    e.preventDefault();
+
+    var form = $('#search-filter');
+    $("#Page").val(1);
+    var options = {
+        url: form.attr("action"),
+        method: form.attr("method"),
+        data: form.serialize()
+    };
+
+    $.ajax(options)
+        .done(function (data) {
+            $('#sessions-container').html(data);
+        });
+});
+
+$("body").on("click",".pager .next a", function (e) { SessionSearch(e, $(this)); });
+$("body").on("click", ".pager .previous a", function (e) { SessionSearch(e, $(this)); });
+$("body").on("click", ".pager .today a", function (e) { SessionSearch(e, $(this)); });
+
+var SessionSearch = function (e, el) {
+    e.preventDefault();
+
+    var parent = el.parent();
+    parent.addClass("disabled");
+
+    $("#Page").val(el.attr("data-page"));
+    var form = $('#search-filter');
+
+    var options = {
+        url: el.attr("href"),
+        method: "GET",
+        data: form.serialize()
+    };
+
+    $.ajax(options)
+    .done(function (data) {
+            $('#sessions-container').html(data);
+        })
+    .always(function () {
+        parent.removeClass("disabled");
+        });
+}

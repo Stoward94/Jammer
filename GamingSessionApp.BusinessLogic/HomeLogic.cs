@@ -35,7 +35,7 @@ namespace GamingSessionApp.BusinessLogic
                             ScheduledDate = s.ScheduledDate,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             Summary = s.Information
                         }).Take(15).ToListAsync();
@@ -65,7 +65,7 @@ namespace GamingSessionApp.BusinessLogic
                             ScheduledDate = s.ScheduledDate,
                             SessionId = s.Id,
                             Platform = s.Platform.Name,
-                            Type = s.Type.Name,
+                            TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             Summary = s.Information
                         }).Take(15).ToListAsync();
