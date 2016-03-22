@@ -4,25 +4,11 @@ using System.Threading.Tasks;
 
 namespace GamingSessionApp.DataAccess
 {
-    public class UnitOfWork : IDisposable
+    public sealed class UnitOfWork : IDisposable
     {
-        //Single Instace of UoW. This is so we can have a single instance
-        //of the ApplicationDbContext
-        private static UnitOfWork _instance;
-        public static UnitOfWork Instance
-        {
-            get { return _instance ?? (_instance = new UnitOfWork()); }
-            set { _instance = value; }
-        }
-
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = new ApplicationDbContext();
         private bool _disposed;
         private Dictionary<string, object> _repositories;
-
-        private UnitOfWork()
-        {
-            _context = new ApplicationDbContext();
-        }
 
         public GenericRepository<T> Repository<T>() where T : class
         {
@@ -53,7 +39,7 @@ namespace GamingSessionApp.DataAccess
             return true;
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_disposed)
             {

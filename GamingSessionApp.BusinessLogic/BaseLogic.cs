@@ -12,20 +12,18 @@ namespace GamingSessionApp.BusinessLogic
     public class BaseLogic : IDisposable
     {
 
-        protected readonly UnitOfWork UoW = UnitOfWork.Instance;
+        protected readonly UnitOfWork UoW;
         public string UserId { protected get; set; }
 
         private UserManager<ApplicationUser> _userManager;
         private ApplicationUser _applicationUser;
         private TimeZoneInfo _userTimeZone;
 
-        private static bool _disposed;
-
         protected ValidationResult VResult;
 
         protected BaseLogic()
         {
-            _disposed = false;
+            UoW = new UnitOfWork();
             VResult = new ValidationResult();
         }
 
@@ -37,7 +35,7 @@ namespace GamingSessionApp.BusinessLogic
 
         protected ApplicationUser CurrentUser
         {
-            get { return _applicationUser ?? (_applicationUser = UserManager.FindById(UserId)); }//UoW.Repository<ApplicationUser>().GetById(UserId)); }
+            get { return _applicationUser ?? (_applicationUser = UserManager.FindById(UserId)); }
             set { _applicationUser = value; }
         }
 
@@ -103,23 +101,8 @@ namespace GamingSessionApp.BusinessLogic
 
         public void Dispose()
         {
-            Dispose(true);
-            //GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    UoW?.Dispose();
-                    //Null the singleton instance
-                    UnitOfWork.Instance = null;
-                    _userManager?.Dispose();
-                }
-            }
-            _disposed = true;
+            UoW?.Dispose();
+            _userManager?.Dispose();
         }
 
         #endregion
@@ -135,6 +118,8 @@ namespace GamingSessionApp.BusinessLogic
         public string Error { get; set; }
 
         public bool Success { get; set; }
+
+        public object Data { get; set; }
 
         public ValidationResult AddError(string error)
         {
