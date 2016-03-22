@@ -380,6 +380,7 @@
     <Content Include="Scripts\tinymce\skins\lightgray\skin.ie7.min.css" />
     <Content Include="Scripts\tinymce\skins\lightgray\skin.min.css" />
     <Content Include="Scripts\tinymce\tinymce.min.js" />
+    <Content Include="Scripts\TriggerWars\authorised.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Unity.Mvc3.README.txt" />
     <Content Include="Web.config">

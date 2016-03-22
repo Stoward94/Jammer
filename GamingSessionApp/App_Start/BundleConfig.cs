@@ -29,7 +29,8 @@ namespace GamingSessionApp
                       "~/Scripts/igdb.jquery.js",
                       "~/Scripts/moment.min.js",
                       "~/Scripts/bootstrap-datetimepicker.min.js",
-                      "~/Scripts/site.js"));
+                      "~/Scripts/site.js",
+                      "~/Scripts/TriggerWars/authorised.js"));
 
              bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

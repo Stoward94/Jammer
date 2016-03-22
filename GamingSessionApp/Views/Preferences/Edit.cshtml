@@ -9,10 +9,22 @@
 
     @* Left hand nav *@
     <div class="col-md-3">
-        <ul>
-            <li>@Html.ActionLink("Edit Profile", "Edit", "Profile")</li>
-            <li>@Html.ActionLink("Edit Account", "Edit", "Account")</li>
-            <li>@Html.ActionLink("Edit Preferences", "Edit", "Preferences")</li>
+        <ul class="edit-profile-nav">
+            <li>
+                <a href="@Url.Action("Edit", "Profile")">
+                    <div>Edit Profile</div>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Edit", "Account")">
+                    <div>Edit Account</div>
+                </a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("Edit", "Preferences")">
+                    <div>Edit Preferences</div>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -30,38 +42,38 @@
 
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ReceiveEmail, new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
+                    @Html.LabelFor(model => model.ReceiveEmail, new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
                         <div class="checkbox">
-                            @Html.EditorFor(model => model.ReceiveEmail)
-                            @Html.ValidationMessageFor(model => model.ReceiveEmail, "", new { @class = "text-danger" })
+                            <label>
+                                @Html.EditorFor(model => model.ReceiveEmail)
+                            </label>
+                            @Html.ValidationMessageFor(model => model.ReceiveEmail, "", new {@class = "text-danger"})
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ReceiveNotifications, new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
+                    @Html.LabelFor(model => model.ReceiveNotifications, new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
                         <div class="checkbox">
-                            @Html.EditorFor(model => model.ReceiveNotifications)
-                            @Html.ValidationMessageFor(model => model.ReceiveNotifications, "", new { @class = "text-danger" })
+                            <label>
+                                @Html.EditorFor(model => model.ReceiveNotifications)
+                            </label>
+                            @Html.ValidationMessageFor(model => model.ReceiveNotifications, "", new {@class = "text-danger"})
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ReminderTimeId, new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
+                    @Html.LabelFor(model => model.ReminderTimeId, new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
                         @Html.DropDownListFor(m => m.ReminderTimeId, Model.ReminderTimes, null, new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.ReminderTimeId, "", new {@class = "text-danger"})
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Save" class="btn btn-default" />
-                    </div>
-                </div>
+                <button type="submit" class="btn btn-default pull-right"><i class="fa fa-save"></i> Save</button>
             </div>
         }
     </div>

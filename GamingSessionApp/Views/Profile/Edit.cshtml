@@ -1,4 +1,5 @@
 ﻿@model GamingSessionApp.ViewModels.Profile.EditProfileViewModel
+@using GamingSessionApp.Helpers
 
 @{
     ViewBag.Title = "Edit Profile";
@@ -7,110 +8,150 @@
 <div class="row">
 
     @* Left hand nav *@
-    <div class="col-md-3">
-        <ul>
-            <li>@Html.ActionLink("Edit Profile", "Edit", "Profile")</li>
-            <li>@Html.ActionLink("Edit Account", "Edit", "Account")</li>
-            <li>@Html.ActionLink("Edit Preferences", "Edit", "Preferences")</li>
+    <div class="col-sm-3">
+        <ul class="edit-profile-nav">
+            <li class="active">
+                <a href="@Url.Action("Edit", "Profile")">
+                    <div>Edit Profile</div>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Edit", "Account")">
+                    <div>Edit Account</div>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Edit", "Preferences")">
+                    <div>Edit Preferences</div>
+                </a>
+            </li>
         </ul>
     </div>
 
     @* Content *@
-    <div class="col-md-9">
+    <div class="col-sm-9">
+        <div class="row">
+
+            @if (TempData.ContainsKey("ErrorMsg"))
+            {
+                <div class="col-sm-12">
+                    <div class="alert alert-danger" role="alert">@Html.Raw(TempData["ErrorMsg"])</div>
+                </div>
+            }
+
+            @* Image *@
+            <div class="col-sm-3 text-center">
+                @using (Html.BeginForm("ImageUpload", "Profile", FormMethod.Post, new {enctype = "multipart/form-data"}))
+                {
+                    <div class="text-center">
+                        <img src="@Model.ImageUrl" width="180" height="180" alt="Profile Picture" title="@Model.DisplayName"/>
+                        <div class="user-img-upload">
+                            <label class="edit-img-lbl" for="file">
+                                <i class="fa fa-picture-o"></i> <strong>Choose a image</strong>
+                            </label>
+                            <input class="file-upload" id="file" name="file" type="file" accept=".png,.jpg,.jpeg"/>
+                            <button class="file-upload-submit" type="submit" title="Upload your file">
+                                <i class="fa fa-upload"></i> <strong>Upload</strong>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
         @using (Html.BeginForm("Edit", "Profile", FormMethod.Post))
         {
             <div class="row">
-                @* Image *@
-                <div class="col-md-3 text-center">
-                    <img src="@Model.ImageUrl" width="180" height="180" alt="Profile Picture" title="@Model.DisplayName" />
+                <div class="col-sm-12">
+                    <hr/>
                 </div>
-                <div class="col-md-9">
+
+                <div class="col-sm-12">
+                    @Html.LabelFor(x => x.DisplayName, new { @class = "control-label" })
                     <div class="form-group">
-                        @Html.LabelFor(x => x.DisplayName, new { @class = "control-label" })
-                        @Html.EditorFor(x => x.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(x => x.DisplayName, "", new { @class = "text-danger" })
+                        <div class="input-icon">
+                            @Html.EditorFor(x => x.DisplayName, new { htmlAttributes = new { @class = "form-control input-icon-l" } })
+                            <i class="fa fa-user input-icon-l" style="font-size: 14px"></i>
+                        </div>
+                        @Html.ValidationMessageFor(x => x.DisplayName, "", new {@class = "text-danger"})
                     </div>
                 </div>
-            </div>
 
-            <hr />
-
-            <div class="row">
-                <div class="col-md-12">
+                <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.LabelFor(x => x.About, new { @class = "control-label" })
-                        @Html.TextAreaFor(x => x.About, new { @class = "form-control rich-text-area" })
-                        @Html.ValidationMessageFor(x => x.About, "", new { @class = "text-danger" })
+                        @Html.LabelFor(x => x.About, new {@class = "control-label"})
+                        @Html.TextAreaFor(x => x.About, new {@class = "form-control rich-text-area"})
+                        @Html.ValidationMessageFor(x => x.About, "", new {@class = "text-danger"})
                     </div>
                 </div>
-            </div>
 
+                <div class="col-sm-12">
+                    <hr />
+                </div>
 
-
-            <h3>Social</h3>
-            <hr />
-
-            <div class="row">
-
-                <div class="col-md-12">
+                @* Website *@
+                <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.EditorFor(x => x.Website, new { htmlAttributes = new { @class = "form-control", @placeholder = "Website" } })
+                        @Html.LabelFor(x => x.Website, new { @class = "control-label" })
+                        <div class="input-icon">
+                            @Html.EditorFor(x => x.Website, new { htmlAttributes = new { @class = "form-control input-icon-l", @placeholder = "Website" } })
+                            <i class="fa fa-chrome input-icon-l"></i>
+                        </div>
                     </div>
                 </div>
 
                 @* Xbox Details *@
-                <div class="col-md-4">
+                <div class="col-sm-12 col-md-4">
                     <div class="form-group">
-                        @Html.EditorFor(x => x.XboxUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "Xbox Gamertag"}})
+                        @Html.LabelFor(x => x.XboxUsername, new { @class = "control-label" })
+                        @Html.EditorFor(x => x.XboxUsername, new { htmlAttributes = new { @class = "form-control", @placeholder = "Xbox Gamertag" } })
                     </div>
 
                     <div class="form-group">
-                        @Html.EditorFor(x => x.XboxUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "Xbox Account Url"}})
+                        @Html.LabelFor(x => x.XboxUrl, new { @class = "control-label" })
+                        @Html.EditorFor(x => x.XboxUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "Xbox Account URL" } })
                     </div>
                 </div>
 
                 @* PSN Details *@
-                <div class="col-md-4">
+                <div class="col-sm-12 col-md-4">
                     <div class="form-group">
+                        @Html.LabelFor(x => x.PsnUsername, new { @class = "control-label" })
                         @Html.EditorFor(x => x.PsnUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "PlayStation Network"}})
                     </div>
 
                     <div class="form-group">
-                        @Html.EditorFor(x => x.PsnUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "PSN Url"}})
+                        @Html.LabelFor(x => x.PsnUrl, new { @class = "control-label" })
+                        @Html.EditorFor(x => x.PsnUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "PlayStation Network URL"}})
                     </div>
                 </div>
 
                 @* Steam Details *@
-                <div class="col-md-4">
+                <div class="col-sm-12 col-md-4">
                     <div class="form-group">
-                        @Html.EditorFor(x => x.SteamUsername, new {htmlAttributes = new {@class = "form-control", @placeholder = "Steam Id"}})
+                        @Html.LabelFor(x => x.SteamUsername, new { @class = "control-label" })
+                        <div class="input-icon">
+                            @Html.EditorFor(x => x.SteamUsername, new { htmlAttributes = new { @class = "form-control input-icon-l", @placeholder = "Steam Id" } })
+                            <i class="fa fa-steam input-icon-l" style="font-size: 14px"></i>
+                        </div>
+                        
                     </div>
 
                     <div class="form-group">
-                        @Html.EditorFor(x => x.SteamUrl, new {htmlAttributes = new {@class = "form-control", @placeholder = "Steam Account Url"}})
+                        @Html.LabelFor(x => x.SteamUrl, new { @class = "control-label" })
+                        <div class="input-icon">
+                            @Html.EditorFor(x => x.SteamUrl, new { htmlAttributes = new { @class = "form-control input-icon-l", @placeholder = "Steam Account Url" } })                           
+                            <i class="fa fa-steam input-icon-l" style="font-size: 14px"></i>
+                        </div>
                     </div>
                 </div>
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-default pull-right"><i class="fa fa-save"></i> Save</button>
+                </div>
             </div>
-
-            <button type="submit" class="btn btn-default pull-right">Save</button>
         }
     </div>
 </div>
 
 
-
-
-
-
-
-
-
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-@using (Html.BeginForm("ImageUpload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <input id="file" name="file" required type="file" accept=".png,.jpg,.jpeg" />
-
-    <button type="submit" class="btn btn-default">Submit</button>
-}
+@Html.ValidationSummary(true, "", new {@class = "text-danger"})

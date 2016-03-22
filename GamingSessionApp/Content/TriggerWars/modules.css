@@ -598,6 +598,79 @@ a.type-casual:hover, .type-casual.selected { background-position: 0 -725px; }
 }
 
 /**********************************************
+    EDIT PROFILE STYLES
+**********************************************/
+ul.edit-profile-nav {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+ul.edit-profile-nav .active {
+    border-right: 5px solid red;
+}
+
+.edit-profile-nav > li div{
+    padding: 20px;
+    font-weight: bold;
+    color: gray;
+}
+
+.edit-profile-nav a:hover, .edit-profile-nav a:focus{
+    text-decoration: none;
+}
+
+.edit-profile-nav li:hover{
+    background: #f1f1f1;
+}
+
+.edit-profile-nav > li {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.user-img-upload {
+    width: 180px;
+    margin: 0 auto;
+}
+.user-img-upload input {
+    display: none;
+}
+
+.user-img-upload label {
+    background: #f1f1f1;
+    border: 1px solid #b4b4b4;
+    color: gray;
+    padding: 5px;
+    margin: 0;
+    cursor: pointer;
+    width: 100%
+}
+
+.user-img-upload label:hover {
+    background: #d9d9d9;
+    color: #606060;
+}
+
+.file-upload {
+    display: none;
+    visibility: hidden;
+}
+
+.file-upload-submit {
+    width: 100%;
+    border: none;
+    background: #3399FF;
+    border: 1px solid #2f88e1;
+    color: #fff;
+    padding: 5px;
+    display: none;
+}
+
+.file-upload-submit:hover {
+    background: #2f88e1;
+}
+
+/**********************************************
     MEDIA QUERIES
 **********************************************/
 

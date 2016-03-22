@@ -11,11 +11,11 @@ namespace GamingSessionApp.ViewModels.Account
 
         public SelectList TimeZones { get; set; }
 
-        [Required]
+        [Required, Display(Name = "Time Zone")]
         public string TimeZoneId { get; set; }
 
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password), Display(Name = "Current Password")]
         public string CurrentPassword { get; set; }
 
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

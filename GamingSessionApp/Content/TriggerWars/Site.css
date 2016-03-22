@@ -19,7 +19,7 @@ html {
 /* Adjust padding to accommodate for footer */
 @media (max-width: 767px) {
   .body-content {
-      padding-bottom: 260px;
+      padding-bottom: 290px;
   }
 }
 
@@ -169,11 +169,11 @@ i.input-icon-l {
     z-index: 10;
     color: #555;
 }
-select.input-icon-l {
+select.input-icon-l, input.input-icon-l {
     padding-left: 25px;
 }
 i.input-icon-l {
-    left: 10px;
+    left: 8px;
     right: 100%;
 }
 

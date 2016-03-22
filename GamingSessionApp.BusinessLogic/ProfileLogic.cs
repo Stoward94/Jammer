@@ -267,7 +267,7 @@ namespace GamingSessionApp.BusinessLogic
                 {
                     // Not allowed
                     return VResult.AddError($"The file type {extension} is not allowed. " +
-                                            $"Please select an image with the following supported file types: {allowedExtensions.ToList()}");
+                                            $"Please select an image with the following supported file types: {string.Join(" ", allowedExtensions.ToList())}");
                 }
 
                 //Thumbnail path

@@ -10,7 +10,7 @@ namespace GamingSessionApp.ViewModels.Profile
 {
     public class EditProfileViewModel
     {
-        [Required]
+        [Required, Display(Name ="Display Name")]
         public string DisplayName { get; set; }
         
         public string ImageUrl { get; set; }
@@ -24,19 +24,19 @@ namespace GamingSessionApp.ViewModels.Profile
         [Display(Name = "Xbox GamerTag")]
         public string XboxUsername { get; set; }
 
-        [Display(Name = "Xbox GamerTag Url")]
+        [Display(Name = "Xbox GamerTag URL")]
         public string XboxUrl { get; set; }
 
-        [Display(Name = "PSN")]
+        [Display(Name = "PSN Username")]
         public string PsnUsername { get; set; }
 
-        [Display(Name = "PSN Url")]
+        [Display(Name = "PSN Account URL")]
         public string PsnUrl { get; set; }
 
         [Display(Name = "Steam Username")]
         public string SteamUsername { get; set; }
 
-        [Display(Name = "Steam Account Url")]
+        [Display(Name = "Steam Account URL")]
         public string SteamUrl { get; set; }
 
 
