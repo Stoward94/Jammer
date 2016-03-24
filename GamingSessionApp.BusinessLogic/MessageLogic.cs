@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Inbox;
+using GamingSessionApp.ViewModels.Shared;
 
 namespace GamingSessionApp.BusinessLogic
 {
@@ -19,33 +20,57 @@ namespace GamingSessionApp.BusinessLogic
             _messageRepo = UoW.Repository<UserMessage>();
         }
 
-        public async Task<List<UserMessagesViewModel>> GetUsersMessages(string userId)
+        public async Task<UserMessagesViewModel> GetUsersMessages(string userId, int page)
         {
             try
             {
                 //Update base logic reference
                 UserId = userId;
 
-                List<UserMessagesViewModel> messages = await _messageRepo.Get(x => x.RecipientId == userId)
+                int pageSize = 10;
+                int skip = (page - 1) * pageSize;
+
+                UserMessagesViewModel userMessages = await _messageRepo.Get(x => x.RecipientId == userId)
+                    .GroupBy(x => x.RecipientId)
                     .Select(x => new UserMessagesViewModel
                     {
-                        Id = x.Id,
-                        SenderImageUrl = x.Sender.ThumbnailUrl,
-                        SenderName = x.Sender.DisplayName,
-                        Subject = x.Subject,
-                        SentDate = x.CreatedDate,
-                        Read = x.Read
+                        Pagination = new Pagination
+                        {
+                            TotalCount = x.Count(),
+                            PageNo = page,
+                            PageSize = pageSize
+                        },
+
+                        Messages = x.Select(m => new MessageViewModel
+                        {
+                            Id = m.Id,
+                            Read = m.Read,
+                            SenderImageUrl = m.Sender.ThumbnailUrl,
+                            SenderName = m.Sender.DisplayName,
+                            SentDate = m.CreatedDate,
+                            Subject = m.Subject
+                        })
+                        .OrderByDescending(m => m.SentDate)
+                        .Skip(skip)
+                        .Take(pageSize)
+                        .ToList()
                     })
-                    .OrderByDescending(x => x.SentDate)
-                    .ToListAsync();
+                    .FirstOrDefaultAsync();
+
+                //If no messages create default
+                if (userMessages == null)
+                    userMessages = new UserMessagesViewModel();
+
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
 
                 //Convert the times to the users time zone
-                foreach (var m in messages)
+                foreach (var m in userMessages.Messages)
                 {
                     m.SentDate = m.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                    m.SentDisplayDate = m.SentDate.ToMinsAgoTime(now);
                 }
 
-                return messages;
+                return userMessages;
             }
             catch (Exception ex)
             {
@@ -54,31 +79,51 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<List<OutboxMessageViewModel>> GetUserOutbox(string userId)
+        public async Task<OutboxMessageViewModel> GetUserOutbox(string userId, int page)
         {
             try
             {
                 UserId = userId;
 
-                List<OutboxMessageViewModel> messages = await _messageRepo.Get(x => x.SenderId == userId)
+                int pageSize = 10;
+                int skip = (page - 1) * pageSize;
+
+                OutboxMessageViewModel sentMessages = await _messageRepo.Get(x => x.SenderId == userId)
+                    .GroupBy(x => x.SenderId)
                     .Select(x => new OutboxMessageViewModel
                     {
-                        Id = x.Id,
-                        RecipientImageUrl = x.Recipient.ThumbnailUrl,
-                        RecipientName = x.Recipient.DisplayName,
-                        SentDate = x.CreatedDate,
-                        Subject = x.Subject
-                    })
-                    .OrderByDescending(x => x.SentDate)
-                    .ToListAsync();
+                        Pagination = new Pagination
+                        {
+                            TotalCount = x.Count(),
+                            PageNo = page,
+                            PageSize = pageSize
+                        },
 
+                        Messages = x.Select(m => new SentMessageViewModel
+                        {
+                            Id = m.Id,
+                            RecipientImageUrl = m.Recipient.ThumbnailUrl,
+                            RecipientName = m.Recipient.DisplayName,
+                            SentDate = m.CreatedDate,
+                            Subject = m.Subject
+                        })
+                        .OrderByDescending(m => m.SentDate)
+                        .Skip(skip)
+                        .Take(pageSize)
+                        .ToList()
+                    })
+                    .FirstOrDefaultAsync();
+
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+                
                 //Convert the times to the users time zone
-                foreach (var m in messages)
+                foreach (var m in sentMessages.Messages)
                 {
                     m.SentDate = m.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                    m.SentDisplayDate = m.SentDate.ToMinsAgoTime(now);
                 }
 
-                return messages;
+                return sentMessages;
 
             }
             catch (Exception ex)
@@ -88,44 +133,56 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<ViewMessageViewModel> GetMessage(Guid id, string userId)
+        public async Task<ViewMessageViewModel> ViewMessage(Guid id, string userId)
         {
             try
             {
                 UserId = userId;
 
                 //Load the message
-                UserMessage model = await _messageRepo.Get(x => x.Id == id)
-                    .Where(x => x.RecipientId == userId || x.SenderId == userId)
-                    .Include(x => x.Sender)
+                ViewMessageViewModel message = await _messageRepo.Get(x => x.Id == id)
+                    .Where(x => x.RecipientId == userId)
+                    .Select(x => new ViewMessageViewModel
+                    {
+                        ImageUrl = x.Sender.ThumbnailUrl,
+                        SenderName = x.Sender.DisplayName,
+                        Kudos = x.Sender.Kudos.Points.ToString(),
+                        SentDate = x.CreatedDate,
+                        Subject = x.Subject,
+                        Body = x.Body,
+                        Read = x.Read
+
+                    })
                     .FirstOrDefaultAsync();
 
-                if (model == null) return null;
+                if (message == null) return null;
 
                 //Now we need to update and save the message as being read
                 //If the message hasn't been read
-                if (model.Read == false)
+                if (message.Read == false)
                 {
+                    var model = await _messageRepo.Get(x => x.Id == id)
+                        .FirstAsync();
+
                     model.Read = true;
 
                     _messageRepo.Update(model);
                     await SaveChangesAsync();
                 }
 
-                //Now map to view model
-                ViewMessageViewModel viewModel = new ViewMessageViewModel
-                {
-                    ImageUrl = model.Sender.ThumbnailUrl,
-                    SenderName = model.Sender.DisplayName,
-                    SentDate = model.CreatedDate,
-                    Subject = model.Subject,
-                    Body = model.Body
-                };
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                //Get the large thumbnail image
+                message.ImageUrl = GetImageUrl(message.ImageUrl, "180x180");
 
                 //Convert date to local timezone
-                viewModel.SentDate = viewModel.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                message.SentDate = message.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                message.SentDisplayDate = message.SentDate.ToMinsAgoTime(now);
+                message.Kudos = TrimKudos(message.Kudos);
 
-                return viewModel;
+                message.CanReply = true;
+
+                return message;
             }
             catch (Exception ex)
             {
@@ -134,31 +191,45 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<ViewMessageViewModel> GetSentMessage(Guid id, string userId)
+        public async Task<ViewMessageViewModel> ViewSentMessage(Guid id, string userId)
         {
             try
             {
                 UserId = userId;
 
                 //Load the message
-                ViewMessageViewModel model = await _messageRepo.Get(x => x.Id == id)
-                    .Where(x => x.RecipientId == userId || x.SenderId == userId)
+                ViewMessageViewModel message = await _messageRepo.Get(x => x.Id == id)
+                    .Where(x => x.SenderId == userId)
                     .Select(x => new ViewMessageViewModel
                     {
                         ImageUrl = x.Recipient.ThumbnailUrl,
                         SenderName = x.Recipient.DisplayName,
+                        Kudos = x.Recipient.Kudos.Points.ToString(),
                         SentDate = x.CreatedDate,
                         Subject = x.Subject,
-                        Body = x.Body
+                        Body = x.Body,
+                        Read = x.Read
+
                     })
                     .FirstOrDefaultAsync();
 
-                if (model == null) return null;
+                if (message == null) return null;
 
                 //Convert date to local timezone
-                model.SentDate = model.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
 
-                return model;
+                //Get the large thumbnail image
+                message.ImageUrl = GetImageUrl(message.ImageUrl, "180x180");
+
+                //Convert date to local timezone
+                message.SentDate = message.SentDate.ToTimeZoneTime(GetUserTimeZone());
+                message.SentDisplayDate = message.SentDate.ToMinsAgoTime(now);
+                message.Kudos = TrimKudos(message.Kudos);
+
+                //We can't reply to a message we've sent
+                message.CanReply = false;
+
+                return message;
             }
             catch (Exception ex)
             {

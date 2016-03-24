@@ -5,48 +5,52 @@
 }
 
 <h2>Create</h2>
-
-@using (Html.BeginForm("Create", "Messages", FormMethod.Post, new { @id = "create-message-form" })) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Recipients, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <input id="user-autocomplete" type="text" data-update-target="#Recipients"/>
-                @Html.HiddenFor(m => m.Recipients)
-                @Html.ValidationMessageFor(model => model.Recipients, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.Subject, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Body, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextAreaFor(model => model.Body, new { @class = "form-control rich-text-area" })
-                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input id="create-message-btn" type="submit" value="Send" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
+<hr/>
 
 <div>
-    @Html.ActionLink("Inbox", "Inbox")
+    <a href="@Url.Action("Inbox", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-inbox"></i> Inbox</a>
+
+    <a href="@Url.Action("Outbox", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-paper-plane-o"></i> Outbox</a>
+</div>
+
+<div class="create-message">
+    @using (Html.BeginForm("Create", "Messages", FormMethod.Post, new { @id = "create-message-form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Recipients, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <input id="user-autocomplete" type="text" class="form-control" data-update-target="#Recipients" />
+                    @Html.HiddenFor(m => m.Recipients)
+                    @Html.ValidationMessageFor(model => model.Recipients, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Subject, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Body, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Body, new { @class = "form-control rich-text-area hidden" })
+                    @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button id="create-message-btn" type="submit" class="btn btn-default"><i class="fa fa-paper-plane-o"></i> Send</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>

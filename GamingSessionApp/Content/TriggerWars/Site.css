@@ -27,6 +27,9 @@ html {
 .font-14{ font-size: 14px; }
 .font-12{ font-size: 12px; }
 
+.margin-t-10 { margin-top: 10px; }
+.margin-t-20 { margin-top: 20px; }
+
 .logo {
     min-height: 55px;
     max-height: 55px;
@@ -107,7 +110,7 @@ figcaption {
 }
 
 .navbar-link {
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 .navbar-nav > li > a {

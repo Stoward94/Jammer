@@ -1,40 +1,56 @@
-﻿@model IEnumerable<GamingSessionApp.ViewModels.Inbox.OutboxMessageViewModel>
+﻿@using GamingSessionApp.Helpers
+@model GamingSessionApp.ViewModels.Inbox.OutboxMessageViewModel
 
 @{
     ViewBag.Title = "Outbox";
 }
 
 <h2>Outbox</h2>
+<hr />
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(m => m.RecipientName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(m => m.Subject)
-        </th>
-        <th>
-            @Html.DisplayNameFor(m => m.SentDate)
-        </th>
-    </tr>
+<div>
+    <a href="@Url.Action("Create", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-edit"></i> Create New</a>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <img src="@item.RecipientImageUrl" width="36" height="36" title="@item.RecipientName" alt="@item.RecipientName" />
-            @Html.ActionLink(item.RecipientName, "UserProfile", "Profile", new { userName = item.RecipientName }, null)
-        </td>
-        <td>
-            @Html.ActionLink(item.Subject, "Sent", "Messages", new { id = item.Id }, null)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SentDate)
-        </td>
-    </tr>
+    <a href="@Url.Action("Inbox", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-inbox"></i> Inbox</a>
+</div>
+
+<table class="table inbox-table">
+
+    <thead>
+        <tr>
+            <th>To</th>
+            <th>Subject</th>
+            <th>Sent</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var m in Model.Messages)
+        {
+            <tr>
+                <td>
+                    <img class="hidden-xs" src="@m.RecipientImageUrl" width="36" height="36" title="@m.RecipientName" alt="@m.RecipientName"/>
+                    @Html.ActionLink(m.RecipientName, "UserProfile", "Profile", new {userName = m.RecipientName}, null)
+                </td>
+                <td>
+                    @Html.ActionLink(m.Subject, "Sent", "Messages", new {id = m.Id}, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => m.SentDisplayDate)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Messages.Count < 1)
+{
+    <div class="no-messages">
+        <i class="fa fa-paper-plane-o"></i>
+        <span>You have sent no messages</span>
+    </div>
 }
 
-</table>
+<div class="text-right">
+    @Html.PaginationFull(Model.Pagination.PageSize, Model.Pagination.PageNo, Model.Pagination.TotalCount, Url.Action("Outbox", "Messages"))
+</div>

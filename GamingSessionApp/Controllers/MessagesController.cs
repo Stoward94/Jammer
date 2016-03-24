@@ -20,21 +20,17 @@ namespace GamingSessionApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Inbox()
+        public async Task<ActionResult> Inbox(int page = 1)
         {
-            //Possible success message from redirect
-            if (TempData.ContainsKey("SuccessMessage"))
-                ViewBag.SuccessMessage = TempData["SuccessMessage"].ToString();
-
-            var model = await _messageLogic.GetUsersMessages(UserId);
+            var model = await _messageLogic.GetUsersMessages(UserId, page);
             
             return View(model);
         }
 
         [HttpGet]
-        public async Task<ActionResult> Outbox()
+        public async Task<ActionResult> Outbox(int page = 1)
         {
-            var model = await _messageLogic.GetUserOutbox(UserId);
+            var model = await _messageLogic.GetUserOutbox(UserId, page);
 
             return View(model);
         }
@@ -44,7 +40,7 @@ namespace GamingSessionApp.Controllers
         {
             if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            ViewMessageViewModel model = await _messageLogic.GetMessage(id, UserId);
+            ViewMessageViewModel model = await _messageLogic.ViewMessage(id, UserId);
 
             if(model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
@@ -57,7 +53,7 @@ namespace GamingSessionApp.Controllers
         {
             if (id == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            ViewMessageViewModel model = await _messageLogic.GetSentMessage(id, UserId);
+            ViewMessageViewModel model = await _messageLogic.ViewSentMessage(id, UserId);
 
             if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 

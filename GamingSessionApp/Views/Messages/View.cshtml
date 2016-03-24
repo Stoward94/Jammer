@@ -4,32 +4,59 @@
     ViewBag.Title = "View Message";
 }
 
-<h1>Private Message</h1>
+<div>
+    <a href="@Url.Action("Create", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-edit"></i> Create New</a>
 
-<div class="row">
+    <a href="@Url.Action("Inbox", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-inbox"></i> Inbox</a>
 
-    <div class="col-md-3">
-        <div style="text-align: center">
-            <a href="@Url.Action("UserProfile", "Profile", new { userName = Model.SenderName })">
-                <img src="@Model.ImageUrl" title="@Model.SenderName" alt="@Model.SenderName" width="180" height="180" />
-                <br/>
-                @Html.DisplayFor(x => x.SenderName)
-            </a>
-        </div>
+    <a href="@Url.Action("Outbox", "Messages")" class="btn btn-default margin-t-10"><i class="fa fa-paper-plane-o"></i> Outbox</a>
 
+
+</div>
+
+<div class="row view-message">
+    <div class="col-md-3 text-center">
+        <figure>
+            <img src="@Model.ImageUrl" title="@Model.SenderName" alt="@Model.SenderName" width="180" height="180"/>
+            <figcaption>
+                <a class="view-msg-user" href="@Url.Action("UserProfile", "Profile", new {userName = Model.SenderName})">
+                    @Model.SenderName <i class="fa fa-trophy"></i> @Model.Kudos
+                </a>
+            </figcaption>
+        </figure>
     </div>
 
     <div class="col-md-9">
-        <div class="row">
-            <div class="col-md-9">
-                <h3 style="margin: 5px;">@Html.DisplayFor(x => x.Subject)</h3>
-            </div>
-            <div class="col-md-3" style="text-align: right;"><span><i class="fa fa-calendar"></i> @Html.DisplayFor(x => x.SentDate)</span></div>
+        <div class="clearfix">
+            <h3 class="pull-left" style="margin: 5px;">@Model.Subject</h3>
+            <span class="view-msg-time"><i class="fa fa-clock-o"></i> @Model.SentDisplayDate</span>
         </div>
-        <div>
-            <hr style="margin-top: 0" />
+        <hr style="margin-top: 0"/>
+        <div class="view-msg-body">
             @Html.Raw(Model.Body)
         </div>
+
+        @if (Model.CanReply)
+        {
+            <hr/>
+
+            using (Html.BeginForm("Create", "Messages", FormMethod.Post))
+             {
+                 @Html.AntiForgeryToken()
+                 @(Model.Body = "")
+
+                 <div class="form-group">
+                     <label>Reply</label>
+                     @Html.TextAreaFor(m => m.Body, new {@class = "form-control rich-text-area"})
+                     @Html.ValidationMessageFor(m => m.Body, "", new {@class = "text-danger"})
+                 </div>
+
+                 <button class="btn btn-default"><i class="fa fa-reply"></i> Send Reply</button>
+
+                 <input type="hidden" value="@Model.SenderName" id="Recipients" name="Recipients"/>
+                 <input type="hidden" value="@Model.Subject" id="Subject" name="Subject"/>
+             }
+        }
     </div>
 
 </div>

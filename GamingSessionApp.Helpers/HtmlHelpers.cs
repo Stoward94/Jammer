@@ -139,7 +139,7 @@ namespace GamingSessionApp.Helpers
             return link;
         }
 
-        public static MvcHtmlString PaginationFull(this HtmlHelper helper, int pageSize, int pageNo, int totalCount)
+        public static MvcHtmlString PaginationFull(this HtmlHelper helper, int pageSize, int pageNo, int totalCount, string url)
         {
             //If we are on page 1 of 1 return (no control is needed);
             if (pageNo == 1 && totalCount <= pageSize)
@@ -155,10 +155,12 @@ namespace GamingSessionApp.Helpers
 
             ul.AddCssClass("pagination");
 
-            start.InnerHtml = "<a href='#' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>";
-            end.InnerHtml = "<a href='#' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>";
-
+            //Total number of pages
             int pagesRounded = (int)Math.Ceiling((double)totalCount / (double)pageSize);
+
+            start.InnerHtml = "<a href='"+ url + "?page=1' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>";
+            end.InnerHtml = "<a href='" + url + "?page=" + pagesRounded + "' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>";
+
 
             StringBuilder numbersHtml = new StringBuilder();
 
@@ -170,7 +172,7 @@ namespace GamingSessionApp.Helpers
                 if (i == pageNo)
                     li.AddCssClass("active");
 
-                a.Attributes.Add("href", "/Notifications/ViewAll?page=" + i);
+                a.Attributes.Add("href", url + "?page=" + i);
                 a.InnerHtml = i.ToString();
 
                 li.InnerHtml = a.ToString();

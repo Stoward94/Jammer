@@ -181,8 +181,8 @@ tinymceInitialise();
 
 //Create message tag/autocomplete
 $("#user-autocomplete").tagEditor({
-    delimiter: ',',
-    placeholder: 'Username',
+    delimiter: ",",
+    placeholder: "Username(s)",
     maxTags: 10,
     autocomplete: { 'source': "/Profile/GetUsersJson", minLength: 2 },
     onChange: function (field, editor, tags) {
@@ -190,6 +190,9 @@ $("#user-autocomplete").tagEditor({
         $(targetId).val(tags);
     }
 });
+
+//Add bootstrap class so styling matches other fields
+$(".tag-editor").addClass("form-control");
 
 //Mark messages as read
 $("#mark-read-btn").click(function () {

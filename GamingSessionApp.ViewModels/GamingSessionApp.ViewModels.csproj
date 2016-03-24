@@ -112,6 +112,7 @@
     <Compile Include="Session\SessionListItemViewModel.cs" />
     <Compile Include="Session\SessionMemberViewModel.cs" />
     <Compile Include="Session\SessionCommentsViewModel.cs" />
+    <Compile Include="Shared\Pagination.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
