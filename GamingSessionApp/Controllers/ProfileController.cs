@@ -14,9 +14,9 @@ namespace GamingSessionApp.Controllers
     //[Route("Profile/[action]")]
     public class ProfileController : BaseController
     {
-        private readonly ProfileLogic _profileLogic;
+        private readonly IProfileLogic _profileLogic;
 
-        public ProfileController(ProfileLogic profileLogic)
+        public ProfileController(IProfileLogic profileLogic)
         {
             _profileLogic = profileLogic;
         }
@@ -86,10 +86,8 @@ namespace GamingSessionApp.Controllers
         {
             if(username == null)
                 return Json(new { success = false, responseText = "No user provided" });
-
-            _profileLogic.UserId = UserId;
-
-            ValidationResult result = await _profileLogic.AddFriend(username);
+            
+            ValidationResult result = await _profileLogic.AddFriend(username, UserId);
 
             //Return Success
             if (result.Success)

@@ -7,27 +7,47 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using GamingSessionApp.ViewModels.Home;
 using static GamingSessionApp.BusinessLogic.SystemEnums;
+using GamingSessionApp.DataAccess;
+using GamingSessionApp.Models;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class HomeLogic : BaseLogic
+    public class HomeLogic : BaseLogic, IHomeLogic, IDisposable
     {
         //Business Logics
-        private readonly SessionLogic _sessionLogic;
+        private readonly GenericRepository<Session> _sessionRepo;
 
-        public HomeLogic()
+        public HomeLogic(UnitOfWork uow)
         {
-            _sessionLogic = new SessionLogic();
+            UoW = uow;
+            _sessionRepo = UoW.Repository<Session>();
         }
 
-        public async Task<List<SessionListItem>> GetOpenSessions()
+        public async Task<HomeViewModel> GetHomeViewModel(string userId)
         {
             try
             {
-                var query = _sessionLogic.GetAllQueryable();
+                UserId = userId;
 
-                var openSessions = await query
-                        .Where(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
+                var viewModel = new HomeViewModel();
+
+                viewModel.NewSessions = await GetNewSessions();
+                viewModel.OpenSessions = await GetOpenSessions();
+
+                return viewModel;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error preparing home view model");
+                throw;
+            }
+        }
+
+        private async Task<List<SessionListItem>> GetOpenSessions()
+        {
+            try
+            {
+                var openSessions = await _sessionRepo.Get(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
                         .Where(x => x.StatusId != (int)SessionStatusEnum.FullyLoaded) //Sessions that are not full
                         .OrderBy(x => x.ScheduledDate)
                         .Select(s => new SessionListItem
@@ -38,27 +58,26 @@ namespace GamingSessionApp.BusinessLogic
                             TypeId = s.TypeId,
                             GamerCount = s.Members.Count + "/" + s.MembersRequired,
                             Summary = s.Information
-                        }).Take(15).ToListAsync();
+                        })
+                        .Take(15)
+                        .ToListAsync();
 
                 ConvertTimesToTimeZone(openSessions);
 
 
                 return openSessions;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                LogError(ex, "GetOpenSessions() threw an error!");
                 throw;
             }
         }
-        public async Task<List<SessionListItem>> GetNewSessions()
+        private async Task<List<SessionListItem>> GetNewSessions()
         {
             try
             {
-                var query = _sessionLogic.GetAllQueryable();
-
-                var newSessions = await query
-                        .Where(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
+                var newSessions = await _sessionRepo.Get(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
                         .OrderByDescending(x => x.ScheduledDate)
                         .Select(s => new SessionListItem
                         {
@@ -74,9 +93,9 @@ namespace GamingSessionApp.BusinessLogic
 
                 return newSessions;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                LogError(ex, "GetNewSessions() threw an error!");
                 throw;
             }
         }
@@ -89,5 +108,7 @@ namespace GamingSessionApp.BusinessLogic
                 s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
             }
         }
+
+        
     }
 }

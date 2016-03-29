@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
@@ -12,13 +11,14 @@ using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class SessionCommentLogic : BaseLogic
+    public class SessionCommentLogic : BaseLogic, ISessionCommentLogic
     {
         //Session Repository
         private readonly GenericRepository<SessionComment> _commentRepo;
 
-        public SessionCommentLogic()
+        public SessionCommentLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _commentRepo = UoW.Repository<SessionComment>();
         }
 
@@ -63,7 +63,7 @@ namespace GamingSessionApp.BusinessLogic
                 var members = await UoW.Repository<Session>().Get(x => x.Id == model.SessionId)
                     .Select(x => x.Members).FirstAsync();
 
-                var nLogic = new NotificationLogic();
+                var nLogic = new NotificationLogic(UoW);
                 nLogic.AddCommentNotification(members, userId, model.SessionId, comment.Id);
 
                 //Return commentId to load the new comment viewModel

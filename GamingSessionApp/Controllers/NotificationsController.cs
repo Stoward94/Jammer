@@ -8,9 +8,9 @@ namespace GamingSessionApp.Controllers
 {
     public class NotificationsController : BaseController
     {
-        private readonly NotificationLogic _notificationLogic;
+        private readonly INotificationLogic _notificationLogic;
 
-        public NotificationsController(NotificationLogic notificationLogic)
+        public NotificationsController(INotificationLogic notificationLogic)
         {
             _notificationLogic = notificationLogic;
         }

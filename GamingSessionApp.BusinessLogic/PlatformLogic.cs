@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
@@ -14,8 +11,9 @@ namespace GamingSessionApp.BusinessLogic
     {
         private readonly GenericRepository<Platform> _platformRepo;
 
-        public PlatformLogic()
+        public PlatformLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _platformRepo = UoW.Repository<Platform>();
         }
 

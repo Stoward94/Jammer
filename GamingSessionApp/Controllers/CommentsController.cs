@@ -12,9 +12,9 @@ namespace GamingSessionApp.Controllers
 {
     public class CommentsController : BaseController
     {
-        private readonly SessionCommentLogic _commentLogic;
+        private readonly ISessionCommentLogic _commentLogic;
 
-        public CommentsController(SessionCommentLogic commentLogic)
+        public CommentsController(ISessionCommentLogic commentLogic)
         {
             _commentLogic = commentLogic;
         }

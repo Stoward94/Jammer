@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web.Hosting;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Helpers;
-using System.Web.UI.WebControls;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Home;
@@ -21,12 +18,13 @@ using Image = System.Drawing.Image;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class ProfileLogic : BaseLogic
+    public class ProfileLogic : BaseLogic, IProfileLogic
     {
         private readonly GenericRepository<UserProfile> _profileRepo;
 
-        public ProfileLogic()
+        public ProfileLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _profileRepo = UoW.Repository<UserProfile>();
         }
 
@@ -175,10 +173,12 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<ValidationResult> AddFriend(string userName)
+        public async Task<ValidationResult> AddFriend(string userName, string userId)
         {
             try
             {
+                UserId = userId;
+
                 //Find the user in the db
                 string targetUserId = await _profileRepo.Get(x => x.DisplayName == userName)
                     .Select(x => x.UserId)

@@ -14,8 +14,9 @@ namespace GamingSessionApp.BusinessLogic
     {
         private readonly GenericRepository<SessionType> _typeRepo;
 
-        public SessionTypeLogic()
+        public SessionTypeLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _typeRepo = UoW.Repository<SessionType>();
         }
         

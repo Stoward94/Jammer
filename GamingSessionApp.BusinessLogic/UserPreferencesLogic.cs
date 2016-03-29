@@ -9,12 +9,13 @@ using GamingSessionApp.ViewModels.Preferences;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class UserPreferencesLogic : BaseLogic
+    public class UserPreferencesLogic : BaseLogic, IUserPreferencesLogic
     {
         private readonly GenericRepository<UserPreferences> _preferencesRepo;
 
-        public UserPreferencesLogic()
+        public UserPreferencesLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _preferencesRepo = UoW.Repository<UserPreferences>();
         }
 

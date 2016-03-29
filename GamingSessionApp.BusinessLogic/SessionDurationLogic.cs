@@ -14,8 +14,9 @@ namespace GamingSessionApp.BusinessLogic
     {
         private readonly GenericRepository<SessionDuration> _durationRepo;
 
-        public SessionDurationLogic()
+        public SessionDurationLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _durationRepo = UoW.Repository<SessionDuration>();
         }
 

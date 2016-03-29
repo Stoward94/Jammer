@@ -12,7 +12,7 @@ using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class SessionLogic : BaseLogic
+    public class SessionLogic : BaseLogic, ISessionLogic
     {
 
     #region Variables
@@ -28,11 +28,12 @@ namespace GamingSessionApp.BusinessLogic
 
     #region Constructor
 
-        public SessionLogic()
+        public SessionLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _sessionRepo = UoW.Repository<Session>();
             
-            _durationLogic = new SessionDurationLogic();
+            _durationLogic = new SessionDurationLogic(uow);
         }
 
         #endregion
@@ -199,12 +200,7 @@ namespace GamingSessionApp.BusinessLogic
                 throw;
             }
         }
-
-        public IQueryable<Session> GetAllQueryable()
-        {
-            return _sessionRepo.Get();
-        }
-
+        
         public async Task<ValidationResult> CreateSession(CreateSessionVM model, string userId)
         {
             try
@@ -264,7 +260,7 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Add the game to the session
                 //Check to see if this game exists in my db
-                GameLogic gLogic = new GameLogic();
+                GameLogic gLogic = new GameLogic(UoW);
                 var existingGame = await gLogic.ExistingGame(model.IgdbGameId, model.GameTitle);
 
                 //Either use existing gameId or create a new game.
@@ -283,7 +279,7 @@ namespace GamingSessionApp.BusinessLogic
 
 
                 //Add the intial message to the session messages feed
-                _commentLogic = new SessionCommentLogic();
+                _commentLogic = new SessionCommentLogic(UoW);
                 _commentLogic.AddSessionCreatedComment(session);
 
                 //Load the UserProfile of the creator to add as a member
@@ -310,7 +306,7 @@ namespace GamingSessionApp.BusinessLogic
                     await email.SessionInviteEmail(session.Id, model.GameTitle, creator.DisplayName, recipients);
 
                     //Send Notification
-                    NotificationLogic nLogic = new NotificationLogic();
+                    NotificationLogic nLogic = new NotificationLogic(UoW);
                     await nLogic.SessionInviteNotification(session, creator.UserId, recipients);
                 }
 
@@ -353,7 +349,7 @@ namespace GamingSessionApp.BusinessLogic
                 //If the game has changed look for an existing local record
                 if (gameChanged)
                 {
-                    GameLogic gLogic = new GameLogic();
+                    GameLogic gLogic = new GameLogic(UoW);
                     var existingGame = await gLogic.ExistingGame(viewModel.IgdbGameId, viewModel.GameTitle);
 
                     //Either use existing gameId or create a new game.
@@ -746,7 +742,7 @@ namespace GamingSessionApp.BusinessLogic
                 return null;
             }
         }
-
+        
         #endregion
 
         public async Task<ValidationResult> AddUserToSession(string userId, Guid sessionId)
@@ -806,14 +802,14 @@ namespace GamingSessionApp.BusinessLogic
                 CheckSessionStatus(targetSession);
 
                 //Add 'User joined' message to session feed
-                _commentLogic = new SessionCommentLogic();
+                _commentLogic = new SessionCommentLogic(UoW);
                 var comment = _commentLogic.AddUserJoinedComment(targetSession.Id, user.DisplayName, user.UserId);
 
                 if(comment != null)
                     targetSession.Comments.Add(comment);
 
                 //Send notification to the session owner
-                NotificationLogic nLogic = new NotificationLogic();
+                NotificationLogic nLogic = new NotificationLogic(UoW);
                 await nLogic.AddUserJoinedNotification(targetSession, user.UserId);
 
                 _sessionRepo.Update(targetSession);

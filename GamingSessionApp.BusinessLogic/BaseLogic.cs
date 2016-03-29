@@ -12,7 +12,7 @@ namespace GamingSessionApp.BusinessLogic
     public class BaseLogic : IDisposable
     {
 
-        protected readonly UnitOfWork UoW;
+        protected UnitOfWork UoW;
         public string UserId { protected get; set; }
 
         private UserManager<ApplicationUser> _userManager;
@@ -23,7 +23,6 @@ namespace GamingSessionApp.BusinessLogic
 
         protected BaseLogic()
         {
-            UoW = new UnitOfWork();
             VResult = new ValidationResult();
         }
 

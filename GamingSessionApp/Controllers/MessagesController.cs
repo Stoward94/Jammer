@@ -12,9 +12,9 @@ namespace GamingSessionApp.Controllers
 {
     public class MessagesController : BaseController
     {
-        private readonly MessageLogic _messageLogic;
+        private readonly IMessageLogic _messageLogic;
 
-        public MessagesController(MessageLogic messageLogic)
+        public MessagesController(IMessageLogic messageLogic)
         {
             _messageLogic = messageLogic;
         }

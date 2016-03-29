@@ -12,7 +12,7 @@
 
     <div class="col-sm-11 col-xs-12 comment">
         <span class="date-time pull-right"><i class="fa fa-clock-o"></i> @Model.CreatedDisplayDate</span>
-        <span class="comment-author">@Html.ActionLink(Model.Author, "UserProfile", "Profile")</span>
+        <span class="comment-author">@Html.ActionLink(Model.Author, "UserProfile", "Profile", new { userName = Model.Author }, null)</span>
         <div class="comment-body">
             @Html.Raw(Model.Body)
         </div>

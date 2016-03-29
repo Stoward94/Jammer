@@ -12,9 +12,9 @@ namespace GamingSessionApp.Controllers
 {
     public class FeedbackController : BaseController
     {
-        private readonly FeedbackLogic _feedbackLogic;
+        private readonly IFeedbackLogic _feedbackLogic;
 
-        public FeedbackController(FeedbackLogic feedbackLogic)
+        public FeedbackController(IFeedbackLogic feedbackLogic)
         {
             _feedbackLogic = feedbackLogic;
         }

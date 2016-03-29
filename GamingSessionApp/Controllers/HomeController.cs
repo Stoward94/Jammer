@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
-using System.Linq;
+﻿using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.Migrations;
@@ -13,9 +9,9 @@ namespace GamingSessionApp.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly HomeLogic _homeLogic;
+        private readonly IHomeLogic _homeLogic;
 
-        public HomeController(HomeLogic homeLogic)
+        public HomeController(IHomeLogic homeLogic)
         {
             _homeLogic = homeLogic;
         }
@@ -23,15 +19,8 @@ namespace GamingSessionApp.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ViewResult> Index()
         {
-            _homeLogic.UserId = UserId;
-
-            HomeViewModel viewModel = new HomeViewModel
-            {
-                OpenSessions = await _homeLogic.GetOpenSessions(),
-                NewSessions = await _homeLogic.GetNewSessions(),
-                RecommendedSessions = await _homeLogic.GetNewSessions()
-            };
-
+            HomeViewModel viewModel = await _homeLogic.GetHomeViewModel(UserId);
+            
             return View(viewModel);
         }
 

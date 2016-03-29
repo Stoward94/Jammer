@@ -15,8 +15,9 @@ namespace GamingSessionApp.BusinessLogic
         //Session Repository
         private readonly GenericRepository<Session> _sessionRepo;
 
-        public SessionDetailsVmLogic()
+        public SessionDetailsVmLogic(UnitOfWork uow) : base(uow)
         {
+            UoW = uow;
             _sessionRepo = UoW.Repository<Session>();
         }
 

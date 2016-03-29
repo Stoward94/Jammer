@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -17,17 +16,13 @@ namespace GamingSessionApp.Controllers
     public class AccountController : BaseController
     {
         private ApplicationSignInManager _signInManager;
-        private readonly UserLogic _userLogic;
-
-        public AccountController()
-        {
-            _userLogic = new UserLogic();
-        }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        private readonly IUserLogic _userLogic;
+       
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUserLogic userLogic)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _userLogic = userLogic;
         }
 
         public ApplicationSignInManager SignInManager
@@ -459,7 +454,8 @@ namespace GamingSessionApp.Controllers
                     _signInManager = null;
                 }
 
-                _userLogic.Dispose();
+                if(_userLogic != null)
+                    _userLogic.Dispose();
             }
 
             base.Dispose(disposing);

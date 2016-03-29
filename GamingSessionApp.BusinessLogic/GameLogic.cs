@@ -6,12 +6,13 @@ using GamingSessionApp.Models;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class GameLogic : BaseLogic
+    public class GameLogic : BaseLogic, IGameLogic
     {
         private readonly GenericRepository<Game> _gameRepo;
 
-        public GameLogic()
+        public GameLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _gameRepo = UoW.Repository<Game>();
         }
 

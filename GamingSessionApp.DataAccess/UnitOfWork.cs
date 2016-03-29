@@ -6,9 +6,14 @@ namespace GamingSessionApp.DataAccess
 {
     public sealed class UnitOfWork : IDisposable
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
+        private readonly ApplicationDbContext _context;// = new ApplicationDbContext();
         private bool _disposed;
         private Dictionary<string, object> _repositories;
+
+        public UnitOfWork(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public GenericRepository<T> Repository<T>() where T : class
         {

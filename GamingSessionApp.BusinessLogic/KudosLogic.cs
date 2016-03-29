@@ -9,13 +9,14 @@ using GamingSessionApp.Models;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class KudosLogic : BaseLogic
+    public class KudosLogic : BaseLogic, IKudosLogic
     {
         //Repository
         private readonly GenericRepository<Kudos> _kudosRepo;
 
-        public KudosLogic()
+        public KudosLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _kudosRepo = UoW.Repository<Kudos>();
         }
 

@@ -11,12 +11,13 @@ using Microsoft.AspNet.Identity;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class UserLogic : BaseLogic
+    public class UserLogic : BaseLogic, IUserLogic
     {
         private readonly GenericRepository<ApplicationUser> _userRepo;
 
-        public UserLogic()
+        public UserLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _userRepo = UoW.Repository<ApplicationUser>();
         }
 
@@ -26,7 +27,6 @@ namespace GamingSessionApp.BusinessLogic
                 .Include(x => x.Profile)
                 .FirstOrDefault();
         }
-
 
         public async Task<EditAccountViewModel> GetEditAccountModel(string userId)
         {

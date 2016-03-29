@@ -10,12 +10,13 @@ using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class NotificationLogic : BaseLogic
+    public class NotificationLogic : BaseLogic, INotificationLogic
     {
         private readonly GenericRepository<UserNotification> _notificationRepo;
 
-        public NotificationLogic()
+        public NotificationLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _notificationRepo = UoW.Repository<UserNotification>();
         }
 

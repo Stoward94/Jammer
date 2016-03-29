@@ -117,6 +117,17 @@
     <Compile Include="FeedbackLogic.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="HomeLogic.cs" />
+    <Compile Include="IFeedbackLogic.cs" />
+    <Compile Include="IGameLogic.cs" />
+    <Compile Include="IHomeLogic.cs" />
+    <Compile Include="IKudosLogic.cs" />
+    <Compile Include="IMessageLogic.cs" />
+    <Compile Include="INotificationLogic.cs" />
+    <Compile Include="IProfileLogic.cs" />
+    <Compile Include="ISessionCommentLogic.cs" />
+    <Compile Include="ISessionLogic.cs" />
+    <Compile Include="IUserLogic.cs" />
+    <Compile Include="IUserPreferencesLogic.cs" />
     <Compile Include="KudosLogic.cs" />
     <Compile Include="MessageLogic.cs" />
     <Compile Include="NotificationLogic.cs" />

@@ -12,10 +12,10 @@ namespace GamingSessionApp.Controllers
 {
     public class SessionsController : BaseController
     {
-        private readonly SessionLogic _sessionLogic;
+        private readonly ISessionLogic _sessionLogic;
         private readonly SessionDetailsVmLogic _detailsVmLogic;
 
-        public SessionsController(SessionLogic sessionLogic, SessionDetailsVmLogic detailsVmLogic)
+        public SessionsController(ISessionLogic sessionLogic, SessionDetailsVmLogic detailsVmLogic)
         {
             _sessionLogic = sessionLogic;
             _detailsVmLogic = detailsVmLogic;
@@ -175,25 +175,13 @@ namespace GamingSessionApp.Controllers
         public async Task<ActionResult> LeaveSession(Guid sessionId)
         {
             if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            PassUserToLogic();
-
+            
             if (await _sessionLogic.RemoveUserFromSession(UserId, sessionId))
             {
                 return RedirectToAction("Details", new { id = sessionId });
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.Conflict);
-        }
-
-        /// <summary>
-        /// Passes the current user to the session logic. (or null)
-        /// </summary>
-        private void PassUserToLogic()
-        {
-            //If we have a user then pass the Id
-            _sessionLogic.UserId = UserId;
-            _detailsVmLogic.UserId = UserId;
         }
         
         protected override void Dispose(bool disposing)

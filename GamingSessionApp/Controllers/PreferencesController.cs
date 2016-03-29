@@ -9,9 +9,9 @@ namespace GamingSessionApp.Controllers
     public class PreferencesController : BaseController
     {
 
-        private readonly UserPreferencesLogic _preferencesLogic;
+        private readonly IUserPreferencesLogic _preferencesLogic;
 
-        public PreferencesController(UserPreferencesLogic preferencesLogic)
+        public PreferencesController(IUserPreferencesLogic preferencesLogic)
         {
             _preferencesLogic = preferencesLogic;
         }

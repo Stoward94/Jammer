@@ -1,4 +1,3 @@
-using System.Data.Entity;
 using System.Web.Mvc;
 using GamingSessionApp.BusinessLogic;
 using Microsoft.Practices.Unity;
@@ -8,7 +7,9 @@ using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 using Microsoft.Owin.Security;
+using System.Web;
 
 namespace GamingSessionApp
 {
@@ -30,12 +31,26 @@ namespace GamingSessionApp
             container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new HierarchicalLifetimeManager());
             container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
 
-            container.RegisterType<AccountController>(new InjectionConstructor());
+            container.RegisterType<ApplicationDbContext>(new PerRequestLifetimeManager());
+            container.RegisterType<UnitOfWork>(new PerRequestLifetimeManager());
+
+            container.RegisterType<IAuthenticationManager>(new InjectionFactory(o => HttpContext.Current.GetOwinContext().Authentication));
+            
             container.RegisterType<ManageController>(new InjectionConstructor());
 
             container.RegisterType<SessionLogic>();
             container.RegisterType<SessionDetailsVmLogic>();
             container.RegisterType<HomeLogic>();
+
+            container.RegisterType<IUserLogic, UserLogic>();
+            container.RegisterType<IFeedbackLogic, FeedbackLogic>();
+            container.RegisterType<INotificationLogic, NotificationLogic>();
+            container.RegisterType<IMessageLogic, MessageLogic>();
+            container.RegisterType<IHomeLogic, HomeLogic>();
+            container.RegisterType<IProfileLogic, ProfileLogic>();
+            container.RegisterType<ISessionCommentLogic, SessionCommentLogic>();
+            container.RegisterType<ISessionLogic, SessionLogic>();
+            container.RegisterType<IUserPreferencesLogic, UserPreferencesLogic>();
 
             return container;
         }

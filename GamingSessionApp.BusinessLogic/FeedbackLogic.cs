@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Feedback;
-using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class FeedbackLogic : BaseLogic
+    public class FeedbackLogic : BaseLogic, IFeedbackLogic
     {
         private readonly GenericRepository<SessionFeedback> _feedbackRepo;
 
-        public FeedbackLogic()
+        public FeedbackLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _feedbackRepo = UoW.Repository<SessionFeedback>();
         }
 
@@ -164,7 +162,7 @@ namespace GamingSessionApp.BusinessLogic
                 //Reward user with kudos if new feedback
                 if (isNewFeedback)
                 {
-                    KudosLogic kudos = new KudosLogic();
+                    KudosLogic kudos = new KudosLogic(UoW);
                     int kudosPoints = 5*model.UsersFeeback.Count;
                     await kudos.AddKudosPoints(userId, kudosPoints);
                 }

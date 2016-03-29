@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
@@ -11,12 +10,13 @@ using GamingSessionApp.ViewModels.Shared;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class MessageLogic : BaseLogic
+    public class MessageLogic : BaseLogic, IMessageLogic
     {
         private readonly GenericRepository<UserMessage> _messageRepo;
 
-        public MessageLogic()
+        public MessageLogic(UnitOfWork uow)
         {
+            UoW = uow;
             _messageRepo = UoW.Repository<UserMessage>();
         }
 
