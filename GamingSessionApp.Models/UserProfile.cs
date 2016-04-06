@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GamingSessionApp.Models
 {
@@ -49,8 +44,10 @@ namespace GamingSessionApp.Models
 
         //Users kudos
         public Kudos Kudos { get; set; }
-
+        
         public UserPreferences Preferences { get; set; }
+
+        public UserStatistics Statistics { get; set; }
 
         public ICollection<UserFriend> Friends { get; set; }
 
@@ -62,5 +59,6 @@ namespace GamingSessionApp.Models
 
         public ICollection<SessionFeedback> Feedback { get; set; }
 
+        public ICollection<UserAward> Awards { get; set; }
     }
 }

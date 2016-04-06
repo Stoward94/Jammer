@@ -146,10 +146,16 @@ namespace GamingSessionApp.Controllers
                         DisplayName = model.UserName,
                         ThumbnailUrl = "/Images/thumbnails/default/002.png",
                         Kudos = new Kudos(),
-                        Preferences = new UserPreferences()
+                        Preferences = new UserPreferences(),
+                        Statistics = new UserStatistics()
                     }
                 };
 
+                UserManager.UserValidator = new UserValidator<ApplicationUser>(UserManager)
+                {
+                    AllowOnlyAlphanumericUserNames = false,
+                    RequireUniqueEmail = true,
+                };
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -58,5 +58,24 @@ namespace GamingSessionApp.BusinessLogic
             CasualPlay = 5,
             Achievement = 6
         }
+
+        public enum AwardGroupsEnum
+        {
+            Created = 1,
+            Completed = 2,
+            Donation = 3,
+            Rating = 4,
+            Kudos = 5,
+            Unique = 6
+        }
+
+        public enum AwardLevelsEnum
+        {
+            Beginner = 1,
+            Novice = 2,
+            Intermediate = 3,
+            Advanced = 4,
+            Expert = 5
+        }
     }
 }

@@ -736,6 +736,98 @@ ul.edit-profile-nav .active {
 }
 
 /**********************************************
+    MY AWARDS STYLES
+**********************************************/
+.award,.award-unlocked, .award-locked {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background: url("../../Media/awards-sprite.png");
+}
+
+.award-summary {
+    text-align: center;
+    padding-bottom: 60px;
+    margin-bottom: 60px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.award-group-heading {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #005ca1;
+}
+
+.award-group {
+    margin-bottom: 60px;
+}
+
+.award-block {
+    border-bottom: 1px solid #f1f1f1;
+    padding: 20px 0;   
+}
+
+.award-body {
+    padding-top: 20px;
+}
+
+.award-progress-lbl {
+    position: absolute;
+    width: 100%;
+    padding-right: 30px;
+    color: #515151;
+    font-weight: bold;
+}
+
+.award-level {
+    width: 10px;
+	height: 10px;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+    display: inline-block;
+}
+
+.award-beginner { background-color: #CD7F32; }
+.award-novice { background-color: #C0C0C0; }
+.award-intermediate { background-color: #FAA500; }
+.award-advanced { background-color: #19B5FE; }
+.award-expert { background-color: #F22613; }
+
+.award-created-1 { background-position: 0 -750px; }
+.award-created-10 { background-position: 0 -900px; }
+.award-created-100 { background-position: 0 -1050px; }
+.award-created-250 { background-position: 0 -1200px; }
+.award-created-1000 { background-position: 0 -1350px; }
+
+.award-completed-1 { background-position: 0 0; }
+.award-completed-10 { background-position: 0 -150px; }
+.award-completed-100 { background-position: 0 -300px; }
+.award-completed-250 { background-position: 0 -450px; }
+.award-completed-1000 { background-position: 0 -600px; }
+
+.award-kudos-100 { background-position: 0 -1500px; }
+.award-kudos-1000 { background-position: 0 -1650px; }
+.award-kudos-10000 { background-position: 0 -1800px; }
+.award-kudos-50000 { background-position: 0 -1950px; }
+.award-kudos-100000 { background-position: 0 -2100px; }
+
+.award-feedback-5 { background-position: 0 -2250px; }
+.award-feedback-6 { background-position: 0 -2400px; }
+.award-feedback-7 { background-position: 0 -2550px; }
+.award-feedback-8 { background-position: 0 -2700px; }
+.award-feedback-9 { background-position: 0 -2850px; }
+
+.award-donated { background-position: 0 -3000px; }
+.award-donated-superior { background-position: 0 -3150px; }
+
+.award-crowdfunded { background-position: 0 -3300px; }
+
+.award-locked { background-position: 0 -3600px; }
+.award-unlocked { background-position: 0 -3450px; }
+
+/**********************************************
     MEDIA QUERIES
 **********************************************/
 

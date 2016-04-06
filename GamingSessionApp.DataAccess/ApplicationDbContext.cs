@@ -38,7 +38,7 @@ namespace GamingSessionApp.DataAccess
                        cs.MapRightKey("UserId");
                        cs.ToTable("SessionMembers");
                    });
-
+            
             //Fix for 2 navigation properties
             modelBuilder.Entity<UserMessage>()
                 .HasRequired(p => p.Recipient)
@@ -65,6 +65,12 @@ namespace GamingSessionApp.DataAccess
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<Award> Awards { get; set; }
+        
+        public DbSet<AwardLevel> AwardLevels { get; set; }
+
+        public DbSet<AwardGroup> AwardGroups { get; set; }
 
         public DbSet<Game> Games { get; set; }
 
@@ -98,7 +104,11 @@ namespace GamingSessionApp.DataAccess
 
         public DbSet<UserMessage> UserMessages { get; set; }
 
+        public DbSet<UserAward> UserAwards { get; set; }
+
         public DbSet<UserPreferences> UserPreferences { get; set; }
+
+        public DbSet<UserStatistics> UserStatistics { get; set; }
 
         public DbSet<EmailReminderTime> EmailReminderTimes { get; set; }
 

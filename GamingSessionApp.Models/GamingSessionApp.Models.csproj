@@ -58,6 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationUser.cs" />
+    <Compile Include="Award.cs" />
+    <Compile Include="AwardGroup.cs" />
+    <Compile Include="AwardLevel.cs" />
     <Compile Include="EmailReminderTime.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Kudos.cs" />
@@ -73,12 +76,14 @@
     <Compile Include="SessionSettings.cs" />
     <Compile Include="SessionStatus.cs" />
     <Compile Include="SessionType.cs" />
+    <Compile Include="UserAward.cs" />
     <Compile Include="UserFriend.cs" />
     <Compile Include="UserMessage.cs" />
     <Compile Include="UserNotification.cs" />
     <Compile Include="UserNotificationType.cs" />
     <Compile Include="UserPreferences.cs" />
     <Compile Include="UserProfile.cs" />
+    <Compile Include="UserStatistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

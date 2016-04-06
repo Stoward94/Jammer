@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using GamingSessionApp.BusinessLogic;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using Microsoft.AspNet.Identity;
@@ -38,28 +37,39 @@ namespace GamingSessionApp.Migrations
 
             context.SaveChanges();
 
-            var user = new ApplicationUser();
+            var usernames = new List<string> {"Stoward94", "hazfraz007", "SenseiNeo", "8Thrills", "Straight8Shot"};
+            var emails = new List<string> { "luke_stoward@hotmail.co.uk", "email1@email.com", "email2@email.com", "email3@email.com", "email4@email.com" };
 
-            //Seed the Master User if required
+            //Seed the users if required
             if (!context.Users.Any())
             {
                 var um = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
 
-                user = new ApplicationUser
+                for (int i = 0; i < usernames.Count; i++)
                 {
-                    UserName = "Stoward94",
-                    Email = "luke_stoward@hotmail.co.uk",
-                    TimeZoneId = "GMT Standard Time",
-                    Profile = new UserProfile
+                    var user = new ApplicationUser
                     {
-                        DisplayName = "Stoward94",
-                        ThumbnailUrl = "/Images/thumbnails/default/001.png",
-                        Kudos = new Kudos(),
-                        Preferences = new UserPreferences()
-                    }
-                };
-                um.Create(user, "Password");
-                context.SaveChanges();
+                        UserName = usernames[i],
+                        Email = emails[i],
+                        TimeZoneId = "GMT Standard Time",
+                        Profile = new UserProfile
+                        {
+                            DisplayName = usernames[i],
+                            ThumbnailUrl = "/Images/thumbnails/default/00" + i + ".png",
+                            XboxGamertag = "British Legends",
+                            XboxUrl = "account.xbox.com/en-GB/Profile?gamerTag=British+Legend",
+                            Website = "https://www.triggerwars.com",
+                            Kudos = new Kudos(),
+                            Preferences = new UserPreferences(),
+                            Statistics = new UserStatistics()
+                        }
+                    };
+                    var result = um.Create(user, "Password");
+
+
+                    if (result.Succeeded)
+                        context.SaveChanges();
+                }
             }
 
             //Seed the SessionDuration Values
@@ -138,38 +148,130 @@ namespace GamingSessionApp.Migrations
 
             context.SaveChanges();
 
+            //Seed award levels
+            var levels = new List<string>
+            {
+                "Beginner",
+                "Novice",
+                "Intermediate",
+                "Advanced",
+                "Expert"
+            };
+
+            levels.ForEach(l => context.AwardLevels.AddOrUpdate(x => x.Level, new AwardLevel {Level = l}));
+
+            //Seed award groups
+            var awardGroups = new List<string>
+            {
+                "Sessions Created",
+                "Sessions Completed",
+                "Donation",
+                "Rating",
+                "Kudos",
+                "Unique"
+            };
+
+            awardGroups.ForEach(g => context.AwardGroups.AddOrUpdate(x => x.Group, new AwardGroup { Group = g }));
+
+            context.SaveChanges();
+
+
+            //Seed the user awards
+            var awards = new List<Award>
+            {
+                new Award { Title = "1st Session Created", Description = "Awarded for creating your 1st session", LevelId = 1, GroupId = 1, Requirement = 1, Slug = "award-created-1" },
+                new Award { Title = "10 Sessions Created", Description = "Awarded for creating your 10th session", LevelId = 2, Requirement = 10, GroupId = 1, Slug = "award-created-10" },
+                new Award { Title = "100 Sessions Created", Description = "Awarded for creating your 100th session", LevelId = 3, Requirement = 100, GroupId = 1, Slug = "award-created-100" },
+                new Award { Title = "250 Sessions Created", Description = "Awarded for creating your 250th session", LevelId = 4, Requirement = 250, GroupId = 1, Slug = "award-created-250" },
+                new Award { Title = "1000 Sessions Created", Description = "Awarded for creating your 1000th session", LevelId = 5, Requirement = 1000, GroupId = 1, Slug = "award-created-1000" },
+
+                new Award { Title = "1st Sessions Completed", Description = "Awarded for completing your 1st session", LevelId = 1, Requirement = 1, GroupId = 2, Slug = "award-completed-1" },
+                new Award { Title = "10 Sessions Completed", Description = "Awarded for completing your 10th session", LevelId = 2, Requirement = 10, GroupId = 2, Slug = "award-completed-10" },
+                new Award { Title = "100 Sessions Completed", Description = "Awarded for completing your 100th session", LevelId = 3, Requirement = 100, GroupId = 2, Slug = "award-completed-100" },
+                new Award { Title = "250 Sessions Completed", Description = "Awarded for completing your 250th session", LevelId = 4, Requirement = 250, GroupId = 2, Slug = "award-completed-250" },
+                new Award { Title = "1000 Sessions Completed", Description = "Awarded for completing your 1000th session", LevelId = 5, Requirement = 1000, GroupId = 2, Slug = "award-completed-1000" },
+
+                //Donations
+                new Award { Title = "Donation Supporter", Description = "Awarded for donating to help run TriggerWars", LevelId = 4, Requirement = 1, GroupId = 3, Slug = "award-donated" },
+                new Award { Title = "Superior Donation Supporter", Description = "Awarded for a significant donation to help run TriggerWars", LevelId = 5, Requirement = 20, GroupId = 3, Slug = "award-donated-superior" },
+
+                //Rating
+                new Award { Title = "Outstanding Average Feedback Rating", Description = "Awarded for having an average rating of 9+", LevelId = 5, Requirement = 9, GroupId = 4, Slug = "award-feedback-9" },
+                new Award { Title = "Excellent Average Feedback Rating", Description = "Awarded for having an average rating of 8+", LevelId = 4, Requirement = 8, GroupId = 4, Slug = "award-feedback-8" },
+                new Award { Title = "Impressive Average Feedback Rating", Description = "Awarded for having an average rating of 7+", LevelId = 3, Requirement = 7, GroupId = 4, Slug = "award-feedback-7" },
+                new Award { Title = "Good Average Feedback Rating", Description = "Awarded for having an average rating of 6+", LevelId = 2, Requirement = 6, GroupId = 4, Slug = "award-feedback-6" },
+                new Award { Title = "Acceptable Average Feedback Rating", Description = "Awarded for having an average rating of 5+", LevelId = 1, Requirement = 5, GroupId = 4, Slug = "award-feedback-5" },
+
+                //Kudos
+                new Award { Title = "100 Kudos Earned", Description = "Awarded for achieving 100 total Kudos", LevelId = 1, Requirement = 100, GroupId = 5, Slug = "award-kudos-100" },
+                new Award { Title = "1,000 Kudos Earned", Description = "Awarded for achieving 1,000 total Kudos", LevelId = 2, Requirement = 1000, GroupId = 5, Slug = "award-kudos-1000" },
+                new Award { Title = "10,000 Kudos Earned", Description = "Awarded for achieving 10,000 total Kudos", LevelId = 3, Requirement = 10000, GroupId = 5, Slug = "award-kudos-10000" },
+                new Award { Title = "50,000 Kudos Earned", Description = "Awarded for achieving 50,000 total Kudos", LevelId = 4, Requirement = 50000, GroupId = 5, Slug = "award-kudos-50000" },
+                new Award { Title = "100,000 Kudos Earned!", Description = "Awarded for achieving a staggering 100,000 total Kudos", LevelId = 5, Requirement = 100000, GroupId = 5, Slug = "award-kudos-100000" },
+
+                //Crowdfunder award
+                new Award { Title = "I Crowdfunded TriggerWars!", Description = "A Unique award, awarded only to those that crowdfunded TriggerWars", LevelId = 5, GroupId = 6, Slug = "award-crowdfunded" }
+            };
+
+            awards.ForEach(award => context.Awards.AddOrUpdate(x => x.Title, award));
+
+            //Seed Games
+            context.Games.AddOrUpdate(x => x.GameTitle, 
+                new Game {GameTitle = "Rise of the Tomb Raider", IgdbGameId = 7323},
+                new Game {GameTitle = "Battlefield 2", IgdbGameId = 277},
+                new Game {GameTitle = "The Walking Dead - 400 Days", IgdbGameId = 3015},
+                new Game {GameTitle = "LOST", IgdbGameId = 10226},
+                new Game {GameTitle = "Gears of War 4", IgdbGameId = 11186},
+                new Game {GameTitle = "Rare Replay", IgdbGameId = 11147},
+                new Game {GameTitle = "Dark Souls III", IgdbGameId = 11133});
+
+            context.SaveChanges();
+
             //Seed sample sessions
             if (!context.Sessions.Any())
             {
-                
-                Session session = new Session
+                var users = context.UserProfiles.ToList();
+                var count = users.Count;
+
+                var index = 0;
+
+                for (int i = 1; i < 20; i++)
                 {
-                    PlatformId = 2,
-                    CreatorId = user.Id,
-                    DurationId = 3,
-                    MembersRequired = 4,
-                    Information = "This is the first session",
-                    ScheduledDate = DateTime.UtcNow.AddDays(12),
-                    TypeId = 1,
-                    StatusId = (int)SessionStatusEnum.Recruiting,
-                    Settings = new SessionSettings
+                    if (index == count)
+                        index = 0;
+
+                    var creator = users[index];
+
+                    Session session = new Session
                     {
-                        IsPublic = true,
-                        ApproveJoinees = false
-                    },
-                    Comments = new List<SessionComment>()
-                    {
-                        new SessionComment() { AuthorId = user.Id, Body = "Session Created",CommentTypeId = 1 },
-                        new SessionComment() { AuthorId = user.Id, Body = "Luke Joined", CommentTypeId = 2 }
-                    }
-                };
+                        GameId = i < 8 ? i : 1 ,
+                        PlatformId = index + 1,
+                        CreatorId = creator.UserId,
+                        DurationId = i <= count ? 60*i : 120,
+                        MembersRequired = (i + 1),
+                        Information =
+                            "Looking to boost the multiplayer achievements. Will help anyone who needs any of them",
+                        ScheduledDate = DateTime.UtcNow.AddDays(i),
+                        EndTime = DateTime.UtcNow.AddDays(i).AddMinutes(120),
+                        TypeId = index + 1,
+                        StatusId = (int) SessionStatusEnum.Recruiting,
+                        Settings = new SessionSettings
+                        {
+                            IsPublic = true,
+                            ApproveJoinees = false
+                        },
+                        Comments = new List<SessionComment>()
+                        {
+                            new SessionComment() {AuthorId = creator.UserId, Body = "Session Created", CommentTypeId = 1}
+                        }
+                    };
+                    
+                    session.Members.Add(creator);
 
-                //Need to load user as profile is null
-                UserProfile profile = context.UserProfiles.First(x => x.UserId == user.Id);
+                    context.Sessions.AddOrUpdate(x => x.PlatformId, session);
 
-                session.Members.Add(profile);
-
-                context.Sessions.AddOrUpdate(x => x.PlatformId, session);
+                    index++;
+                }
             }
             context.SaveChanges();
         }

@@ -36,6 +36,7 @@
                     @Html.ActionLink(m.Subject, "Sent", "Messages", new {id = m.Id}, null)
                 </td>
                 <td>
+                    <i class="fa fa-clock-o hidden-xs"></i>
                     @Html.DisplayFor(x => m.SentDisplayDate)
                 </td>
             </tr>

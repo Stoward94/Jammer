@@ -51,6 +51,7 @@ namespace GamingSessionApp
             container.RegisterType<ISessionCommentLogic, SessionCommentLogic>();
             container.RegisterType<ISessionLogic, SessionLogic>();
             container.RegisterType<IUserPreferencesLogic, UserPreferencesLogic>();
+            container.RegisterType<IAwardLogic, AwardLogic>();
 
             return container;
         }

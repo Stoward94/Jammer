@@ -1,0 +1,98 @@
+﻿@using GamingSessionApp.ViewModels.Awards
+@model UserAwardsViewModel
+
+@{
+    ViewBag.Title = "My Awards";
+
+    var createdAwards = Model.Awards.Where(x => x.GroupId == 1);
+    var completedAwards = Model.Awards.Where(x => x.GroupId == 2);
+    var donationAwards = Model.Awards.Where(x => x.GroupId == 3);
+    var ratingAwards = Model.Awards.Where(x => x.GroupId == 4);
+    var kudosAwards = Model.Awards.Where(x => x.GroupId == 5);
+    var uniqueAwards = Model.Awards.Where(x => x.GroupId == 6);
+
+    string unlockedHeading = Model.TotalAwards + " Awards";
+
+    if (Model.TotalAwards == 1)
+    {
+        unlockedHeading = Model.TotalAwards + " Award";
+    }
+}
+
+
+<div class="award-summary">
+    <h3><i class="fa fa-check" style="color: green;"></i> You have unlocked @unlockedHeading</h3>
+    <br />
+    <div class="col-sm-2 col-sm-offset-1"><span class="award-level award-beginner"></span> @Model.BeginnerAwardsCount x Beginner</div>
+    <div class="col-sm-2"><span class="award-level award-novice"></span> @Model.NoviceAwardsCount x Novice</div>
+    <div class="col-sm-2"><span class="award-level award-intermediate"></span> @Model.IntermediateAwardsCount x Intermediate</div>
+    <div class="col-sm-2"><span class="award-level award-advanced"></span> @Model.AdvancedAwardsCount x Advanced</div>
+    <div class="col-sm-2"><span class="award-level award-expert"></span> @Model.ExpertAwardsCount x Expert</div>
+</div>
+
+@AwardsGroup("Sessions Created Awards", createdAwards, Model.Created)
+@AwardsGroup("Sessions Completed Awards", completedAwards, Model.Completed)
+@*@AwardsGroup("Donation Awards", donationAwards, 4)*@
+@AwardsGroup("Average Rating Awards", ratingAwards, (int) Model.Rating)
+@AwardsGroup("Kudos Milestone Awards", kudosAwards, Model.Kudos)
+@*@AwardsGroup("Unique Awards", uniqueAwards, 1)*@
+
+
+
+@helper AwardsGroup(string groupName, IEnumerable<AwardViewModel> awards, int currentValue)
+{
+    <div class="award-group">
+        <h3 class="award-group-heading">@groupName</h3>
+        @foreach (var award in awards)
+        {
+            var percentage = CalculatePercentage(currentValue, award.Requirement);
+
+            <div class="row award-block">
+                <div class="col-md-2 text-center">
+                    <div class="award @award.Slug"></div>
+                </div>
+                <div class="col-md-8 award-body">
+                    <h4>
+                        @award.Title <small>(@award.Level.Level)</small>
+                    </h4>
+                    <p>@award.Description</p>
+
+                    @* Progress bar *@
+                    <div class="progress text-center">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@currentValue" aria-valuemin="0" aria-valuemax="@award.Requirement" style="width: @percentage%;"></div>
+                        <div class="award-progress-lbl">
+                            <span>@(currentValue > award.Requirement ? award.Requirement : currentValue) / @award.Requirement</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div>
+                        @if (award.Obtained)
+                        {
+                            <div class="award-unlocked" title="Unlocked"></div>
+                            <div class="gray" title="@award.DateObtained">
+                                <i class="fa fa-clock-o"></i> @award.DisplayDateObtained</div>
+                        }
+                        else
+                        {
+                            <div class="award-locked" title="Locked"></div>
+                            <div class="gray">Not yet unlocked</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@functions
+{
+
+    double CalculatePercentage(int current, int max)
+    {
+        var percentage = ((double) current/max)*100;
+        return percentage > 100 ? 100 : percentage;
+    }
+
+}
