@@ -110,6 +110,8 @@ namespace GamingSessionApp.DataAccess
 
         public DbSet<UserStatistics> UserStatistics { get; set; }
 
+        public DbSet<UserSocial> UserSocials { get; set; }
+
         public DbSet<EmailReminderTime> EmailReminderTimes { get; set; }
 
         public DbSet<SessionFeedback> SessionFeedback { get; set; }

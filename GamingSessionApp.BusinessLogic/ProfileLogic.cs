@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using System.Web;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
-using GamingSessionApp.ViewModels.Home;
+using GamingSessionApp.ViewModels.Awards;
 using GamingSessionApp.ViewModels.Profile;
+using GamingSessionApp.ViewModels.Session;
 using GamingSessionApp.ViewModels.Shared;
 using Microsoft.AspNet.Identity;
 using Image = System.Drawing.Image;
@@ -38,48 +39,126 @@ namespace GamingSessionApp.BusinessLogic
                     .Select(x => new UserProfileViewModel
                     {
                         DisplayName = x.DisplayName,
-                        KudosPoints = x.Kudos.Points,
-                        XboxUsername = x.XboxGamertag,
-                        XboxUrl = x.XboxUrl,
-                        PsnUsername = x.PlayStationNetwork,
-                        PsnUrl = x.PlayStationUrl,
-                        SteamUsername = x.SteamName,
-                        SteamUrl = x.SteamUrl,
+                        About = x.About,
+                        Kudos = x.Kudos.Points.ToString(),
+                        Rating = x.Rating,
                         ProfileImageUrl = x.ThumbnailUrl,
+                        Registered = x.User.DateRegistered,
+                        LastSignIn = x.User.LastSignIn,
+
+                        Social = new UserSocialLinks
+                        {
+                            Xbox = x.Social.Xbox,
+                            XboxUrl = x.Social.XboxUrl,
+                            PlayStation = x.Social.PlayStation,
+                            PlayStationUrl = x.Social.PlayStationUrl,
+                            Steam = x.Social.Steam,
+                            SteamUrl = x.Social.SteamUrl,
+                            Facebook = x.Social.Facebook,
+                            Twitter = x.Social.Twitter,
+                            Twitch = x.Social.Twitch
+                        },
+
+                        BeginnerCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Beginner),
+                        NoviceCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Novice),
+                        IntermediateCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Intermediate),
+                        AdvancedCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Advanced),
+                        ExpertCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Expert),
+
+                        //Awards (select highest level for each group)
+                        Awards = x.Awards
+                        .GroupBy(a => a.Award.GroupId, (key, ag) => ag.OrderByDescending(a => a.Award.LevelId).FirstOrDefault())
+                        .Select(a => new AwardViewModel
+                        {
+                            Title = a.Award.Title,
+                            Level = a.Award.Level,
+                            Description = a.Award.Description,
+                            Slug = a.Award.Slug,
+                            
+                        }).ToList(),
+
+                        Statistics = new UserSessionStatistics
+                        {
+                            CompletedSessions = x.Sessions.Count(s => s.StatusId == (int)SystemEnums.SessionStatusEnum.Completed),
+                            Platforms = x.Sessions
+                            .Where(s => s.StatusId == (int)SystemEnums.SessionStatusEnum.Completed)
+                            .GroupBy(s => s.PlatformId)
+                            .Select(s => new UserPlatformStatistic
+                            {
+                                PlatformId = s.Select(p => p.PlatformId).FirstOrDefault(),
+                                Platform = s.Select(p => p.Platform.Name).FirstOrDefault(),
+                                CompletedCount = s.Count()
+                            }).ToList()
+                        },
+
                         Friends = x.Friends.Select(f => new UserFriendViewModel
                         {
                             DisplayName = f.Friend.DisplayName,
                             KudosPoints = f.Friend.Kudos.Points
                         }).OrderByDescending(f => f.KudosPoints).ToList(), 
                         //My Sessions
-                        Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
+                        Sessions = x.Sessions.Where(s => s.Active && s.ScheduledDate >= DateTime.UtcNow).Select(s => new SessionListItemViewModel
                         {
-                            ScheduledDate = s.ScheduledDate,
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Duration = s.Duration.Duration,
+                            Game = s.Game.GameTitle,
+                            MembersCount = s.Members.Count,
+                            PlatformId = s.PlatformId,
+                            RequiredCount = s.MembersRequired,
+                            ScheduledTime = s.ScheduledDate,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            Type = s.Type.Name,
                             TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Summary = s.Information
-                        }).OrderBy(s => s.ScheduledDate).ToList(),
+                        }).OrderBy(s => s.ScheduledTime).Take(5).ToList(),
+
                         //Friends Sessions
                         FriendsSessions = x.Friends.SelectMany(f => f.Friend.Sessions)
-                        .Where(f => f.Active)
-                        .Select(s => new SessionListItem
+                        .Where(f => f.Active && f.ScheduledDate >= DateTime.UtcNow)
+                        .Select(s => new SessionListItemViewModel
                         {
-                            ScheduledDate = s.ScheduledDate,
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Duration = s.Duration.Duration,
+                            Game = s.Game.GameTitle,
+                            MembersCount = s.Members.Count,
+                            PlatformId = s.PlatformId,
+                            RequiredCount = s.MembersRequired,
+                            ScheduledTime = s.ScheduledDate,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            Type = s.Type.Name,
                             TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Summary = s.Information
                         })
-                        .OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
+                        .OrderBy(fs => fs.ScheduledTime).Take(10).ToList(),
                         //Kudos History
                         KudosHistory = x.Kudos.History.OrderByDescending(kh => kh.DateAdded).Take(10).ToList()
                     })
                     .FirstOrDefaultAsync();
 
                 if (profile == null) return null;
+
+                //Format last sign-in date
+                profile.LastSignIn = profile.LastSignIn.ToTimeZoneTime(GetUserTimeZone());
+                profile.Registered = profile.Registered.ToTimeZoneTime(GetUserTimeZone());
+
+                var now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                if (profile.LastSignIn.Date == now.Date)
+                    profile.DisplayLastSignIn = "Today";
+                else if (profile.LastSignIn.Date == now.Date.AddDays(1))
+                    profile.DisplayLastSignIn = "Tomorrow";
+                else
+                    profile.DisplayLastSignIn = profile.LastSignIn.ToShortDateString();
+
+
+                //Format Kudos Number
+                profile.Kudos = int.Parse(profile.Kudos).ToString("n0");
 
                 //Get the full image rather than the thumbnail
                 string fileName = Path.GetFileName(profile.ProfileImageUrl);
@@ -88,12 +167,14 @@ namespace GamingSessionApp.BusinessLogic
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
                 {
-                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDisplayTime = s.ScheduledTime.ToFullDateTimeString();
                 }
 
                 foreach (var s in profile.FriendsSessions)
                 {
-                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDisplayTime = s.ScheduledTime.ToFullDateTimeString();
                 }
 
                 foreach (var kh in profile.KudosHistory)
@@ -110,58 +191,169 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<UserProfileViewModel> GetUserProfile(string userName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username">Username of the profile you want to fetch</param>
+        /// <param name="userId">UserId of the user that is making the request</param>
+        /// <returns></returns>
+        public async Task<UserProfileViewModel> GetUserProfile(string username, string userId)
         {
             try
             {
-                UserProfileViewModel profile = await _profileRepo.Get(x => x.DisplayName == userName)
+                //Assign the userId of the user making the request
+                UserId = userId;
+
+                UserProfileViewModel profile = await _profileRepo.Get(x => x.DisplayName == username)
                     .Select(x => new UserProfileViewModel
                     {
                         DisplayName = x.DisplayName,
-                        KudosPoints = x.Kudos.Points,
+                        About = x.About,
+                        Kudos = x.Kudos.Points.ToString(),
+                        Rating = x.Rating,
                         ProfileImageUrl = x.ThumbnailUrl,
+                        Registered = x.User.DateRegistered,
+                        LastSignIn = x.User.LastSignIn,
+
+                        Social = new UserSocialLinks
+                        {
+                            Xbox = x.Social.Xbox,
+                            XboxUrl = x.Social.XboxUrl,
+                            PlayStation = x.Social.PlayStation,
+                            PlayStationUrl = x.Social.PlayStationUrl,
+                            Steam = x.Social.Steam,
+                            SteamUrl = x.Social.SteamUrl,
+                            Facebook = x.Social.Facebook,
+                            Twitter = x.Social.Twitter,
+                            Twitch = x.Social.Twitch
+                        },
+
+                        BeginnerCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Beginner),
+                        NoviceCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Novice),
+                        IntermediateCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Intermediate),
+                        AdvancedCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Advanced),
+                        ExpertCount = x.Awards.Count(a => a.Award.LevelId == (int)SystemEnums.AwardLevelsEnum.Expert),
+
+                        //Awards (select highest level for each group)
+                        Awards = x.Awards
+                        .GroupBy(a => a.Award.GroupId, (key, ag) => ag.OrderByDescending(a => a.Award.LevelId).FirstOrDefault())
+                        .Select(a => new AwardViewModel
+                        {
+                            Title = a.Award.Title,
+                            Level = a.Award.Level,
+                            Description = a.Award.Description,
+                            Slug = a.Award.Slug,
+
+                        }).ToList(),
+
+                        Statistics = new UserSessionStatistics
+                        {
+                            CompletedSessions = x.Sessions.Count(s => s.StatusId == (int)SystemEnums.SessionStatusEnum.Completed),
+                            Platforms = x.Sessions
+                            .Where(s => s.StatusId == (int)SystemEnums.SessionStatusEnum.Completed)
+                            .GroupBy(s => s.PlatformId)
+                            .Select(s => new UserPlatformStatistic
+                            {
+                                PlatformId = s.Select(p => p.PlatformId).FirstOrDefault(),
+                                Platform = s.Select(p => p.Platform.Name).FirstOrDefault(),
+                                CompletedCount = s.Count()
+                            }).ToList()
+                        },
+
                         Friends = x.Friends.Select(f => new UserFriendViewModel
                         {
                             DisplayName = f.Friend.DisplayName,
                             KudosPoints = f.Friend.Kudos.Points
                         }).OrderByDescending(f => f.KudosPoints).ToList(),
                         //My Sessions
-                        Sessions = x.Sessions.Where(s => s.Active).Select(s => new SessionListItem
+                        Sessions = x.Sessions.Where(s => s.Active && s.ScheduledDate >= DateTime.UtcNow).Select(s => new SessionListItemViewModel
                         {
-                            ScheduledDate = s.ScheduledDate,
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Duration = s.Duration.Duration,
+                            Game = s.Game.GameTitle,
+                            MembersCount = s.Members.Count,
+                            PlatformId = s.PlatformId,
+                            RequiredCount = s.MembersRequired,
+                            ScheduledTime = s.ScheduledDate,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            Type = s.Type.Name,
                             TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Summary = s.Information
-                        }).OrderBy(s => s.ScheduledDate).ToList(),
+                        }).OrderBy(s => s.ScheduledTime).Take(5).ToList(),
+
                         //Friends Sessions
                         FriendsSessions = x.Friends.SelectMany(f => f.Friend.Sessions)
-                        .Where(f => f.Active)
-                        .Select(s => new SessionListItem
+                        .Where(f => f.Active && f.ScheduledDate >= DateTime.UtcNow)
+                        .Select(s => new SessionListItemViewModel
                         {
-                            ScheduledDate = s.ScheduledDate,
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Duration = s.Duration.Duration,
+                            Game = s.Game.GameTitle,
+                            MembersCount = s.Members.Count,
+                            PlatformId = s.PlatformId,
+                            RequiredCount = s.MembersRequired,
+                            ScheduledTime = s.ScheduledDate,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            Type = s.Type.Name,
                             TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            SessionId = s.Id,
                             Platform = s.Platform.Name,
                             Summary = s.Information
                         })
-                        .OrderBy(fs => fs.ScheduledDate).Take(10).ToList(),
+                        .OrderBy(fs => fs.ScheduledTime).Take(10).ToList(),
+                        //Kudos History
+                        KudosHistory = x.Kudos.History.OrderByDescending(kh => kh.DateAdded).Take(10).ToList()
                     })
                     .FirstOrDefaultAsync();
 
                 if (profile == null) return null;
-                
+
+                //Check if the requesting user is a friend of this user
+                profile.IsFriend = await _profileRepo.Get(x => x.UserId == userId)
+                    .SelectMany(x => x.Friends)
+                    .AnyAsync(x => x.Friend.DisplayName == username);
+
+                //Format last sign-in date
+                profile.LastSignIn = profile.LastSignIn.ToTimeZoneTime(GetUserTimeZone());
+                profile.Registered = profile.Registered.ToTimeZoneTime(GetUserTimeZone());
+
+                var now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
+
+                if (profile.LastSignIn.Date == now.Date)
+                    profile.DisplayLastSignIn = "Today";
+                else if (profile.LastSignIn.Date == now.Date.AddDays(1))
+                    profile.DisplayLastSignIn = "Tomorrow";
+                else
+                    profile.DisplayLastSignIn = profile.LastSignIn.ToString("dd-MMM-yy");
+
+
+                //Format Kudos Number
+                profile.Kudos = int.Parse(profile.Kudos).ToString("n0");
+
+                //Get the full image rather than the thumbnail
+                string fileName = Path.GetFileName(profile.ProfileImageUrl);
+                profile.ProfileImageUrl = $"/Images/180x180/{fileName}";
+
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
                 {
-                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDisplayTime = s.ScheduledTime.ToFullDateTimeString();
                 }
 
                 foreach (var s in profile.FriendsSessions)
                 {
-                    s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDisplayTime = s.ScheduledTime.ToFullDateTimeString();
+                }
+
+                foreach (var kh in profile.KudosHistory)
+                {
+                    kh.DateAdded = kh.DateAdded.ToTimeZoneTime(GetUserTimeZone());
                 }
 
                 return profile;
@@ -379,12 +571,12 @@ namespace GamingSessionApp.BusinessLogic
                         ImageUrl = x.ThumbnailUrl,
                         About = x.About,
                         Website = x.Website,
-                        XboxUsername = x.XboxGamertag,
-                        XboxUrl = x.XboxUrl,
-                        PsnUsername = x.PlayStationNetwork,
-                        PsnUrl = x.PlayStationUrl,
-                        SteamUsername = x.SteamName,
-                        SteamUrl = x.SteamUrl
+                        XboxUsername = x.Social.Xbox,
+                        XboxUrl = x.Social.XboxUrl,
+                        PsnUsername = x.Social.PlayStation,
+                        PsnUrl = x.Social.PlayStationUrl,
+                        SteamUsername = x.Social.Steam,
+                        SteamUrl = x.Social.SteamUrl
                     })
                     .FirstOrDefaultAsync();
 
@@ -408,6 +600,7 @@ namespace GamingSessionApp.BusinessLogic
             {
                 UserProfile p = await _profileRepo.Get(x => x.UserId == userId)
                     .Include(x => x.User)
+                    .Include(x => x.Social)
                     .FirstOrDefaultAsync();
 
                 if (p == null)
@@ -425,12 +618,12 @@ namespace GamingSessionApp.BusinessLogic
                 //Now update the rest of the values
                 p.About = model.About;
                 p.Website = model.Website;
-                p.XboxGamertag = model.XboxUsername;
-                p.XboxUrl = model.XboxUrl;
-                p.PlayStationNetwork = model.PsnUsername;
-                p.PlayStationUrl = model.PsnUrl;
-                p.SteamName = model.SteamUsername;
-                p.SteamUrl = model.SteamUrl;
+                p.Social.Xbox = model.XboxUsername;
+                p.Social.XboxUrl = model.XboxUrl;
+                p.Social.PlayStation = model.PsnUsername;
+                p.Social.PlayStationUrl = model.PsnUrl;
+                p.Social.Steam = model.SteamUsername;
+                p.Social.SteamUrl = model.SteamUrl;
 
                 //Save changes
                 _profileRepo.Update(p);

@@ -1,11 +1,8 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
 using GamingSessionApp.BusinessLogic;
-using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Profile;
 using Microsoft.AspNet.Identity;
 
@@ -27,19 +24,23 @@ namespace GamingSessionApp.Controllers
         public async Task<ActionResult> UserProfile(string userName)
         {
             if(userName == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
+            
             //Is my profile?
             if (userName == User.Identity.GetUserName())
             {
                 UserProfileViewModel model = await _profileLogic.GetMyProfile(UserId);
 
+                ViewBag.IsMyProfile = true;
+
                 return View("MyProfile", model);
             }
             else
             {
-                UserProfileViewModel model = await _profileLogic.GetUserProfile(userName);
+                UserProfileViewModel model = await _profileLogic.GetUserProfile(userName, UserId);
 
                 if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+                ViewBag.IsMyProfile = false;
 
                 return View("UserProfile", model);
             }

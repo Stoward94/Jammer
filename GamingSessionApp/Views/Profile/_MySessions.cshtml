@@ -1,0 +1,61 @@
+﻿@using GamingSessionApp.Helpers
+@model List<GamingSessionApp.ViewModels.Session.SessionListItemViewModel>
+
+@{
+    bool isMyProfile = ViewBag.IsMyProfile;
+
+    string heading = isMyProfile ? "My Upcoming Sessions" : "Upcoming Sessions";
+} 
+
+<div>
+    <h3 class="widget-heading border-bottom-green center-xs">@heading</h3>
+    <div class="widget">
+        @{
+            if (Model.Any())
+            {
+                foreach (var s in Model)
+                {
+                    <div class="clearfix sli-heading center-xs">
+                        <div class="col-sm-7">
+                            <a href="@Url.Action("Details", "Sessions", new {s.Id})">
+                                <i class="fa fa-gamepad" style="margin-right: 5px;"></i> @s.Game
+                            </a>
+                        </div>
+                        <div class="col-sm-5 center-xs text-right">
+                            <div class="sli-time"><i class="fa fa-clock-o"></i> @s.ScheduledDisplayTime</div>
+                        </div>
+                    </div>
+                    <div class="sli-table">
+
+                        <div class="thead">
+                            <div class="th width-10">Platform</div>
+                            <div class="th width-10 hidden-xs">Type</div>
+                            <div class="th width-10 hidden-xs">Duration</div>
+                            <div class="th width-10">Members</div>
+                            <div class="th width-20 hidden-xs">Status</div>
+                            <div class="th width-10 hidden-xs">Host</div>
+                        </div>
+
+                        <a class="tr" href="@Url.Action("Details", "Sessions", new {id = s.Id})">
+                            <div class="tc width-10">@Html.PlatformIcon(s.PlatformId, s.Platform)</div>
+                            <div class="tc width-10 hidden-xs">@Html.SessionTypeIconSmall(s.TypeId)</div>
+                            <div class="tc width-10 hidden-xs"><i class="fa fa-history fa-flip-horizontal"></i> @s.Duration</div>
+                            <div class="tc width-10"><i class="fa fa-users"></i> @s.MembersCount/@s.RequiredCount</div>
+                            <div class="tc width-10 hidden-xs">
+                                @Html.SessionStatusLabel(s.Status, s.StatusDescription, "left")
+                            </div>
+                            <div class="tc width-10 hidden-xs">@s.Creator</div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-sessions">
+                    <i class="fa fa-info-circle"></i> You have no up-coming sessions. <a href="@Url.Action("Index", "Sessions")">Search</a> for a session, or
+                    <a href="@Url.Action("Create", "Sessions")">Create</a> your own :D
+                </div>
+            }
+        }
+    </div>
+</div>

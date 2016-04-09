@@ -83,6 +83,7 @@
     <Compile Include="UserNotificationType.cs" />
     <Compile Include="UserPreferences.cs" />
     <Compile Include="UserProfile.cs" />
+    <Compile Include="UserSocial.cs" />
     <Compile Include="UserStatistics.cs" />
   </ItemGroup>
   <ItemGroup>

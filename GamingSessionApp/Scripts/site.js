@@ -160,8 +160,9 @@ var tinymceInitialise = function(){
     tinymce.init({
         selector: ".rich-text-area",
         max_width: 700,
-        min_height : 150,
-        plugins: "emoticons,autolink,link",
+        min_height: 150,
+        plugins: "emoticons,autolink,link,paste",
+        paste_as_text: true,
         toolbar: "undo redo | bold italic | bullist numlist | link | emoticons",
         menubar: false,
         statusbar: false,

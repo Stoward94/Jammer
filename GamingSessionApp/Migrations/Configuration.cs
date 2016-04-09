@@ -37,7 +37,7 @@ namespace GamingSessionApp.Migrations
 
             context.SaveChanges();
 
-            var usernames = new List<string> {"Stoward94", "hazfraz007", "SenseiNeo", "8Thrills", "Straight8Shot"};
+            var usernames = new List<string> {"Stoward94", "hazfraz007", "Sensei Neo", "8Thrills", "Straight8Shot"};
             var emails = new List<string> { "luke_stoward@hotmail.co.uk", "email1@email.com", "email2@email.com", "email3@email.com", "email4@email.com" };
 
             //Seed the users if required
@@ -52,16 +52,25 @@ namespace GamingSessionApp.Migrations
                         UserName = usernames[i],
                         Email = emails[i],
                         TimeZoneId = "GMT Standard Time",
+                        DateRegistered = DateTime.UtcNow,
+                        LastSignIn = DateTime.UtcNow,
                         Profile = new UserProfile
                         {
                             DisplayName = usernames[i],
                             ThumbnailUrl = "/Images/thumbnails/default/00" + i + ".png",
-                            XboxGamertag = "British Legends",
-                            XboxUrl = "account.xbox.com/en-GB/Profile?gamerTag=British+Legend",
                             Website = "https://www.triggerwars.com",
                             Kudos = new Kudos(),
                             Preferences = new UserPreferences(),
-                            Statistics = new UserStatistics()
+                            Statistics = new UserStatistics(),
+                            Social = new UserSocial
+                            {
+                                Xbox = "British Legends",
+                                XboxUrl = "account.xbox.com/en-GB/Profile?gamerTag=British+Legend",
+                                Steam = "MonsterAchievements",
+                                Facebook = "Luke Stoward",
+                                PlayStation = "Stoward94",
+                                Twitter = "TriggerWars",
+                            }
                         }
                     };
                     var result = um.Create(user, "Password");
@@ -185,7 +194,7 @@ namespace GamingSessionApp.Migrations
                 new Award { Title = "250 Sessions Created", Description = "Awarded for creating your 250th session", LevelId = 4, Requirement = 250, GroupId = 1, Slug = "award-created-250" },
                 new Award { Title = "1000 Sessions Created", Description = "Awarded for creating your 1000th session", LevelId = 5, Requirement = 1000, GroupId = 1, Slug = "award-created-1000" },
 
-                new Award { Title = "1st Sessions Completed", Description = "Awarded for completing your 1st session", LevelId = 1, Requirement = 1, GroupId = 2, Slug = "award-completed-1" },
+                new Award { Title = "1st Session Completed", Description = "Awarded for completing your 1st session", LevelId = 1, Requirement = 1, GroupId = 2, Slug = "award-completed-1" },
                 new Award { Title = "10 Sessions Completed", Description = "Awarded for completing your 10th session", LevelId = 2, Requirement = 10, GroupId = 2, Slug = "award-completed-10" },
                 new Award { Title = "100 Sessions Completed", Description = "Awarded for completing your 100th session", LevelId = 3, Requirement = 100, GroupId = 2, Slug = "award-completed-100" },
                 new Award { Title = "250 Sessions Completed", Description = "Awarded for completing your 250th session", LevelId = 4, Requirement = 250, GroupId = 2, Slug = "award-completed-250" },
@@ -196,11 +205,11 @@ namespace GamingSessionApp.Migrations
                 new Award { Title = "Superior Donation Supporter", Description = "Awarded for a significant donation to help run TriggerWars", LevelId = 5, Requirement = 20, GroupId = 3, Slug = "award-donated-superior" },
 
                 //Rating
-                new Award { Title = "Outstanding Average Feedback Rating", Description = "Awarded for having an average rating of 9+", LevelId = 5, Requirement = 9, GroupId = 4, Slug = "award-feedback-9" },
-                new Award { Title = "Excellent Average Feedback Rating", Description = "Awarded for having an average rating of 8+", LevelId = 4, Requirement = 8, GroupId = 4, Slug = "award-feedback-8" },
-                new Award { Title = "Impressive Average Feedback Rating", Description = "Awarded for having an average rating of 7+", LevelId = 3, Requirement = 7, GroupId = 4, Slug = "award-feedback-7" },
-                new Award { Title = "Good Average Feedback Rating", Description = "Awarded for having an average rating of 6+", LevelId = 2, Requirement = 6, GroupId = 4, Slug = "award-feedback-6" },
-                new Award { Title = "Acceptable Average Feedback Rating", Description = "Awarded for having an average rating of 5+", LevelId = 1, Requirement = 5, GroupId = 4, Slug = "award-feedback-5" },
+                new Award { Title = "9 Star Average Feedback Rating", Description = "Awarded for having an average rating of 9+", LevelId = 5, Requirement = 9, GroupId = 4, Slug = "award-feedback-9" },
+                new Award { Title = "8 Star Average Feedback Rating", Description = "Awarded for having an average rating of 8+", LevelId = 4, Requirement = 8, GroupId = 4, Slug = "award-feedback-8" },
+                new Award { Title = "7 Star Average Feedback Rating", Description = "Awarded for having an average rating of 7+", LevelId = 3, Requirement = 7, GroupId = 4, Slug = "award-feedback-7" },
+                new Award { Title = "6 Star Average Feedback Rating", Description = "Awarded for having an average rating of 6+", LevelId = 2, Requirement = 6, GroupId = 4, Slug = "award-feedback-6" },
+                new Award { Title = "5 Star Average Feedback Rating", Description = "Awarded for having an average rating of 5+", LevelId = 1, Requirement = 5, GroupId = 4, Slug = "award-feedback-5" },
 
                 //Kudos
                 new Award { Title = "100 Kudos Earned", Description = "Awarded for achieving 100 total Kudos", LevelId = 1, Requirement = 100, GroupId = 5, Slug = "award-kudos-100" },
@@ -254,7 +263,7 @@ namespace GamingSessionApp.Migrations
                         ScheduledDate = DateTime.UtcNow.AddDays(i),
                         EndTime = DateTime.UtcNow.AddDays(i).AddMinutes(120),
                         TypeId = index + 1,
-                        StatusId = (int) SessionStatusEnum.Recruiting,
+                        StatusId = (int) SessionStatusEnum.Open,
                         Settings = new SessionSettings
                         {
                             IsPublic = true,

@@ -294,7 +294,6 @@
     <Content Include="Media\favicons\safari-pinned-tab.svg" />
     <Content Include="fonts\font-awesome\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Media\invitation-icon.png" />
     <Content Include="Media\loader.gif" />
     <Content Include="Media\ellipsis.gif" />
     <Content Include="Global.asax" />
@@ -305,6 +304,8 @@
     <Content Include="Media\platform-icon-sprite.png" />
     <Content Include="Media\search-loader.gif" />
     <Content Include="Media\social-media-icons.png" />
+    <Content Include="Media\social-media\PlayStation-Icon.svg" />
+    <Content Include="Media\social-media\Xbox-Icon.svg" />
     <Content Include="Media\type-icons-sm.png" />
     <Content Include="Media\type-icons.png" />
     <Content Include="Media\user-joined-icon.png" />
@@ -323,6 +324,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Media\favicons\manifest.json" />
+    <Content Include="fonts\font-awesome\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\GameJammer.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -365,6 +367,7 @@
     <Content Include="Scripts\tinymce\plugins\emoticons\img\smiley-undecided.gif" />
     <Content Include="Scripts\tinymce\plugins\emoticons\img\smiley-wink.gif" />
     <Content Include="Scripts\tinymce\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="Scripts\tinymce\plugins\paste\plugin.min.js" />
     <Content Include="Scripts\tinymce\skins\lightgray\content.inline.min.css" />
     <Content Include="Scripts\tinymce\skins\lightgray\content.min.css" />
     <Content Include="Scripts\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
@@ -453,6 +456,10 @@
     <Content Include="Views\Sessions\_InviteFriendsModal.cshtml" />
     <Content Include="Views\Sessions\_AllSessions.cshtml" />
     <Content Include="Views\Awards\MyAwards.cshtml" />
+    <Content Include="Views\Profile\_SocialWidget.cshtml" />
+    <Content Include="Views\Profile\_SessionsStatistics.cshtml" />
+    <Content Include="Views\Profile\_MySessions.cshtml" />
+    <Content Include="Views\Profile\_TopAwards.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

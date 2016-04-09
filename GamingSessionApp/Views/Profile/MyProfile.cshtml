@@ -5,119 +5,141 @@
     ViewBag.Title = Model.DisplayName + "'s Profile";
 }
 
-<div class="row" style="margin-bottom:40px">
-    <div class="col-md-2">
-        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
-    </div>
-    <div class="col-md-7">
-        <h1>@Model.DisplayName <small>Kudos: @Model.KudosPoints</small></h1>
-
-        @if (!string.IsNullOrEmpty(Model.XboxUsername))
-        {
-            if (!string.IsNullOrEmpty(Model.XboxUrl))
-            {
-                <a href="@Model.XboxUrl" target="_blank" title="@Model.XboxUsername">@Model.XboxUsername</a>
-            }
-            else
-            {
-                <span>@Model.XboxUsername</span>
-            }
-        }
-    </div>
-</div>
-
 <div class="row">
     <div class="col-md-9">
-
-        @* My Sessions Widget *@
-        <div class="widget">
-            <h4 class="widget-heading">My Sessions</h4>
-            <div class="widget-body">
-                @{
-                    if (Model.Sessions.Any())
-                    {
-                        foreach (var session in Model.Sessions)
-                        {
-                            <div class="sli-container">
-                                @*-- Display Scheduled Time --*@
-                                <div class="sli-heading-time border-bottom-blue">
-                                    <i class="fa fa-clock-o"></i> @Html.DisplayFor(s => session.ScheduledDate)
-                                </div>
-
-                                @*-- Session Details --*@
-                                <div class="sli-details-left border-right-blue">
-                                    <div class="sli-details-left-image">
-                                        @Html.SessionTypeIconSmall(session.TypeId)
-                                    </div>
-
-                                    <span><i class="fa fa-user"></i> @session.GamerCount</span>
-                                </div>
-
-                                <div class="sli-details-right sli-blue">
-                                    <a href="@Url.Action("Details", "Sessions", new {id = session.SessionId})">
-                                        @Html.DisplayFor(s => session.Platform) - Tomb Raider Multiplayer session
-                                    </a>
-                                    <p>@Html.DisplayFor(s => session.Summary)</p>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p>You have no up-coming sessions.</p>
-                        <p>Why not join some?</p>
-                    }
-                }
+        <div class="row">
+            <div class="col-md-3">
+                <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
             </div>
+            <div class="col-md-9">
+                <h1>
+                    @Model.DisplayName <small><i class="fa fa-trophy"></i> @Model.Kudos Kudos</small>
+                </h1>
+
+                @* About *@
+                @if (!string.IsNullOrEmpty(Model.About))
+                {
+                    <blockquote class="user-about">
+                        @Html.Raw(Model.About)
+                    </blockquote>
+                }
+                else
+                {
+                    <div class="my-about-empty">Complete your <a href="@Url.Action("Edit", "Profile")">"about"</a> section to fill this space</div>
+                }
+
+                <div style="margin-top: 10px;">
+                    <i>
+                        | Registered: <b style="color: #0064ad">@Html.DisplayFor(m => m.Registered)</b>
+                        | Last Signed In: <b style="color: #0064ad">@Model.DisplayLastSignIn</b>
+                        | Average Rating: <b style="color: #0064ad">@Model.Rating</b>
+                        |
+                    </i>
+                </div>
+
+            </div>
+
+
+            <div class="col-md-12">
+                <div class="user-awards">
+                    <div class="clearfix" style="margin: 10px 0;">
+                        <div class="col-sm-2">
+                            <span class="award-level award-beginner"></span> @Model.BeginnerCount x Beginner
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-novice"></span> @Model.NoviceCount x Novice
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="award-level award-intermediate"></span> @Model.IntermediateCount x Intermediate
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-advanced"></span> @Model.AdvancedCount x Advanced
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-expert"></span> @Model.ExpertCount x Expert
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        @* Friends Sessions Widget *@
-        <div class="widget">
-            <h4 class="widget-heading">Friends Sessions</h4>
-            <div class="widget-body">
-                @{
-                    if (Model.FriendsSessions.Any())
-                    {
-                        foreach (var session in Model.FriendsSessions)
-                        {
-                            <div class="sli-container">
-                                @*-- Display Scheduled Time --*@
-                                <div class="sli-heading-time border-bottom-blue">
-                                    <i class="fa fa-clock-o"></i> @Html.DisplayFor(s => session.ScheduledDate)
-                                </div>
 
-                                @*-- Session Details --*@
-                                <div class="sli-details-left border-right-blue">
-                                    <div class="sli-details-left-image">
-                                        @Html.SessionTypeIconSmall(session.TypeId)
-                                    </div>
-
-                                    <span><i class="fa fa-user"></i> @session.GamerCount</span>
-                                </div>
-
-                                <div class="sli-details-right sli-blue">
-                                    <a href="@Url.Action("Details", "Sessions", new {id = session.SessionId})">
-                                        @Html.DisplayFor(s => session.Platform) - Tomb Raider Multiplayer session
-                                    </a>
-                                    <p>@Html.DisplayFor(s => session.Summary)</p>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p>Your friends have no up-coming sessions.</p>
-                        <p>Maybe you should set on up!</p>
-                    }
-                }
+        <div class="row">
+            <div class="col-md-12">
+                @* My Sessions Widget *@
+                @Html.Partial("_MySessions", Model.Sessions)
             </div>
+
+            @if (Model.Friends.Any())
+            {
+                <div class="col-md-12">
+                    @* Friends Sessions Widget *@
+                    <div>
+                        <h3 class="widget-heading border-bottom-orange center-xs">Friends Upcoming Sessions</h3>
+                        <div class="widget">
+                            @{
+                                if (Model.FriendsSessions.Any())
+                                {
+                                    foreach (var s in Model.FriendsSessions)
+                                    {
+                                        <div class="clearfix sli-heading center-xs">
+                                            <div class="col-sm-7">
+                                                <a href="@Url.Action("Details", "Sessions", new { s.Id })">
+                                                    <i class="fa fa-gamepad"></i> @s.Game
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-5 center-xs text-right">
+                                                <div class="sli-time"><i class="fa fa-clock-o"></i> @s.ScheduledDisplayTime</div>
+                                            </div>
+                                        </div>
+                                        <div class="sli-table">
+
+                                            <div class="thead">
+                                                <div class="th width-10">Platform</div>
+                                                <div class="th width-10 hidden-xs">Type</div>
+                                                <div class="th width-10 hidden-xs">Duration</div>
+                                                <div class="th width-10">Members</div>
+                                                <div class="th width-20 hidden-xs">Status</div>
+                                                <div class="th width-10 hidden-xs">Host</div>
+                                            </div>
+
+                                            <a class="tr" href="@Url.Action("Details", "Sessions", new {id = s.Id})">
+                                                <div class="tc width-10">@Html.PlatformIcon(s.PlatformId, s.Platform)</div>
+                                                <div class="tc width-10 hidden-xs">@Html.SessionTypeIconSmall(s.TypeId)</div>
+                                                <div class="tc width-10 hidden-xs"><i class="fa fa-history fa-flip-horizontal"></i> @s.Duration</div>
+                                                <div class="tc width-10"><i class="fa fa-users"></i> @s.MembersCount/@s.RequiredCount</div>
+                                                <div class="tc width-10 hidden-xs">
+                                                    @Html.SessionStatusLabel(s.Status, s.StatusDescription, "left")
+                                                </div>
+                                                <div class="tc width-10 hidden-xs">@s.Creator</div>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Your friends have no up-coming sessions.</p>
+                                    <p>Maybe you should set on up!</p>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                                }
         </div>
     </div>
 
     <div class="col-md-3">
+        @Html.Partial("_SocialWidget", Model.Social)
 
-        @* My Friends Widget *@
+        @Html.Partial("_TopAwards", Model.Awards)
+
         @Html.Partial("_FriendsWidget", Model.Friends)
+
+        @Html.Partial("_SessionsStatistics", Model.Statistics)
+
+
 
         @if (Model.KudosHistory.Any())
         {
@@ -140,5 +162,6 @@
                 </div>
             </div>
         }
+
     </div>
 </div>

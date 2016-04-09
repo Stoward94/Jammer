@@ -1,33 +1,194 @@
-﻿@model GamingSessionApp.ViewModels.Profile.UserProfileViewModel
+﻿@using GamingSessionApp.Helpers
+@model GamingSessionApp.ViewModels.Profile.UserProfileViewModel
 @{
     ViewBag.Title = Model.DisplayName + "'s Profile";
+
+    bool isMyProfile = ViewBag.IsMyProfile;
 }
 
 <div class="row">
-    <div class="col-md-2">
-        <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
-    </div>
-    <div class="col-md-7">
-        <h1>@Model.DisplayName</h1>
-        <h2>Kudos: @Model.KudosPoints</h2>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-3">
+                <img src="@Model.ProfileImageUrl" alt="Oops we seem to be missing this profile pic" title="@Model.DisplayName" width="180" height="180" />
+            </div>
+            <div class="col-md-9">
+                <h1>
+                    @Model.DisplayName <small><i class="fa fa-trophy"></i> @Model.Kudos Kudos</small>
+                </h1>
+
+                @* About *@
+                @if (!string.IsNullOrEmpty(Model.About))
+                {
+                    <blockquote class="user-about">
+                        @Html.Raw(Model.About)
+                    </blockquote>
+                }
+                else
+                {
+                    if (isMyProfile)
+                    {
+                        <div class="my-about-empty">Complete your <a href="@Url.Action("Edit", "Profile")">"about"</a> section to fill this space</div>
+                    }
+                    else
+                    {
+                        <div class="user-about-empty">@Model.DisplayName hasn't completed their about section yet. <br/>Lets just assume they like to play games :D</div>
+                    }
+
+                }
+
+                <div style="margin-top: 10px;">
+                    <i>
+                        | Registered: <b style="color: #0064ad">@Html.DisplayFor(m => m.Registered)</b>
+                        | Last Signed In: <b style="color: #0064ad">@Model.DisplayLastSignIn</b>
+                        | Average Rating: <b style="color: #0064ad">@Model.Rating</b>
+                        |
+                    </i>
+                </div>
+
+            </div>
+
+            @* Awards Summary *@
+            <div class="col-md-12">
+                <div class="user-awards">
+                    <div class="clearfix" style="margin: 10px 0;">
+                        <div class="col-sm-2">
+                            <span class="award-level award-beginner"></span> @Model.BeginnerCount x Beginner
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-novice"></span> @Model.NoviceCount x Novice
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="award-level award-intermediate"></span> @Model.IntermediateCount x Intermediate
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-advanced"></span> @Model.AdvancedCount x Advanced
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="award-level award-expert"></span> @Model.ExpertCount x Expert
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+
+                @* My Sessions Widget *@
+                @Html.Partial("_MySessions", Model.Sessions)
+            </div>
+
+            @if (Model.Friends.Any())
+            {
+                <div class="col-md-12">
+                    @* Friends Sessions Widget *@
+                    <div>
+                        <h3 class="widget-heading border-bottom-orange center-xs">Friends Upcoming Sessions</h3>
+                        <div class="widget">
+                            @{
+                                if (Model.FriendsSessions.Any())
+                                {
+                                    foreach (var s in Model.FriendsSessions)
+                                    {
+                                        <div class="clearfix sli-heading center-xs">
+                                            <div class="col-sm-7">
+                                                <a href="@Url.Action("Details", "Sessions", new { s.Id })">
+                                                    <i class="fa fa-gamepad"></i> @s.Game
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-5 center-xs text-right">
+                                                <div class="sli-time"><i class="fa fa-clock-o"></i> @s.ScheduledDisplayTime</div>
+                                            </div>
+                                        </div>
+                                        <div class="sli-table">
+
+                                            <div class="thead">
+                                                <div class="th width-10">Platform</div>
+                                                <div class="th width-10 hidden-xs">Type</div>
+                                                <div class="th width-10 hidden-xs">Duration</div>
+                                                <div class="th width-10">Members</div>
+                                                <div class="th width-20 hidden-xs">Status</div>
+                                                <div class="th width-10 hidden-xs">Host</div>
+                                            </div>
+
+                                            <a class="tr" href="@Url.Action("Details", "Sessions", new {id = s.Id})">
+                                                <div class="tc width-10">@Html.PlatformIcon(s.PlatformId, s.Platform)</div>
+                                                <div class="tc width-10 hidden-xs">@Html.SessionTypeIconSmall(s.TypeId)</div>
+                                                <div class="tc width-10 hidden-xs"><i class="fa fa-history fa-flip-horizontal"></i> @s.Duration</div>
+                                                <div class="tc width-10"><i class="fa fa-users"></i> @s.MembersCount/@s.RequiredCount</div>
+                                                <div class="tc width-10 hidden-xs">
+                                                    @Html.SessionStatusLabel(s.Status, s.StatusDescription, "left")
+                                                </div>
+                                                <div class="tc width-10 hidden-xs">@s.Creator</div>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Your friends have no up-coming sessions.</p>
+                                    <p>Maybe you should set on up!</p>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                                }
+        </div>
     </div>
 
     <div class="col-md-3">
 
-        <div style="margin-bottom: 20px;">
+        <div class="profile-actions">
+            
             @* Add friend button *@
-            @using (Html.BeginForm("AddFriend", "Profile", new { username = Model.DisplayName }, FormMethod.Post))
+            @if (!Model.IsFriend)
             {
+                 using (Html.BeginForm("AddFriend", "Profile", new {username = Model.DisplayName}, FormMethod.Post))
+                 {
 
-                <button id="add-friend-btn" type="submit" class="btn btn-default">
-                    Add Friend
-                    <i id="btn-spinner" class="fa fa-spinner fa-pulse" style="display: none"></i>
-                </button>
+                     <button id="add-friend-btn" type="submit" class="btn btn-default">
+                         Add Friend
+                         <i id="btn-spinner" class="fa fa-spinner fa-pulse" style="display: none"></i>
+                     </button>
+                 }
             }
         </div>
 
-        @* Users Friends Widget *@
+        @Html.Partial("_SocialWidget", Model.Social)
+
+        @Html.Partial("_TopAwards", Model.Awards)
+
         @Html.Partial("_FriendsWidget", Model.Friends)
+
+        @Html.Partial("_SessionsStatistics", Model.Statistics)
+
+
+
+        @if (Model.KudosHistory.Any())
+        {
+            @* Kudos History Widget *@
+            <div class="widget widget-orange">
+                <h4 class="widget-heading">Kudos History</h4>
+                <div class="widget-body">
+
+                    <table>
+                        @foreach (var history in Model.KudosHistory)
+                        {
+                            <tr>
+                                <td>+ @history.Points</td>
+                                <td>@history.DateAdded</td>
+                            </tr>
+                        }
+                    </table>
+
+
+                </div>
+            </div>
+        }
 
     </div>
 </div>

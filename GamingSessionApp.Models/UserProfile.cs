@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,9 +11,6 @@ namespace GamingSessionApp.Models
         {
             About = string.Empty;
             Website = string.Empty;
-            XboxUrl = string.Empty;
-            PlayStationUrl = string.Empty;
-            SteamUrl = string.Empty;
             Rating = 5;
         }
 
@@ -33,21 +31,14 @@ namespace GamingSessionApp.Models
 
         public string Website { get; set; }
 
-        public string XboxGamertag { get; set; }
-        public string XboxUrl { get; set; }
-
-        public string PlayStationNetwork { get; set; }
-        public string PlayStationUrl { get; set; }
-
-        public string SteamName { get; set; }
-        public string SteamUrl { get; set; }
-
-        //Users kudos
+       //Users kudos
         public Kudos Kudos { get; set; }
         
         public UserPreferences Preferences { get; set; }
 
         public UserStatistics Statistics { get; set; }
+
+        public UserSocial Social { get; set; }
 
         public ICollection<UserFriend> Friends { get; set; }
 

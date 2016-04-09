@@ -19,10 +19,10 @@ namespace GamingSessionApp.BusinessLogic
 
         public enum SessionStatusEnum
         {
-            Recruiting = 1,
-            FullyLoaded = 2,
-            Jamming = 3,
-            Retired = 4
+            Open = 1,
+            Full = 2,
+            InProgress = 3,
+            Completed = 4
         }
 
         public enum UserNotificationTypeEnum

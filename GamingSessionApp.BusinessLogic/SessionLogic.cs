@@ -648,11 +648,11 @@ namespace GamingSessionApp.BusinessLogic
             //Is the session now full?
             if (session.MembersCount == session.MembersRequired)
             {
-                session.StatusId = (int) SessionStatusEnum.FullyLoaded;
+                session.StatusId = (int) SessionStatusEnum.Full;
             }
             else
             {
-                session.StatusId = (int)SessionStatusEnum.Recruiting;
+                session.StatusId = (int)SessionStatusEnum.Open;
             }
         }
 

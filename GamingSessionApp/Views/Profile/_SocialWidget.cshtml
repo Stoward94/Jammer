@@ -1,0 +1,94 @@
+﻿@model GamingSessionApp.ViewModels.Profile.UserSocialLinks
+
+
+@{
+    bool anySocialItems = !(string.IsNullOrEmpty(Model.Xbox) &&
+        string.IsNullOrEmpty(Model.PlayStation) &&
+        string.IsNullOrEmpty(Model.Steam) &&
+        string.IsNullOrEmpty(Model.Twitch) &&
+        string.IsNullOrEmpty(Model.Facebook) &&
+        string.IsNullOrEmpty(Model.Twitter));
+}
+
+
+@* Social Links *@
+<h4 class="widget-heading border-bottom-blue">Social</h4>
+<div class="social-links widget " style="font-size: 1.2em">
+    <div class="row">
+
+        @* If we have no user profiles *@
+        @if (anySocialItems == false)
+        {
+            <div class="col-md-12">
+                <div class="no-social-links" style="font-size: 14px;">
+                    Add your <a href="@Url.Action("Edit", "Profile")">"social profiles"</a> so others can connect with you
+                </div>
+            </div>
+        }
+        else
+        {
+
+            if (!string.IsNullOrEmpty(Model.Xbox))
+             {
+                 <div class="col-xs-2">
+                     <img src="~/Media/social-media/Xbox-Icon.svg" width="20" height="20"/>
+                 </div>
+                 <div>
+                     <span><a href="https://account.xbox.com/en-GB/Profile?gamerTag=@Model.Xbox" target="_blank">@Model.Xbox</a></span>
+                 </div>
+             }
+
+            if (!string.IsNullOrEmpty(Model.PlayStation))
+             {
+                 <div class="col-xs-2">
+                     <img src="~/Media/social-media/PlayStation-Icon.svg" width="20" height="20"/>
+                 </div>
+                 <div>
+                     <span> @Model.PlayStation</span>
+                 </div>
+             }
+
+            if (!string.IsNullOrEmpty(Model.Steam))
+             {
+                 <div class="col-xs-2">
+                     <i class="fa fa-steam" style="color: #4b4b4b"></i>
+                 </div>
+                 <div>
+                     <a href="https://steamcommunity.com/id/@Model.Steam" target="_blank">@Model.Steam</a>
+                 </div>
+             }
+
+            if (!string.IsNullOrEmpty(Model.Twitch))
+             {
+                 <div class="col-xs-2">
+                     <i class="fa fa-twitch" style="color: #6441a5"></i>
+                 </div>
+                 <div>
+                     <a href="https://www.twitch.tv/@Model.Twitch" target="_blank">@Model.Twitch</a>
+                 </div>
+             }
+
+            if (!string.IsNullOrEmpty(Model.Facebook))
+             {
+                 <div class="col-xs-2">
+                     <i class="fa fa-facebook" style="color: #3b5998"></i>
+                 </div>
+                 <div>
+                     <span>@Model.Facebook</span>
+                 </div>
+             }
+
+            if (!string.IsNullOrEmpty(Model.Twitter))
+             {
+                 string url = "https://twitter.com/" + Model.Twitter;
+
+                 <div class="col-xs-2">
+                     <i class="fa fa-twitter" style="color: #4099FF"></i>
+                 </div>
+                 <div>
+                     <a href="@url" target="_blank">@@@Model.Twitter</a>
+                 </div>
+             }
+        }
+    </div>
+</div>

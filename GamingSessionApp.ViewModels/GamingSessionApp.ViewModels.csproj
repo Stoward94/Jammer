@@ -86,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\EditAccountViewModel.cs" />
-    <Compile Include="Awards\CompletedAwardsViewModel.cs" />
     <Compile Include="Awards\UserAwardsViewModel.cs" />
     <Compile Include="Feedback\CreateFeedbackViewModel.cs" />
     <Compile Include="Feedback\FeedbackProviderViewModel.cs" />

@@ -48,7 +48,7 @@ namespace GamingSessionApp.BusinessLogic
             try
             {
                 var openSessions = await _sessionRepo.Get(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
-                        .Where(x => x.StatusId != (int)SessionStatusEnum.FullyLoaded) //Sessions that are not full
+                        .Where(x => x.StatusId != (int)SessionStatusEnum.Full) //Sessions that are not full
                         .OrderBy(x => x.ScheduledDate)
                         .Select(s => new SessionListItem
                         {

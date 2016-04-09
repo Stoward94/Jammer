@@ -1,0 +1,30 @@
+﻿@model List<GamingSessionApp.ViewModels.Awards.AwardViewModel>
+
+
+@* If no awards *@
+@if (!Model.Any())
+{
+
+    return;
+}
+
+<h4 class="widget-heading border-bottom-gold">Top Awards</h4>
+<div class="widget">
+    <div id="#awards-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" role="listbox">
+
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <div class="item text-center @(i == 0 ? "active" : "")">
+                    <a class="my-awards" href="@Url.Action("MyAwards", "Awards")" title="@Model[i].Description">
+                        <div class="award @Model[i].Slug"></div>
+                        <div>
+                            <span class="award-level award-@Model[i].Level.Level.ToLower()"></span>
+                            <span class="award-title">@Model[i].Title</span>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

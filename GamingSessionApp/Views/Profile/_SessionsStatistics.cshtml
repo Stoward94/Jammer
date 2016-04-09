@@ -1,0 +1,19 @@
+﻿@model GamingSessionApp.ViewModels.Profile.UserSessionStatistics
+
+@if (!Model.Platforms.Any()) { return; }
+
+<h4 class="widget-heading border-bottom-orange">Sessions Completed (@Model.CompletedSessions)</h4>
+<div class="widget">
+    <table class="sessions-completed-table">
+        <tbody>
+            @foreach (var p in Model.Platforms)
+            {
+                <tr>
+                    <td><i class="fa fa-gamepad"></i> @p.Platform</td>
+                    <td><i class="fa fa-check"></i> @p.CompletedCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+</div>

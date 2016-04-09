@@ -26,10 +26,11 @@ namespace GamingSessionApp.Models
         [Required]
         public string TimeZoneId { get; set; }
 
+        public DateTime DateRegistered { get; set; }
+
+        public DateTime LastSignIn { get; set; }
+
         public UserProfile Profile { get; set; }
-
-        //public virtual ICollection<Session> Sessions { get; set; }
-
         
         #endregion
     }

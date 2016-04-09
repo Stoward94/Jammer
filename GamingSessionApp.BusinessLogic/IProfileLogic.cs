@@ -11,7 +11,7 @@ namespace GamingSessionApp.BusinessLogic
     public interface IProfileLogic : IDisposable
     {
         Task<UserProfileViewModel> GetMyProfile(string userId);
-        Task<UserProfileViewModel> GetUserProfile(string userName);
+        Task<UserProfileViewModel> GetUserProfile(string username, string userId);
         UserMenuViewModel GetUserMenuInformation(string userId);
         Task<object> GetUsersJson(string q);
         Task<ValidationResult> ProcessImageUpload(HttpPostedFileBase file, string userId);

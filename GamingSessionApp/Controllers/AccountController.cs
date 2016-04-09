@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -64,6 +65,12 @@ namespace GamingSessionApp.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+
+                    //Update the users last sign in date
+                    var user = await UserManager.FindByNameAsync(model.UserName);
+                    user.LastSignIn = DateTime.UtcNow;
+                    await UserManager.UpdateAsync(user);
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -141,6 +148,8 @@ namespace GamingSessionApp.Controllers
                     UserName = model.UserName,
                     Email = model.Email,
                     TimeZoneId = "GMT Standard Time",
+                    DateRegistered = DateTime.UtcNow,
+                    LastSignIn = DateTime.UtcNow,
                     Profile = new UserProfile
                     {
                         DisplayName = model.UserName,

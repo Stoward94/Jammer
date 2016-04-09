@@ -1,3 +1,6 @@
+USE TriggerWars
+GO
+
 CREATE FUNCTION CheckIfUserHasAward (@userId VARCHAR(128), @awardId INT)
 RETURNS BIT
 AS BEGIN
