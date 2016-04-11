@@ -1,26 +1,26 @@
 ﻿@model GamingSessionApp.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
-<h4>Use another service to log in.</h4>
-<hr />
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (loginProviders.Count() == 0) {
-        <div>
-            <p>
-                There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support logging in via external services.
-            </p>
-        </div>
-    }
-    else {
-        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl })) {
+    if (loginProviders.Any())
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
             @Html.AntiForgeryToken()
-            <div id="socialLoginList">
+            <div id="socialLoginList" class="text-center">
                 <p>
-                    @foreach (AuthenticationDescription p in loginProviders) {
-                        <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
-                    }
+                    <button type="submit" class="btn btn-facebook" id="Facebook" name="provider" value="Facebook">
+                        <i class="fa fa-facebook" style="margin-right: 5px;"></i> Log in with Facebook
+                    </button>
+
+                    <button type="submit" class="btn btn-google" id="Google" name="provider" value="Google">
+                        <i class="fa fa-google" style="margin-right: 5px;"></i> Log in with Google
+                    </button>
+
+                    <button type="submit" class="btn btn-microsoft" id="Microsoft" name="provider" value="Microsoft">
+                        <i class="fa fa-windows" style="margin-right: 5px;"></i> Log in with Microsoft
+                    </button>
                 </p>
             </div>
         }

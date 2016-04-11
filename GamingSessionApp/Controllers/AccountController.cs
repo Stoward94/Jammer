@@ -1,41 +1,38 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Facebook;
 using GamingSessionApp.BusinessLogic;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Account;
+using GamingSessionApp.ViewModels.Shared;
+using Newtonsoft.Json;
 
 namespace GamingSessionApp.Controllers
 {
     [Authorize]
     public class AccountController : BaseController
     {
-        private ApplicationSignInManager _signInManager;
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly IAuthenticationManager _authenticationManager;
         private readonly IUserLogic _userLogic;
        
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUserLogic userLogic)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, 
+            IAuthenticationManager authenticationManager, IUserLogic userLogic)
         {
-            UserManager = userManager;
-            SignInManager = signInManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _authenticationManager = authenticationManager;
             _userLogic = userLogic;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
         }
 
         //
@@ -59,17 +56,31 @@ namespace GamingSessionApp.Controllers
                 return View(model);
             }
 
+            // Require the user to have a confirmed email before they can log on.
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null)
+            {
+                if (!await _userManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    //Resend verification email
+                    await SendEmailConfirmationTokenAsync(user);
+
+                    ModelState.AddModelError("", "You must confirm your email before trying to log in. A new confirmation email is on its way to your inbox.");
+                    return View(model);
+                }
+            }
+
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
 
                     //Update the users last sign in date
-                    var user = await UserManager.FindByNameAsync(model.UserName);
                     user.LastSignIn = DateTime.UtcNow;
-                    await UserManager.UpdateAsync(user);
+                    await _userManager.UpdateAsync(user);
 
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
@@ -89,7 +100,7 @@ namespace GamingSessionApp.Controllers
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login
-            if (!await SignInManager.HasBeenVerifiedAsync())
+            if (!await _signInManager.HasBeenVerifiedAsync())
             {
                 return View("Error");
             }
@@ -112,7 +123,7 @@ namespace GamingSessionApp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -143,41 +154,19 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    TimeZoneId = "GMT Standard Time",
-                    DateRegistered = DateTime.UtcNow,
-                    LastSignIn = DateTime.UtcNow,
-                    Profile = new UserProfile
-                    {
-                        DisplayName = model.UserName,
-                        ThumbnailUrl = "/Images/thumbnails/default/002.png",
-                        Kudos = new Kudos(),
-                        Preferences = new UserPreferences(),
-                        Statistics = new UserStatistics()
-                    }
-                };
+                ApplicationUser user = CreateUserObject(model.UserName, model.Email, "GMT Standard Time");
 
-                UserManager.UserValidator = new UserValidator<ApplicationUser>(UserManager)
-                {
-                    AllowOnlyAlphanumericUserNames = false,
-                    RequireUniqueEmail = true,
-                };
-
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    //  Comment the following line to prevent log in until the user is confirmed.
+                    //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //Send confirm email 
+                    await SendEmailConfirmationTokenAsync(user);
 
-                    return RedirectToAction("Index", "Home");
+                    //Registration was successful
+                    return View("RegisterConfirmed");
                 }
                 AddErrors(result);
             }
@@ -237,8 +226,15 @@ namespace GamingSessionApp.Controllers
             {
                 return View("Error");
             }
-            var result = await UserManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            var result = await _userManager.ConfirmEmailAsync(userId, code);
+
+            if (result.Succeeded)
+            {
+                return View("ConfirmEmail");
+            }
+
+            AddErrors(result);
+            return View("Error");
         }
 
         //
@@ -258,8 +254,27 @@ namespace GamingSessionApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                //Validate recaptcha
+                var response = Request["g-recaptcha-response"];
+                string secret = ConfigurationManager.AppSettings["RecaptchaSecretKey"];
+
+                var client = new WebClient();
+                var reply =
+                    client.DownloadString(
+                        string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, response));
+
+                var captchaResponse = JsonConvert.DeserializeObject<CaptchaResponse>(reply);
+
+                //if captcha failed
+                if (!captchaResponse.Success)
+                {
+                    ModelState.AddModelError("", "reCaptcha failed validation. Please try again.");
+                    return View(model);
+                }
+
+
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -267,10 +282,10 @@ namespace GamingSessionApp.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await _userManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await _userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -304,17 +319,18 @@ namespace GamingSessionApp.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = await _userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
@@ -343,12 +359,12 @@ namespace GamingSessionApp.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
-            var userId = await SignInManager.GetVerifiedUserIdAsync();
+            var userId = await _signInManager.GetVerifiedUserIdAsync();
             if (userId == null)
             {
                 return View("Error");
             }
-            var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
+            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
@@ -366,7 +382,7 @@ namespace GamingSessionApp.Controllers
             }
 
             // Generate the token and send it
-            if (!await SignInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
+            if (!await _signInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
             {
                 return View("Error");
             }
@@ -385,7 +401,7 @@ namespace GamingSessionApp.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await _signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -399,7 +415,20 @@ namespace GamingSessionApp.Controllers
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+
+                    // Pull the email out from the facebook oauth
+                    if (loginInfo.Login.LoginProvider == "Facebook")
+                    {
+                        var identity = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
+                        var access_token = identity.FindFirstValue("FacebookAccessToken");
+                        var fb = new FacebookClient(access_token);
+                        dynamic myInfo = fb.Get("/me?fields=email"); // specify the email field
+                        loginInfo.Email = myInfo.email;
+                    }
+                    
+                    var timezones = new SelectList(TimeZoneInfo.GetSystemTimeZones(), "Id", "DisplayName");
+
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email, TimeZones = timezones });
             }
         }
 
@@ -423,21 +452,31 @@ namespace GamingSessionApp.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
+
+                var user = CreateUserObject(model.Username, model.Email, model.TimeZoneId);
+                
+                var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
+                    result = await _userManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
+                        //  Comment the following line to prevent log in until the user is confirmed.
+                        //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                        //Send confirm email 
+                        await SendEmailConfirmationTokenAsync(user);
+
+                        //Registration was successful
+                        return View("RegisterConfirmed");
+                        //return RedirectToLocal(returnUrl);
                     }
                 }
                 AddErrors(result);
             }
 
             ViewBag.ReturnUrl = returnUrl;
+            model.TimeZones = new SelectList(TimeZoneInfo.GetSystemTimeZones(), "Id", "DisplayName");
             return View(model);
         }
 
@@ -463,14 +502,9 @@ namespace GamingSessionApp.Controllers
         {
             if (disposing)
             {
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
-
-                if(_userLogic != null)
-                    _userLogic.Dispose();
+                _signInManager?.Dispose();
+                _userManager?.Dispose();
+                _userLogic?.Dispose();
             }
 
             base.Dispose(disposing);
@@ -532,6 +566,46 @@ namespace GamingSessionApp.Controllers
                 }
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
+        }
+
+        private ApplicationUser CreateUserObject(string username, string email, string timezoneId)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = username,
+                Email = email,
+                TimeZoneId = timezoneId,
+                DateRegistered = DateTime.UtcNow,
+                LastSignIn = DateTime.UtcNow,
+                Profile = new UserProfile
+                {
+                    DisplayName = username,
+                    ThumbnailUrl = "/Images/thumbnails/default/002.png",
+                    Kudos = new Kudos(),
+                    Preferences = new UserPreferences(),
+                    Statistics = new UserStatistics()
+                }
+            };
+
+            return user;
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(ApplicationUser user)
+        {
+            string code = await _userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+            
+            StringBuilder emailBody = new StringBuilder();
+            emailBody.Append($"Hi {user.UserName}, </br>");
+            emailBody.Append("Awesome you have joined the TriggerWars community!</br>");
+            emailBody.Append("But first to get up and running, we need you to confirm your email address.</br>");
+            emailBody.Append("Simply click <a href=\"" + callbackUrl + "\">here</a> to confirm your account.</br>");
+            emailBody.Append("=========================================== </br>");
+            emailBody.Append("TriggerWars </br>");
+
+            await _userManager.SendEmailAsync(user.Id, "Confirm your account", emailBody.ToString());
+
+            return callbackUrl;
         }
 
         #endregion

@@ -2,9 +2,11 @@
     ViewBag.Title = "Confirm Email";
 }
 
-<h2>@ViewBag.Title.</h2>
-<div>
-    <p>
+
+<div style="max-width: 450px; text-align: center; margin: 0 auto;">
+    <h2><i class="fa fa-check-square-o" style="color: green;"></i> You're all set
+    </h2>
+    <p class="margin-t-20">
         Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
     </p>
 </div>

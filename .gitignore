@@ -216,3 +216,4 @@ GamingSessionApp/App_Start/Startup.Auth.cs
 GamingSessionApp/Images/48x48/
 GamingSessionApp/Images/180x180/
 GamingSessionApp/Images/thumbnails/
+GamingSessionApp/AppSettingsSecrets.config

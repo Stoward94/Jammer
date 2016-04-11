@@ -27,16 +27,14 @@ namespace GamingSessionApp
             var container = new UnityContainer();
 
             //User Manager / DB contect
-            container.RegisterType<UserManager<ApplicationUser>>(new HierarchicalLifetimeManager());
-            container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new HierarchicalLifetimeManager());
+            container.RegisterType<UserManager<ApplicationUser>>();
             container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
 
             container.RegisterType<ApplicationDbContext>(new PerRequestLifetimeManager());
             container.RegisterType<UnitOfWork>(new PerRequestLifetimeManager());
 
             container.RegisterType<IAuthenticationManager>(new InjectionFactory(o => HttpContext.Current.GetOwinContext().Authentication));
-            
-            container.RegisterType<ManageController>(new InjectionConstructor());
+            container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new InjectionConstructor(typeof(ApplicationDbContext)));
 
             container.RegisterType<SessionLogic>();
             container.RegisterType<SessionDetailsVmLogic>();

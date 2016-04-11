@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace GamingSessionApp.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
-        [Display(Name = "Email")]
+        public string Username { get; set; }
+
+        [Required, Display(Name = "Email")]
         public string Email { get; set; }
+
+        public SelectList TimeZones { get; set; }
+
+        [Required, Display(Name = "Time Zone")]
+        public string TimeZoneId { get; set; }
     }
 
     public class ExternalLoginListViewModel
@@ -80,7 +88,7 @@ namespace GamingSessionApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -99,7 +107,7 @@ namespace GamingSessionApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

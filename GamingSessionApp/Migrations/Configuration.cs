@@ -54,6 +54,7 @@ namespace GamingSessionApp.Migrations
                         TimeZoneId = "GMT Standard Time",
                         DateRegistered = DateTime.UtcNow,
                         LastSignIn = DateTime.UtcNow,
+                        EmailConfirmed = true,
                         Profile = new UserProfile
                         {
                             DisplayName = usernames[i],
