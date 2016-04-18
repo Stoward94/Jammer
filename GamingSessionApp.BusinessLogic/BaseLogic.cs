@@ -92,6 +92,9 @@ namespace GamingSessionApp.BusinessLogic
             if (kudos.Length <= 3)
                 return kudos;
 
+            if(kudos.Length <= 4)
+                return int.Parse(kudos).ToString("n0");
+
             int i = int.Parse(kudos);
             return ((double)i / 1000).ToString("0.#k");
         }

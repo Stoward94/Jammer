@@ -2,6 +2,7 @@
 using System.Text;
 using System.Web.Mvc;
 using GamingSessionApp.ViewModels.Notifications;
+using GamingSessionApp.ViewModels.Shared;
 
 namespace GamingSessionApp.Helpers
 {
@@ -139,10 +140,10 @@ namespace GamingSessionApp.Helpers
             return link;
         }
 
-        public static MvcHtmlString PaginationFull(this HtmlHelper helper, int pageSize, int pageNo, int totalCount, string url)
+        public static MvcHtmlString PaginationFull(this HtmlHelper helper, Pagination pagination, string url)
         {
             //If we are on page 1 of 1 return (no control is needed);
-            if (pageNo == 1 && totalCount <= pageSize)
+            if (pagination.PageNo == 1 && pagination.TotalCount <= pagination.PageSize)
             {
                 return null;
             }
@@ -156,7 +157,7 @@ namespace GamingSessionApp.Helpers
             ul.AddCssClass("pagination");
 
             //Total number of pages
-            int pagesRounded = (int)Math.Ceiling((double)totalCount / (double)pageSize);
+            int pagesRounded = (int)Math.Ceiling((double)pagination.TotalCount / (double)pagination.PageSize);
 
             start.InnerHtml = "<a href='"+ url + "?page=1' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>";
             end.InnerHtml = "<a href='" + url + "?page=" + pagesRounded + "' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>";
@@ -169,7 +170,7 @@ namespace GamingSessionApp.Helpers
                 var li = new TagBuilder("li");
                 var a = new TagBuilder("a");
 
-                if (i == pageNo)
+                if (i == pagination.PageNo)
                     li.AddCssClass("active");
 
                 a.Attributes.Add("href", url + "?page=" + i);
@@ -181,9 +182,9 @@ namespace GamingSessionApp.Helpers
             }
 
             //Disable start/end btn's
-            if (pageNo == 1)
+            if (pagination.PageNo == 1)
                 start.AddCssClass("disabled");
-            else if (pageNo == pagesRounded)
+            else if (pagination.PageNo == pagesRounded)
                 end.AddCssClass("disabled");
 
             //Build ul tag

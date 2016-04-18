@@ -247,6 +247,7 @@
     <Compile Include="Controllers\FeedbackController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IGDBController.cs" />
+    <Compile Include="Controllers\LeaderboardController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
@@ -481,6 +482,7 @@
     <Content Include="Views\Profile\_MySessions.cshtml" />
     <Content Include="Views\Profile\_TopAwards.cshtml" />
     <Content Include="Views\Account\RegisterConfirmed.cshtml" />
+    <Content Include="Views\Leaderboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

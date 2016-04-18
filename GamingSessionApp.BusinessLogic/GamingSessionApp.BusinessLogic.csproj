@@ -124,6 +124,7 @@
     <Compile Include="IGameLogic.cs" />
     <Compile Include="IHomeLogic.cs" />
     <Compile Include="IKudosLogic.cs" />
+    <Compile Include="ILeaderboardLogic.cs" />
     <Compile Include="IMessageLogic.cs" />
     <Compile Include="INotificationLogic.cs" />
     <Compile Include="IProfileLogic.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="IUserLogic.cs" />
     <Compile Include="IUserPreferencesLogic.cs" />
     <Compile Include="KudosLogic.cs" />
+    <Compile Include="LeaderboardLogic.cs" />
     <Compile Include="MessageLogic.cs" />
     <Compile Include="NotificationLogic.cs" />
     <Compile Include="PlatformLogic.cs" />

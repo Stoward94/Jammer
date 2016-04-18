@@ -1,0 +1,128 @@
+﻿@using GamingSessionApp.Helpers
+@using Microsoft.AspNet.Identity
+@model GamingSessionApp.ViewModels.Leaderboard.UserLeaderboardViewModel
+
+@{
+    ViewBag.Title = "User Leaderboard";
+    string username = User.Identity.GetUserName();
+    int index = 0;
+}
+
+<h2>
+    <i class="fa fa-globe"></i> Kudos Leaderboard
+</h2>
+<hr/>
+<p>
+    Welcome to the <i class="fa fa-trophy"></i> Kudos leaderboard! Here you can track the position of the highest ranking members of TriggerWars and see how you and your friends compare.
+</p>
+<div class="row">
+    <div class="col-md-9">
+        <table class="leaderboard-table">
+            <colgroup>
+                <col class="width-10"/>
+                <col style="width: 80%"/>
+                <col class="width-20"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="text-center">Rank</th>
+                    <th>User</th>
+                    <th class="text-center">Kudos</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var u in Model.Users)
+                {
+                    string cssClass = "";
+                    if (Model.Pagination.PageNo == 1)
+                    {
+                        switch (index)
+                        {
+                            case 0:
+                                cssClass = "gold";
+                                break;
+                            case 1:
+                                cssClass = "silver";
+                                break;
+                            case 2:
+                                cssClass = "bronze";
+                                break;
+                        }
+                    }
+
+                    <tr class="@(u.Username == username ? "leaderboard-me" : "")">
+                        <td class="text-center gray">
+                            <i>#@u.Rank</i>
+                        </td>
+                        <td>
+                            <img src="@u.ThumbnailUrl" width="36" height="36" title="@u.Username" alt="Thumbnail" style="margin-right: 10px;"/>
+                            <a href="@Url.Action("UserProfile", "Profile", new {u.Username})">
+                                @u.Username
+                            </a>
+                        </td>
+                        <td class="text-center @cssClass">
+                            <i class="fa fa-trophy" style="color: #DAA520;"></i> @u.Kudos
+                        </td>
+                    </tr>
+
+                    index++;
+                }
+            </tbody>
+        </table>
+
+        <div class="text-right">
+            @Html.PaginationFull(Model.Pagination, Url.Action("Index", "Leaderboard"))
+        </div>
+    </div>
+
+    @* Side panel *@
+    <div class="col-md-3">
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (Model.Friends.Count() > 1)
+            {
+                <h4 class="widget-heading border-bottom-red"><i class="fa fa-users"></i> Your Friends Rank</h4>
+                <div class="widget">
+
+                    <table class="widget-table">
+                        <colgroup>
+                            <col style="width: 12%"/>
+                            <col style="width: 18%"/>
+                            <col style="width: 40%"/>
+                            <col style="width: 30%;"/>
+                        </colgroup>
+                        <tbody>
+                            @foreach (var f in Model.Friends)
+                            {
+                                <tr>
+                                    <td class="gray">
+                                        <i>#@f.Rank</i>
+                                    </td>
+                                    <td>
+                                        <img src="@f.ThumbnailUrl" width="36" height="36"/>
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("UserProfile", "Profile", new {f.Username})">@f.Username</a>
+                                    </td>
+                                    <td class="text-right gray" title="f.Kudos Kudos Points">
+                                        <i class="fa fa-trophy" style="color: #DAA520;"></i> @f.Kudos
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            }
+        }
+        else
+        {
+            <h4 class="widget-heading border-bottom-red"><i class="fa fa-users"></i> Your Friends Rank</h4>
+            <div class="widget widget-login">
+                <a href="@Url.Action("LogIn", "Account", new {returnUrl = Url.Action("Index")})">Log in</a> to see you and your friends rank
+            </div>
+        }
+
+    </div>
+</div>

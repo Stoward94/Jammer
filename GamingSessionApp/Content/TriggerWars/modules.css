@@ -974,6 +974,88 @@ ul.edit-profile-nav .active {
 }
 
 /**********************************************
+            LEADERBOARD STYLES
+**********************************************/
+
+.leaderboard-table {
+    width: 100%;
+    margin: 20px 0;
+    background-color: #fff;
+}
+
+.leaderboard-table tbody tr:nth-child(even) {
+    background:#f0f9ff;
+}
+
+.leaderboard-table thead {
+    background: rgb(47, 136, 225);
+    border: 1px solid rgb(42, 123, 204);
+    color: #fff;
+}
+
+.leaderboard-table > thead > tr > th {
+    padding: 10px;
+}
+
+.leaderboard-table > tbody > tr{
+    border: 1px solid rgb(211, 211, 211);
+}
+
+.leaderboard-table td {
+    padding: 10px;
+    min-height: 30px;
+}
+
+/*Colour the top 3 rows*/
+.gold, 
+.silver,
+.bronze{
+    position: relative;
+}
+
+.gold:after,
+.silver:after,
+.bronze:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0; 
+    height: 0; 
+    display: block;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-top: 20px solid #f1f1f1;
+
+}
+
+.bronze:after {
+    border-top-color: #CD7F32;
+}
+
+.silver:after {
+    border-top-color: #C0C0C0;
+}
+
+.gold:after {
+    border-top-color: #FFD700;
+}
+
+.leaderboard-me {
+    font-weight: bold;
+    background-color: #d5ffce !important;
+}
+
+.widget-login {
+    min-height: 50px;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.3em;
+    color: #454545;
+    margin-bottom: 20px;
+}
+
+/**********************************************
     MEDIA QUERIES
 **********************************************/
 
