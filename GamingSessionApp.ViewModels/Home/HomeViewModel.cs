@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GamingSessionApp.ViewModels.Session;
 
 namespace GamingSessionApp.ViewModels.Home
 {
@@ -10,13 +12,31 @@ namespace GamingSessionApp.ViewModels.Home
     {
         public HomeViewModel()
         {
-            OpenSessions = new List<SessionListItem>();
-            NewSessions = new List<SessionListItem>();
-            RecommendedSessions = new List<SessionListItem>();
+            NewSessions = new List<SessionListItemViewModel>();
         }
-        public List<SessionListItem> OpenSessions { get; set; }
-        public List<SessionListItem> NewSessions { get; set; }
-        public List<SessionListItem> RecommendedSessions { get; set; }
+
+        public KudosLeaderboard KudosLeaderboard { get; set; }
+
+        public List<NewestUsers> NewUsers { get; set; }
+
+        public List<SessionListItemViewModel> NewSessions { get; set; }
+
+    }
+
+    public class KudosLeaderboard
+    {
+        public List<UserSearchResult> Users { get; set; }
+    }
+
+    public class NewestUsers
+    {
+        public string ThumbnailUrl { get; set; }
+
+        public string Username { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yy}")]
+        public DateTime Registered { get; set; }
 
     }
 }

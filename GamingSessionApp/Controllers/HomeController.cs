@@ -24,6 +24,16 @@ namespace GamingSessionApp.Controllers
             return View(viewModel);
         }
 
+        [HttpGet, AllowAnonymous]
+        public async Task<PartialViewResult> Search(string term)
+        {
+            SearchResultsViewModel viewModel = await _homeLogic.GetSearchResults(term, UserId);
+
+            return PartialView("_SearchResults", viewModel);
+        }
+
+
+
         [AllowAnonymous]
         public ActionResult Contact()
         {

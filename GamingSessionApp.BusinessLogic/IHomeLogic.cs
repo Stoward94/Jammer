@@ -7,5 +7,6 @@ namespace GamingSessionApp.BusinessLogic
     public interface IHomeLogic : IDisposable
     {
         Task<HomeViewModel> GetHomeViewModel(string userId);
+        Task<SearchResultsViewModel> GetSearchResults(string term, string userId);
     }
 }

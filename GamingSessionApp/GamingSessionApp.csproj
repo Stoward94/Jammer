@@ -482,6 +482,11 @@
     <Content Include="Views\Profile\_MySessions.cshtml" />
     <Content Include="Views\Profile\_TopAwards.cshtml" />
     <Content Include="Views\Account\RegisterConfirmed.cshtml" />
+    <Content Include="Views\Home\_SearchBar.cshtml" />
+    <Content Include="Views\Home\_SearchResults.cshtml" />
+    <Content Include="Views\Home\_SocialMediaWidget.cshtml" />
+    <Content Include="Views\Home\_TopRankingUsers.cshtml" />
+    <Content Include="Views\Home\_NewestUsers.cshtml" />
     <Content Include="Views\Leaderboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

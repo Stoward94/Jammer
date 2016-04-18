@@ -1,35 +1,55 @@
 ﻿@using GamingSessionApp.Helpers
-@model List<GamingSessionApp.ViewModels.Home.SessionListItem>
+@model List<GamingSessionApp.ViewModels.Session.SessionListItemViewModel>
 
 <div>
-    <div class="list-container border-top-blue">
-        <h2>New Sessions</h2>
-    </div>
+    <h3 class="widget-heading border-bottom-green"><i class="fa fa-gamepad"></i> New Sessions</h3>
+    <div class="widget">
+        @{
+            if (Model.Any())
+            {
+                foreach (var s in Model)
+                {
+                    <div class="clearfix sli-heading center-xs">
+                        <div class="col-sm-7">
+                            <a href="@Url.Action("Details", "Sessions", new {s.Id})">
+                                <i class="fa fa-gamepad" style="margin-right: 5px;"></i> @s.Game
+                            </a>
+                        </div>
+                        <div class="col-sm-5 center-xs text-right">
+                            <div class="sli-time"><i class="fa fa-clock-o"></i> @s.ScheduledDisplayTime</div>
+                        </div>
+                    </div>
+                    <div class="sli-table">
 
-    @foreach (var session in Model)
-    {
-        <div class="sli-container">
-            @*-- Display Scheduled Time --*@
-            <div class="sli-heading-time border-bottom-blue">
-                <i class="fa fa-clock-o"></i> @Html.DisplayFor(s => session.ScheduledDate)
-            </div>
+                        <div class="thead">
+                            <div class="th width-10">Platform</div>
+                            <div class="th width-10 hidden-xs">Type</div>
+                            <div class="th width-10 hidden-xs">Duration</div>
+                            <div class="th width-10">Members</div>
+                            <div class="th width-20 hidden-xs">Status</div>
+                            <div class="th width-10 hidden-xs">Host</div>
+                        </div>
 
-            @*-- Session Details --*@
-            <div class="sli-details-left border-right-blue">
-                <div class="sli-details-left-image">
-                    @Html.SessionTypeIconSmall(session.TypeId)
+                        <a class="tr" href="@Url.Action("Details", "Sessions", new {id = s.Id})">
+                            <div class="tc width-10">@Html.PlatformIcon(s.PlatformId, s.Platform)</div>
+                            <div class="tc width-10 hidden-xs">@Html.SessionTypeIconSmall(s.TypeId)</div>
+                            <div class="tc width-10 hidden-xs"><i class="fa fa-history fa-flip-horizontal"></i> @s.Duration</div>
+                            <div class="tc width-10"><i class="fa fa-users"></i> @s.MembersCount/@s.RequiredCount</div>
+                            <div class="tc width-10 hidden-xs">
+                                @Html.SessionStatusLabel(s.Status, s.StatusDescription, "left")
+                            </div>
+                            <div class="tc width-10 hidden-xs">@s.Creator</div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-sessions">
+                    <i class="fa fa-info-circle"></i> You have no up-coming sessions. <a href="@Url.Action("Index", "Sessions")">Search</a> for a session, or
+                    <a href="@Url.Action("Create", "Sessions")">Create</a> your own :D
                 </div>
-
-                <span><i class="fa fa-user"></i> @session.GamerCount</span>
-            </div>
-
-            <div class="sli-details-right sli-blue">
-                <a href="@Url.Action("Details", "Sessions", new {id = session.SessionId})">
-                    @Html.DisplayFor(s => session.Platform) - Tomb Raider Multiplayer session
-                </a>
-                @Html.DisplayFor(s => session.Summary)
-            </div>
-        </div>
-    }
-
+            }
+        }
+    </div>
 </div>

@@ -1,0 +1,29 @@
+﻿@model GamingSessionApp.ViewModels.Home.KudosLeaderboard
+
+<h4 class="widget-heading border-bottom-gold"><i class="fa fa-globe"></i> Kudos Leaderboard</h4>
+<div class="widget">
+    <table class="widget-table">
+        <colgroup>
+            <col style="width: 12%"/>
+            <col style="width: 18%"/>
+            <col style="width: 40%"/>
+            <col style="width: 30%;"/>
+        </colgroup>
+        <tbody>
+            @for (int i = 0; i < Model.Users.Count; i++)
+            {
+                <tr>
+                    <td class="gray"><i>#@(i + 1)</i></td>
+                    <td><img src="@Model.Users[i].ThumbnailUrl" width="36" height="36"/></td>
+                    <td><a href="@Url.Action("UserProfile", "Profile", new {Model.Users[i].Username})">@Model.Users[i].Username</a></td>
+                    <td class="text-right gray" title="@Model.Users[i].Kudos Kudos Points">
+                        <i class="fa fa-trophy" style="color: #DAA520;"></i> @Model.Users[i].Kudos
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-center" style="border-top: 1px solid #f1f1f1; padding-top: 10px;">
+        <a class="arrow-right-anim" href="@Url.Action("Index", "Leaderboard")">See the full leaderboard <i class="fa fa-arrow-right"></i></a>
+    </div>
+</div>

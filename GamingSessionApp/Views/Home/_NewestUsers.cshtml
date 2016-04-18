@@ -1,0 +1,24 @@
+﻿@model List<GamingSessionApp.ViewModels.Home.NewestUsers>
+
+<h4 class="widget-heading border-bottom-orange"><i class="fa fa-user-plus"></i> Newest Members</h4>
+<div class="widget">
+    <table class="widget-table">
+        <colgroup>
+            @*<col style="width: 12%" />*@
+            <col style="width: 20%" />
+            <col style="width: 40%" />
+            <col style="width: 40%;" />
+        </colgroup>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    @*<td class="gray"><i>#@(i + 1)</i></td>*@
+                    <td><img src="@Model[i].ThumbnailUrl" width="36" height="36" /></td>
+                    <td><a href="@Url.Action("UserProfile", "Profile", new { Model[i].Username })">@Model[i].Username</a></td>
+                    <td class="text-right gray" title="Registered on @Model[i].Registered"><i class="fa fa-clock-o"></i> @Html.DisplayFor(m => Model[i].Registered)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

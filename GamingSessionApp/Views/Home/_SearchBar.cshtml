@@ -1,0 +1,14 @@
+﻿
+
+<div id="search-container" class="search-container">
+    <div style="position: relative;">
+        <input id="search-bar" class="search-bar" type="search" placeholder="Search for a game or a user" data-url="@Url.Action("Search", "Home")" data-update="search-results"/>
+        <i class="fa fa-search input-icon-l" style="font-size: 18px; left: 15px; right: 100%; top: 27%;"></i>
+    </div>
+
+    @* Search Results *@
+    <div class="search-results" style="visibility: hidden; position: absolute; background: #fff; border: 1px solid">
+    </div>
+</div>
+<div class="search-overlay" style="display: none;"></div>
+

@@ -21,7 +21,7 @@
             <div class="form-group">
                 <div class="input-group input-group-lg">
                     <span class="input-group-addon"><i class="fa fa-user" style="width: 15px"></i></span>
-                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "Username" })
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "Username", @autofocus="" })
                 </div>
                 @Html.ValidationMessageFor(m => m.UserName, null, new { @class = "text-danger" })
             </div>

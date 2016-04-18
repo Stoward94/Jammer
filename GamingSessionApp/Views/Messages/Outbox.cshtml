@@ -53,5 +53,5 @@
 }
 
 <div class="text-right">
-    @Html.PaginationFull(Model.Pagination.PageSize, Model.Pagination.PageNo, Model.Pagination.TotalCount, Url.Action("Outbox", "Messages"))
+    @Html.PaginationFull(Model.Pagination, Url.Action("Outbox", "Messages"))
 </div>

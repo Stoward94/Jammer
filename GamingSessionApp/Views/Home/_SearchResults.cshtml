@@ -1,0 +1,71 @@
+﻿@model GamingSessionApp.ViewModels.Home.SearchResultsViewModel
+
+@* Search Results *@
+<div class="search-results">
+    @if (Model.AnyResults)
+    {
+        <div class="search-results-heading">Sessions</div>
+        if (Model.Sessions.Any())
+        {
+            <ul>
+                <li class="search-results-th hidden-xs">
+                    <div class="row">
+                        <div class="col-sm-3">Platform</div>
+                        <div class="col-sm-4">Game</div>
+                        <div class="col-sm-2">Session Type</div>
+                    <div class="col-sm-3">Start date <b>@(Model.IsUtcTime ? "(UTC)" : "")</b></div>
+                    </div> 
+                </li>
+                @foreach (var s in Model.Sessions)
+                {
+                    <li>
+                        <a href="@Url.Action("Details", "Sessions", new {s.Id})">
+                            <div class="row">
+                                <div class="col-sm-3">@s.Platform</div>
+                                <div class="col-sm-4">@s.Game</div>
+                                <div class="col-sm-2">@s.Type</div>
+                                <div class="col-sm-3"><i class="fa fa-clock-o"></i> @s.DisplayScheduledStart</div>
+                            </div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="no-results"><i class="fa fa-info-circle" aria-hidden="true"></i> No sessions match your search</div>
+        }
+
+        <div class="search-results-heading">Users</div>
+        if (Model.Users.Any())
+        {
+            <ul>
+                @foreach (var u in Model.Users)
+                {
+                    <li>
+                        <a href="@Url.Action("UserProfile", "Profile", new { u.Username })">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <img src="@u.ThumbnailUrl" alt="thumbnail" width="36" height="36" />
+                                </div>
+                                <div class="col-sm-4">@u.Username</div>
+                                <div class="col-sm-3"><i class="fa fa-trophy"></i> @u.Kudos</div>
+                            </div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="no-results"><i class="fa fa-info-circle" aria-hidden="true"></i> No users match your search</div>
+        }
+    }
+    else
+    {
+        <div class="no-results"><i class="fa fa-info-circle" aria-hidden="true"></i> No results match your search</div>
+    }
+    <div class="search-results-footer text-center">
+        <a href="@Url.Action("Index", "Sessions")"><i class="fa fa-search-plus"></i> Advanced Search</a>
+    </div>
+</div>

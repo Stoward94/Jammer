@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 using GamingSessionApp.ViewModels.Home;
-using static GamingSessionApp.BusinessLogic.SystemEnums;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
+using GamingSessionApp.ViewModels.Session;
 
 namespace GamingSessionApp.BusinessLogic
 {
-    public class HomeLogic : BaseLogic, IHomeLogic, IDisposable
+    public class HomeLogic : BaseLogic, IHomeLogic
     {
         //Business Logics
         private readonly GenericRepository<Session> _sessionRepo;
@@ -31,8 +29,11 @@ namespace GamingSessionApp.BusinessLogic
 
                 var viewModel = new HomeViewModel();
 
+                viewModel.KudosLeaderboard = await GetKudosLeaderBoard();
+                viewModel.NewUsers = await GetNewestUsers();
                 viewModel.NewSessions = await GetNewSessions();
-                viewModel.OpenSessions = await GetOpenSessions();
+
+
 
                 return viewModel;
             }
@@ -43,53 +44,93 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        private async Task<List<SessionListItem>> GetOpenSessions()
+        public async Task<SearchResultsViewModel> GetSearchResults(string term, string userId)
         {
             try
             {
-                var openSessions = await _sessionRepo.Get(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
-                        .Where(x => x.StatusId != (int)SessionStatusEnum.Full) //Sessions that are not full
-                        .OrderBy(x => x.ScheduledDate)
-                        .Select(s => new SessionListItem
-                        {
-                            ScheduledDate = s.ScheduledDate,
-                            SessionId = s.Id,
-                            Platform = s.Platform.Name,
-                            TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            Summary = s.Information
-                        })
-                        .Take(15)
-                        .ToListAsync();
+                UserId = userId;
 
-                ConvertTimesToTimeZone(openSessions);
+                var sessionResults = await _sessionRepo.Get(x => x.Settings.IsPublic && x.Game.GameTitle.Contains(term))
+                    .Select(x => new SessionSearchResult
+                    {
+                        PlatformId = x.PlatformId,
+                        Platform = x.Platform.Name,
+                        ScheduledStart = x.ScheduledDate,
+                        Id = x.Id,
+                        TypeId = x.TypeId,
+                        Type = x.Type.Name,
+                        Game = x.Game.GameTitle
+                    })
+                    .Take(10)
+                    .ToListAsync();
 
+                var userResults = await UoW.Repository<UserProfile>().Get(x => x.DisplayName.Contains(term))
+                    .Select(x => new UserSearchResult
+                    {
+                        Kudos = x.Kudos.Points.ToString(),
+                        ThumbnailUrl = x.ThumbnailUrl,
+                        Username = x.DisplayName
+                    })
+                    .Take(10)
+                    .ToListAsync();
 
-                return openSessions;
+                //Set times to usertime zone
+                foreach (var s in sessionResults)
+                {
+                    s.ScheduledStart = s.ScheduledStart.ToTimeZoneTime(GetUserTimeZone());
+                    s.DisplayScheduledStart = s.ScheduledStart.ToFullDateTimeString();
+                }
+
+                //Update kudos score
+                foreach (var u in userResults)
+                {
+                    u.Kudos = TrimKudos(u.Kudos);
+                }
+
+                var model = new SearchResultsViewModel
+                {
+                    Sessions = sessionResults,
+                    Users = userResults,
+                    IsUtcTime = UserId == null
+                };
+
+                return model;
             }
             catch (Exception ex)
             {
-                LogError(ex, "GetOpenSessions() threw an error!");
-                throw;
+                LogError(ex, "Error when searching for term: " + term);
+                return null;
             }
         }
-        private async Task<List<SessionListItem>> GetNewSessions()
+
+        private async Task<List<SessionListItemViewModel>> GetNewSessions()
         {
             try
             {
                 var newSessions = await _sessionRepo.Get(s => s.Settings.IsPublic && s.Active) //Only public and active sessions
                         .OrderByDescending(x => x.ScheduledDate)
-                        .Select(s => new SessionListItem
+                        .Select(s => new SessionListItemViewModel
                         {
-                            ScheduledDate = s.ScheduledDate,
-                            SessionId = s.Id,
-                            Platform = s.Platform.Name,
+                            Id = s.Id,
+                            Creator = s.Creator.DisplayName,
+                            Duration = s.Duration.Duration,
+                            Game = s.Game.GameTitle,
+                            MembersCount = s.Members.Count,
+                            PlatformId = s.PlatformId,
+                            RequiredCount = s.MembersRequired,
+                            ScheduledTime = s.ScheduledDate,
+                            Status = s.Status.Name,
+                            StatusDescription = s.Status.Description,
+                            Type = s.Type.Name,
                             TypeId = s.TypeId,
-                            GamerCount = s.Members.Count + "/" + s.MembersRequired,
-                            Summary = s.Information
-                        }).Take(15).ToListAsync();
+                            Platform = s.Platform.Name,
+                        }).Take(10).ToListAsync();
 
-                ConvertTimesToTimeZone(newSessions);
+                foreach (var s in newSessions)
+                {
+                    s.ScheduledTime = s.ScheduledTime.ToTimeZoneTime(GetUserTimeZone());
+                    s.ScheduledDisplayTime = s.ScheduledTime.ToFullDateTimeString();
+                }
 
                 return newSessions;
             }
@@ -100,15 +141,62 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        private void ConvertTimesToTimeZone(List<SessionListItem> model)
+        private async Task<KudosLeaderboard> GetKudosLeaderBoard()
         {
-            //Convert the DateTimes to the users time zone
-            foreach (var s in model)
+            try
             {
-                s.ScheduledDate = s.ScheduledDate.ToTimeZoneTime(GetUserTimeZone());
+                KudosLeaderboard leaderboard = new KudosLeaderboard
+                {
+                    Users = await UoW.Repository<UserProfile>().Get()
+                        .OrderByDescending(x => x.Kudos.Points)
+                        .Select(x => new UserSearchResult
+                        {
+                            Kudos = x.Kudos.Points.ToString(),
+                            ThumbnailUrl = x.ThumbnailUrl,
+                            Username = x.DisplayName
+                        })
+                        .Take(10)
+                        .ToListAsync()
+                };
+
+                foreach (var u in leaderboard.Users)
+                {
+                    u.Kudos = int.Parse(u.Kudos).ToString("n0");
+                }
+
+                return leaderboard;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error getting user kudos leaderboard");
+                return null;
             }
         }
 
-        
+        private async Task<List<NewestUsers>> GetNewestUsers()
+        {
+            try
+            {
+
+                var users = await UoW.Repository<UserProfile>().Get()
+                    .OrderByDescending(x => x.User.DateRegistered)
+                    .Select(x => new NewestUsers
+                    {
+                        ThumbnailUrl = x.ThumbnailUrl,
+                        Username = x.DisplayName,
+                        Registered = x.User.DateRegistered
+
+                    })
+                    .Take(10)
+                    .ToListAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Error getting user kudos leaderboard");
+                return null;
+            }
+        }
     }
 }

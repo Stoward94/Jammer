@@ -19,6 +19,68 @@ var popOverSettings = {
     selector: '[data-toggle="popover"]'
 }
 
+/***************************************************
+                *  HOME SCRIPTS * 
+ ***************************************************/
+
+//Home page search bar auto complete
+$("#search-bar").on('input', function (e) {
+
+    var input = $(this);
+    var target = $("." + input.attr("data-update"));
+    var overlay = $(".search-overlay");
+
+    //Min 2 characters
+    if ($(this).val().length < 2) {
+        overlay.hide();
+        target.hide();
+        return;
+    }
+
+    //Timeout to allow for fast input before firing ajax
+    clearTimeout(input.data('timer'));
+    input.data('timer', setTimeout(function () {
+        input.removeData('timer');
+
+        //Show loading gif
+        input.addClass("search-loading");
+
+        //Ajax options
+        var options = {
+            url: input.attr("data-url"),
+            method: "GET",
+            data: { term: input.val() }
+        }
+
+        //Ajax call
+        $.ajax(options)
+            .success(function(data) {
+                target.replaceWith(data);
+                overlay.show();
+                target.show();
+            })
+            .error(function() {
+                DisplayError("An error occurred during your search. Please try again.");
+            })
+            .always(function() {
+                input.removeClass("search-loading");
+            });
+    }, 300));
+});
+
+//handles hiding the search menu if clicking off it
+$(document).on('click', function (event) {
+    if (!$(event.target).closest('#search-container').length) {
+        // Hide the menus.
+        var input = $("#search-bar");
+        var target = $("." + input.attr("data-update"));
+        target.hide();
+        $(".search-overlay").hide();
+    }
+});
+
+/**************************************************/
+
 $('body').popover(popOverSettings);
 
 //Fix to stop notif menu disappering when clicking inside
