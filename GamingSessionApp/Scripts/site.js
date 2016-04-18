@@ -491,3 +491,14 @@ var SessionSearch = function (e, el) {
         parent.removeClass("disabled");
         });
 }
+
+$(".share-fb").click(function(e) {
+    var $this = $(this);
+
+    FB.ui({
+        method: 'share',
+        href: $this.attr("data-href"),
+        hastag: "TriggerWars,Gaming",
+        mobile_iframe: true
+    }, function (response) { });
+});

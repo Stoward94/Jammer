@@ -352,7 +352,6 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\igdb.jquery.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
@@ -451,9 +450,7 @@
     <Content Include="Views\Sessions\Index.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Comments\_SessionComments.cshtml" />
-    <Content Include="Views\Home\_OpenSessionsList.cshtml" />
     <Content Include="Views\Home\_NewSessionList.cshtml" />
-    <Content Include="Views\Home\_RecommendedSessionList.cshtml" />
     <Content Include="Views\Profile\MyProfile.cshtml" />
     <Content Include="Views\Profile\UserProfile.cshtml" />
     <Content Include="Views\Shared\_UserMenu.cshtml" />

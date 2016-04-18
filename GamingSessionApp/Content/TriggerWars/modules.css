@@ -766,16 +766,18 @@ a.type-casual:hover, .type-casual.selected { background-position: 0 -725px; }
 }
 
 /* facebook */
-.icon-facebook {
+.icon-facebook, .share-fb {
   background-color: #3b5998;
   background-position: 0 0;
 }
 
-.icon-facebook:hover {
+.icon-facebook:hover,
+.share-fb:hover {
   background-position: 0 -5px;
 }
 
-.icon-facebook::after {
+.icon-facebook::after,
+.share-fb::after {
   background-color: #1e2e4f;
 }
 
@@ -969,8 +971,10 @@ ul.edit-profile-nav .active {
 }
 
 .award-block {
-    border-bottom: 1px solid #f1f1f1;
-    padding: 20px 0;   
+    border: 1px solid #f1f1f1;
+    padding: 20px 0;
+    background-color: #fff;
+    border-radius: 5px;
 }
 
 .award-body {

@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @RenderSection("Meta", false)
+
     <title>@ViewBag.Title</title>
 
     <link rel="apple-touch-icon" sizes="57x57" href="~/Media/favicons/apple-touch-icon-57x57.png">
@@ -29,7 +32,49 @@
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 
+    @* Twitter widgets.js *@
+    <script>
+        window.twttr = (function(d, s, id) {
+            var fjs = d.getElementsByTagName(s)[0],
+                t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            var js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js, fjs);
+
+            t._e = [];
+            t.ready = function(f) {
+                t._e.push(f);
+            };
+
+            return t;
+        }(document, "script", "twitter-wjs"));
+    </script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
+
+
+    @* Facebook SDK *@
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '1541657222804839',
+                xfbml: true,
+                version: 'v2.6'
+            });
+        };
+
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
 
 </head>
 <body>
