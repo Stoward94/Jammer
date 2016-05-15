@@ -570,6 +570,9 @@ namespace GamingSessionApp.Controllers
 
         private ApplicationUser CreateUserObject(string username, string email, string timezoneId)
         {
+            Random r = new Random();
+            int rInt = r.Next(1, 5);
+
             var user = new ApplicationUser
             {
                 UserName = username,
@@ -580,10 +583,11 @@ namespace GamingSessionApp.Controllers
                 Profile = new UserProfile
                 {
                     DisplayName = username,
-                    ThumbnailUrl = "/Images/thumbnails/default/002.png",
+                    ThumbnailUrl = "/Images/thumbnails/default/sample-" + rInt + ".png",
                     Kudos = new Kudos(),
                     Preferences = new UserPreferences(),
-                    Statistics = new UserStatistics()
+                    Statistics = new UserStatistics(),
+                    Social = new UserSocial()
                 }
             };
 

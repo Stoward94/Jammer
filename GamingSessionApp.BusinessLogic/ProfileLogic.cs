@@ -161,8 +161,7 @@ namespace GamingSessionApp.BusinessLogic
                 profile.Kudos = int.Parse(profile.Kudos).ToString("n0");
 
                 //Get the full image rather than the thumbnail
-                string fileName = Path.GetFileName(profile.ProfileImageUrl);
-                profile.ProfileImageUrl = $"/Images/180x180/{fileName}";
+                profile.ProfileImageUrl = GetImageUrl(profile.ProfileImageUrl, "180x180");
 
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
@@ -335,8 +334,7 @@ namespace GamingSessionApp.BusinessLogic
                 profile.Kudos = int.Parse(profile.Kudos).ToString("n0");
 
                 //Get the full image rather than the thumbnail
-                string fileName = Path.GetFileName(profile.ProfileImageUrl);
-                profile.ProfileImageUrl = $"/Images/180x180/{fileName}";
+                profile.ProfileImageUrl = GetImageUrl(profile.ProfileImageUrl, "180x180");
 
                 //Convert Session Times to Local Time
                 foreach (var s in profile.Sessions)
@@ -582,8 +580,7 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Use 180x180 image instead of thumbnail
                 //Get the full image rather than the thumbnail
-                string fileName = Path.GetFileName(model.ImageUrl);
-                model.ImageUrl = $"/Images/180x180/{fileName}";
+                model.ImageUrl = GetImageUrl(model.ImageUrl, "180x180");
 
                 return model;
             }

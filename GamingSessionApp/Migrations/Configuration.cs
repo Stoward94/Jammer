@@ -47,6 +47,9 @@ namespace GamingSessionApp.Migrations
 
                 for (int i = 0; i < usernames.Count; i++)
                 {
+                    Random r = new Random();
+                    int rInt = r.Next(1, 5);
+
                     var user = new ApplicationUser
                     {
                         UserName = usernames[i],
@@ -58,7 +61,7 @@ namespace GamingSessionApp.Migrations
                         Profile = new UserProfile
                         {
                             DisplayName = usernames[i],
-                            ThumbnailUrl = "/Images/thumbnails/default/00" + i + ".png",
+                            ThumbnailUrl = "/Images/thumbnails/default/sample-" + rInt + ".png",
                             Website = "https://www.triggerwars.com",
                             Kudos = new Kudos(),
                             Preferences = new UserPreferences(),

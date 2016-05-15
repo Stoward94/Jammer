@@ -77,8 +77,15 @@ namespace GamingSessionApp.BusinessLogic
 
         protected string GetImageUrl(string profileImageUrl, string targetFolder)
         {
-            //Get the full image rather than the thumbnail
             string fileName = Path.GetFileName(profileImageUrl);
+
+            if (profileImageUrl.Contains("default"))
+            {
+                return $"/Images/{targetFolder}/default/{fileName}";
+            }
+
+            //Get the full image rather than the thumbnail
+           
             return$"/Images/{targetFolder}/{fileName}";
         }
 
