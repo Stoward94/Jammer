@@ -16,6 +16,9 @@ namespace GamingSessionApp.ViewModels.Session
 
     public class CommentViewModel
     {
+        //Comment Id
+        public int Id { get; set; }
+
         //Comment order no.
         public int CommentNo { get; set; }
 

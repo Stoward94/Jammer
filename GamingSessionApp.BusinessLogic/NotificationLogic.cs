@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 using GamingSessionApp.Models;
 using GamingSessionApp.ViewModels.Notifications;
+using GamingSessionApp.ViewModels.Shared;
 using static GamingSessionApp.BusinessLogic.SystemEnums;
 
 namespace GamingSessionApp.BusinessLogic
@@ -31,7 +32,7 @@ namespace GamingSessionApp.BusinessLogic
                 List<UserNotification> notifs = await _notificationRepo.Get(x => x.RecipientId == userId)
                     .OrderByDescending(x => x.CreatedDate)
                     .Include(x => x.Referee)
-                    .Include(x => x.Session)
+                    .Include(x => x.Session.Game)
                     .Take(10)
                     .ToListAsync();
 
@@ -64,7 +65,7 @@ namespace GamingSessionApp.BusinessLogic
                 List<UserNotification> notifs = await _notificationRepo.Get(x => x.RecipientId == userId)
                     .OrderByDescending(x => x.CreatedDate)
                     .Include(x => x.Referee)
-                    .Include(x => x.Session)
+                    .Include(x => x.Session.Game)
                     .Skip(skip)//Skip for pagination
                     .Take(pageSize)
                     .ToListAsync();
@@ -73,16 +74,18 @@ namespace GamingSessionApp.BusinessLogic
 
                 var model = new AllNotificationsViewModel
                 {
-                    TotalCount = await _notificationRepo.Get(x => x.RecipientId == userId).CountAsync(),
-                    PageNo = page,
-                    PageSize = pageSize,
+                    Pagination = new Pagination { 
+                        TotalCount = await _notificationRepo.Get(x => x.RecipientId == userId).CountAsync(),
+                        PageNo = page,
+                        PageSize = pageSize
+                    },
                     Notifications = notifications
                 };
 
                 //Build the 'showing x - y of z' display text 
                 int startCount = skip + 1;
                 int endCount = skip + notifs.Count;
-                model.ShowingText = $"Showing {startCount} - {endCount} of {model.TotalCount}";
+                model.ShowingText = $"Showing {startCount} - {endCount} of {model.Pagination.TotalCount}";
 
 
                 //Mark Unread notifications as read
@@ -143,7 +146,7 @@ namespace GamingSessionApp.BusinessLogic
                     switch (n.TypeId)
                     {
                         case (int)UserNotificationTypeEnum.Comment:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has commented on the session: UPDATE ME!";
+                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has commented on the session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                         case (int)UserNotificationTypeEnum.Information:
                             notif.Body = n.Body;
@@ -155,10 +158,10 @@ namespace GamingSessionApp.BusinessLogic
                             notif.Body = n.Body;
                             break;
                         case (int)UserNotificationTypeEnum.PlayerJoined:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has joined your session: UPDATE ME!";
+                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has joined your session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                         case (int)UserNotificationTypeEnum.PlayerLeft:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has left your session: UPDATE ME!";
+                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has left your session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                     }
 
@@ -208,6 +211,34 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+        public async Task AddUserLeftNotification(Session session, string refereeId)
+        {
+            try
+            {
+                UserNotification notification = new UserNotification
+                {
+                    SessionId = session.Id,
+                    RecipientId = session.CreatorId,
+                    TypeId = (int)UserNotificationTypeEnum.PlayerLeft,
+                    RefereeId = refereeId,
+                };
+
+                //Load the preferences to check whether to add the notification
+                UserPreferences preferences = await UoW.Repository<UserPreferences>()
+                    .Get(x => x.ProfileId == session.CreatorId)
+                    .FirstOrDefaultAsync();
+
+                //Attach nofitication
+                AddNotification(preferences, notification);
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+        }
+
         internal async Task SessionInviteNotification(Session session, string creatorId, List<UserProfile> recipients)
         {
             try
@@ -234,11 +265,11 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async void AddCommentNotification(ICollection<UserProfile> members, string authorId, Guid sessionId, int commentId)
+        public void AddCommentNotification(ICollection<UserProfile> members, Guid sessionId, SessionComment comment)
         {
             try
             {
-                var commentAuthor = members.First(x => x.UserId == authorId);
+                var commentAuthor = members.First(x => x.UserId == comment.AuthorId);
 
                 //Can't add notification, something is wrong
                 if (commentAuthor == null) return;
@@ -253,16 +284,15 @@ namespace GamingSessionApp.BusinessLogic
                     {
                         Body = commentAuthor.DisplayName + " has commented on a session",
                         SessionId = sessionId,
-                        CommentId = commentId,
+                        //CommentId = commentId,
+                        Comment = comment,
                         RecipientId = m.UserId,
                         TypeId = (int)UserNotificationTypeEnum.Comment,
-                        RefereeId = authorId
+                        RefereeId = comment.AuthorId
                     };
 
                     _notificationRepo.Insert(n);
                 }
-
-                await SaveChangesAsync();
             }
             catch (Exception ex)
             {

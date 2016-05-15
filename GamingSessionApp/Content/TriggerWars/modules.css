@@ -9,13 +9,23 @@
 }
 
 .comment {
-    margin-top: 10px;
+    -webkit-transition: background-color 2s ease;
+    -moz-transition: background-color 2s ease;
+    -o-transition: background-color 2s ease;
+    transition: background-color 2s ease;
+    padding: 10px 0;
 }
 
 .comment-body {
+    border-left: 1px solid #f1f1f1;
+    padding-top: 5px;
     min-height: 100px;
     padding: 5px 0;
     color: #393d40;
+}
+
+.comment-highlight {
+    background: #f6d8ca;
 }
 
 .figure-center {

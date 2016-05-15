@@ -74,45 +74,46 @@ namespace GamingSessionApp.Helpers
             return new MvcHtmlString(div.ToString());
         }
 
-        public static MvcHtmlString NotificationTypeIcon(this HtmlHelper helper, int typeId)
-        {
-            //<img src="~/Media/user-joined-icon.png" width="36" height="36"/>
-            var img = new TagBuilder("img");
+        //Not using this at the moment, may use it in the future
+        //public static MvcHtmlString NotificationTypeIcon(this HtmlHelper helper, int typeId)
+        //{
+        //    //<img src="~/Media/user-joined-icon.png" width="36" height="36"/>
+        //    var img = new TagBuilder("img");
 
-            switch (typeId)
-            {
-                case 1: //PlayerJoined
-                    img.MergeAttribute("src", "/Media/user-joined-icon.png");
-                    img.MergeAttribute("alt", "Joined icon");
-                    break;
-                case 2: //PlayerLeft
-                    img.MergeAttribute("src", "/Media/user-left-icon.png");
-                    img.MergeAttribute("alt", "Left icon");
-                    break;
-                case 3: //KudosAdded
-                    img.MergeAttribute("src", "/Media/kudos-added-icon.png");
-                    img.MergeAttribute("alt", "Kudos awarded icon");
-                    break;
-                case 4: //Information
-                    img.MergeAttribute("src", "/Media/info-icon.png");
-                    img.MergeAttribute("alt", "Info icon");
-                    break;
-                case 5: //Invitation
-                    img.MergeAttribute("src", "/Media/invitation-icon.png");
-                    img.MergeAttribute("alt", "Invite icon");
-                    break;
-                case 6: //Comment
-                    img.MergeAttribute("src", "/Media/comment-icon.png");
-                    img.MergeAttribute("alt", "Comment icon");
-                    break;
-            }
+        //    switch (typeId)
+        //    {
+        //        case 1: //PlayerJoined
+        //            img.MergeAttribute("src", "/Media/user-joined-icon.png");
+        //            img.MergeAttribute("alt", "Joined icon");
+        //            break;
+        //        case 2: //PlayerLeft
+        //            img.MergeAttribute("src", "/Media/user-left-icon.png");
+        //            img.MergeAttribute("alt", "Left icon");
+        //            break;
+        //        case 3: //KudosAdded
+        //            img.MergeAttribute("src", "/Media/kudos-added-icon.png");
+        //            img.MergeAttribute("alt", "Kudos awarded icon");
+        //            break;
+        //        case 4: //Information
+        //            img.MergeAttribute("src", "/Media/info-icon.png");
+        //            img.MergeAttribute("alt", "Info icon");
+        //            break;
+        //        case 5: //Invitation
+        //            img.MergeAttribute("src", "/Media/invitation-icon.png");
+        //            img.MergeAttribute("alt", "Invite icon");
+        //            break;
+        //        case 6: //Comment
+        //            img.MergeAttribute("src", "/Media/comment-icon.png");
+        //            img.MergeAttribute("alt", "Comment icon");
+        //            break;
+        //    }
 
-            img.MergeAttribute("width", "36");
-            img.MergeAttribute("height", "36");
+        //    img.MergeAttribute("width", "36");
+        //    img.MergeAttribute("height", "36");
 
-            // Render tag
-            return new MvcHtmlString(img.ToString(TagRenderMode.SelfClosing));
-        }
+        //    // Render tag
+        //    return new MvcHtmlString(img.ToString(TagRenderMode.SelfClosing));
+        //}
 
         public static string NotificationTypeLink(this UrlHelper helper, UserNotificationViewModel n)
         {
@@ -133,8 +134,7 @@ namespace GamingSessionApp.Helpers
                 case 5: //Invitation
                     return helper.Action("Details", "Sessions", new { id = n.SessionId });
                 case 6: //Comment
-                    //TODO - Add comment to link
-                    break;
+                    return helper.Action("Details", "Sessions", new { id = n.SessionId }) + "#" + n.CommentId;
             }
 
             return link;

@@ -40,7 +40,9 @@ namespace GamingSessionApp.Models
         public Session Session { get; set; }
 
         //If the notification is referring to a comment on a session
+        [ForeignKey("Comment")]
         public int? CommentId { get; set; }
+        public SessionComment Comment { get; set; }
 
         public bool Read { get; set; }
 

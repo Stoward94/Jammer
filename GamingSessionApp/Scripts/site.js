@@ -501,4 +501,24 @@ $(".share-fb").click(function(e) {
         hastag: "TriggerWars,Gaming",
         mobile_iframe: true
     }, function (response) { });
-});
+});});
+
+
+//Detect if we have an achor tag
+if (window.location.hash) {
+    var hash = window.location.hash;
+    var el = $(hash);
+    scrollToElement(el);
+
+    el.addClass("comment-highlight");
+    setTimeout(function() {
+        el.removeClass("comment-highlight");
+    }, 1000);
+
+}
+function scrollToElement(ele) {
+    $('html, body').animate({
+        scrollTop: ele.offset().top
+    }, 500);
+}
+

@@ -12,7 +12,9 @@ namespace GamingSessionApp.BusinessLogic
         Task<AllNotificationsViewModel> GetAllForUser(string userId, int page);
 
         Task AddUserJoinedNotification(Session session, string refereeId);
-        void AddCommentNotification(ICollection<UserProfile> members, string authorId, Guid sessionId, int commentId);
+        Task AddUserLeftNotification(Session session, string refereeId);
+
+        void AddCommentNotification(ICollection<UserProfile> members, Guid sessionId, SessionComment comment);
 
         Task UpdateNotifications(string userId, List<Guid> ids);
     }

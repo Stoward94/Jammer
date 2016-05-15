@@ -1,24 +1,22 @@
 ﻿@model GamingSessionApp.ViewModels.Session.CommentViewModel
 
-<section class="row">
-    <div class="col-sm-1 hidden-xs pad-r-none">
+<section id="@Model.Id" class="row comment widget">
+    <div class="col-sm-2 hidden-xs">
         <figure class="figure-center">
-            <img src="@Model.ThumbnailUrl" alt="Profile image" class="img-rounded" width="48" height="48" />
+            <img src="@Model.ThumbnailUrl" alt="Profile image" width="48" height="48"/>
             <figcaption>
                 <i class="fa fa-trophy"></i> @Model.Kudos
             </figcaption>
         </figure>
     </div>
 
-    <div class="col-sm-11 col-xs-12 comment">
-        <span class="date-time pull-right"><i class="fa fa-clock-o"></i> @Model.CreatedDisplayDate</span>
-        <span class="comment-author">@Html.ActionLink(Model.Author, "UserProfile", "Profile", new { userName = Model.Author }, null)</span>
-        <div class="comment-body">
+    <div class="col-sm-10 col-xs-12 comment-body">
+        <div>
+            <span class="date-time pull-right"><i class="fa fa-clock-o"></i> @Model.CreatedDisplayDate</span>
+            <span class="comment-author">@Html.ActionLink(Model.Author, "UserProfile", "Profile", new { userName = Model.Author }, null)</span>
+        </div>
+        <div>
             @Html.Raw(Model.Body)
         </div>
-    </div>
-
-    <div class="col-xs-12">
-        <hr />
     </div>
 </section>
