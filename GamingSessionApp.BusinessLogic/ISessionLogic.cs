@@ -19,6 +19,6 @@ namespace GamingSessionApp.BusinessLogic
         Task<SelectList> GetTypesList();
    
         Task<ValidationResult> AddUserToSession(string userId, Guid sessionId);
-        Task<bool> RemoveUserFromSession(string userId, Guid sessionId);
+        Task<ValidationResult> RemoveUserFromSession(string userId, Guid sessionId);
     }
 }

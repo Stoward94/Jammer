@@ -36,6 +36,8 @@ namespace GamingSessionApp.ViewModels.Session
         [Required]
         public int TypeId { get; set; }
 
+        public string TypeDescription { get; set; }
+
         //# of gamers needed for the session
         [Required]
         public int MembersRequired { get; set; }

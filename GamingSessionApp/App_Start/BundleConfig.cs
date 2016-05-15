@@ -22,7 +22,6 @@ namespace GamingSessionApp
             bundles.Add(new ScriptBundle("~/bundles/scripts").Include(
                     "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js",
-                      "~/Scripts/tinymce/tinymce.min.js",
                       "~/Scripts/jquery.caret.min.js",
                       "~/Scripts/jquery.tag-editor.min.js",
                       "~/Scripts/bootstrap-rating.min.js",
@@ -38,10 +37,14 @@ namespace GamingSessionApp
                       "~/Content/jquery-ui.min.css",
                       "~/Content/jquery.tag-editor.css",
                       "~/Content/bootstrap-rating.css",
+                      "~/Content/bootstrap-datetimepicker.min.css",
                       "~/Content/TriggerWars/site.css",
                       "~/Content/TriggerWars/feedback.css",
                       "~/Content/TriggerWars/modules.css",
                       "~/Content/TriggerWars/footer.css"));
+
+
+            //BundleTable.EnableOptimizations = true;
         }
     }
 }

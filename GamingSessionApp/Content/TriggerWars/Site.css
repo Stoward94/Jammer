@@ -18,6 +18,11 @@ a:focus {
     outline: none;
 }
 
+/* TinyMCE width override */
+.mce-tinymce iframe {
+    width: 99%!important;
+}
+
 .ui-autocomplete-loading {
     background: white url("../../Media/search-loader.gif") 92% center no-repeat;
   }

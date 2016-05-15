@@ -286,11 +286,13 @@ namespace GamingSessionApp.Helpers
             return new MvcHtmlString(div.ToString());
         }
 
-        public static MvcHtmlString SessionTypeIcon(this HtmlHelper helper, int typeId, string type)
+        public static MvcHtmlString SessionTypeIcon(this HtmlHelper helper, int typeId, string type, string description)
         {
             var div = new TagBuilder("div");
             div.AddCssClass("type-icon");
-            div.MergeAttribute("title", type);
+            div.MergeAttribute("title", description);
+            div.MergeAttribute("data-toggle", "tooltip");
+            div.MergeAttribute("data-placement", "bottom");
 
             switch (typeId)
             {

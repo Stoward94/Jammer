@@ -12,11 +12,11 @@
 
     <div class="row">
         <div class="col-sm-12">
-            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+            @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
         </div>
 
         @* Platforms *@
-        <div class="col-sm-12 platforms">
+        <div class="col-sm-12 widget">
             <div class="row text-center">
                 <div class="col-md-12">
                     <h2 class="heading-lines gray">
@@ -74,14 +74,14 @@
                     </a>
                 </div>
                 <div class="col-md-12">
-                    @Html.ValidationMessageFor(m => m.PlatformId, "", new { @class = "error-msg" })
+                    @Html.ValidationMessageFor(m => m.PlatformId, "", new {@class = "error-msg"})
                 </div>
                 @Html.HiddenFor(m => m.PlatformId)
             </div>
         </div>
 
         @* Types *@
-        <div class="col-sm-12 types">
+        <div class="col-sm-12 widget">
             <div class="row text-center">
                 <div class="col-md-12">
                     <h2 class="heading-lines gray">
@@ -118,25 +118,26 @@
                         <span></span>
                     </a>
                 </div>
-                @Html.ValidationMessageFor(m => m.TypeId, "", new { @class = "error-msg" })
+                @Html.ValidationMessageFor(m => m.TypeId, "", new {@class = "error-msg"})
                 @Html.HiddenFor(m => m.TypeId)
             </div>
-            <hr />
         </div>
 
+    </div>
+    <div class="row widget" style="padding-top: 20px;">
         <div class="col-md-6">
             @* Game *@
             <div class="form-group">
-                @Html.LabelFor(m => m.GameTitle, new { @class = "control-label" })
+                @Html.LabelFor(m => m.GameTitle, new {@class = "control-label"})
 
                 <div class="input-icon">
-                    @Html.TextBoxFor(m => m.GameTitle, new { @class = "form-control search-control", @type = "search", @data_igdb_ac = "", @placeholder = "Search for your game..." })
+                    @Html.TextBoxFor(m => m.GameTitle, new {@class = "form-control search-control", @type = "search", @data_igdb_ac = "", @placeholder = "Search for your game..."})
                     <i class="fa fa-search input-search" style="font-size: 14px"></i>
                 </div>
                 <small class="byline pull-right">Powered by IGDB.com</small>
 
 
-                @Html.ValidationMessageFor(m => m.GameTitle, "", new { @class = "error-msg" })
+                @Html.ValidationMessageFor(m => m.GameTitle, "", new {@class = "error-msg"})
                 @Html.HiddenFor(m => m.IgdbGameId)
             </div>
 
@@ -144,25 +145,25 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-6">
-                        @Html.LabelFor(m => m.ScheduledDate, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.ScheduledDate, new {@class = "control-label"})
 
                         <div class="input-icon">
-                            <input id="ScheduledDate" name="ScheduledDate" type="text" class="date-picker form-control input-validation-error"
-                                   value="@Model.ScheduledDate" data-val="true" data-val-required="The Schedule Date field is required.">
+                            <input id="ScheduledDatePicker" type="text" class="date-picker form-control" value="@Model.ScheduledDate" >
                             <i class="fa fa-calendar input-cal"></i>
                         </div>
-                        @Html.ValidationMessageFor(m => m.ScheduledDate, "", new { @class = "error-msg" })
+                        @Html.HiddenFor(m => m.ScheduledDate)
+                        @Html.ValidationMessageFor(m => m.ScheduledDate, "", new {@class = "error-msg"})
 
                     </div>
 
                     <div class="col-md-6">
-                        @Html.LabelFor(m => m.ScheduledTime, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.ScheduledTime, new {@class = "control-label"})
 
                         <div class="input-icon">
-                            @Html.EditorFor(m => m.ScheduledTime, new { htmlAttributes = new { @class = "form-control time-picker", @type = "text" } })
+                            @Html.EditorFor(m => m.ScheduledTime, new {htmlAttributes = new {@class = "form-control time-picker", @type = "text"}})
                             <i class="fa fa-clock-o input-clock"></i>
                         </div>
-                        @Html.ValidationMessageFor(m => m.ScheduledTime, "", new { @class = "error-msg" })
+                        @Html.ValidationMessageFor(m => m.ScheduledTime, "", new {@class = "error-msg"})
 
                     </div>
                 </div>
@@ -172,15 +173,15 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-6">
-                        @Html.LabelFor(m => m.DurationId, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.DurationId, "", new { @class = "error-msg" })
+                        @Html.LabelFor(m => m.DurationId, new {@class = "control-label"})
+                        @Html.DropDownListFor(m => m.DurationId, Model.DurationList, null, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.DurationId, "", new {@class = "error-msg"})
                     </div>
                     <div class="col-md-6">
                         <div>
                             <label for="end-time" class="control-label">Predicted End Time</label>
                             <div class="input-icon">
-                                <input id="end-time" type="text" class="form-control" readonly disabled />
+                                <input id="end-time" type="text" class="form-control" readonly disabled/>
                                 <i class="fa fa-history fa-flip-horizontal input-cal"></i>
                             </div>
                         </div>
@@ -193,18 +194,18 @@
                     @* Gamers Required *@
                     <div class="col-md-6">
                         <div class="form-group">
-                            @Html.LabelFor(m => m.GamersRequired, new { @class = "control-label" })
+                            @Html.LabelFor(m => m.GamersRequired, new {@class = "control-label"})
                             <div class="input-icon">
-                                @Html.DropDownListFor(m => m.GamersRequired, Model.GamersRequiredList, null, new { @class = "form-control input-icon-l" })
+                                @Html.DropDownListFor(m => m.GamersRequired, Model.GamersRequiredList, null, new {@class = "form-control input-icon-l"})
                                 <i class="fa fa-users input-icon-l"></i>
                             </div>
-                            @Html.ValidationMessageFor(m => m.GamersRequired, "", new { @class = "text-danger" })
+                            @Html.ValidationMessageFor(m => m.GamersRequired, "", new {@class = "text-danger"})
                         </div>
                     </div>
 
                     @* Min User Rating *@
                     <div class="col-md-6">
-                        @Html.LabelFor(m => m.MinRatingScore, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.MinRatingScore, new {@class = "control-label"})
 
                         @* Rating info popup *@
                         @{
@@ -215,7 +216,7 @@
                         @Html.InfoPopUp(title, body, "bottom")
 
                         <div class="form-group">
-                            @Html.HiddenFor(m => m.MinRatingScore, new { @class = "rating" })
+                            @Html.HiddenFor(m => m.MinRatingScore, new {@class = "rating"})
                             <p style="margin: 0">
                                 <i>@Model.MinRatingScore / 10</i>
                             </p>
@@ -240,7 +241,7 @@
                     @* Template used to clone more *@
                     <li id="goal-template" class="goal-item" hidden>
                         <i class="fa fa-gamepad"></i>
-                        <input type="text" />
+                        <input type="text"/>
                         <button type="button" class="close" title="Remove">
                             <span>&times;</span>
                         </button>
@@ -248,12 +249,12 @@
 
                     @* If 'post back' populate goals list *@
                     @if (Model.Goals != null && Model.Goals.Any())
-                {
-                    for (int i = 0; i < Model.Goals.Count; i++)
                     {
+                        for (int i = 0; i < Model.Goals.Count; i++)
+                        {
                             <li class="goal-item">
                                 <i class="fa fa-gamepad"></i>
-                                @Html.TextBoxFor(m => m.Goals[i], new { @placeholder = "Objective / Goal " + (i + 1) })
+                                @Html.TextBoxFor(m => m.Goals[i], new {@placeholder = "Objective / Goal " + (i + 1)})
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -263,15 +264,15 @@
                     else
                     {
                         @* Initial items *@
-                    for (int i = 0; i < 5; i++)
-                    {
-                        <li class="goal-item">
-                            <i class="fa fa-gamepad"></i>
-                            <input id="goals[@i]" name="goals[@i]" type="text" placeholder="Objective / Goal @(i + 1)" />
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </li>
+                        for (int i = 0; i < 5; i++)
+                        {
+                            <li class="goal-item">
+                                <i class="fa fa-gamepad"></i>
+                                <input id="goals[@i]" name="goals[@i]" type="text" placeholder="Objective / Goal @(i + 1)"/>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
                         }
                     }
                 </ul>
@@ -282,18 +283,18 @@
         <div class="col-md-12">
             @* Information *@
             <div class="form-group">
-                @Html.LabelFor(m => m.Information, new { @class = "control-label" })
-                @Html.TextAreaFor(model => model.Information, new { @class = "form-control rich-text-area" })
-                @Html.ValidationMessageFor(m => m.Information, "", new { @class = "error-msg" })
+                @Html.LabelFor(m => m.Information, new {@class = "control-label"})
+                @Html.TextAreaFor(model => model.Information, new {@class = "form-control rich-text-area"})
+                @Html.ValidationMessageFor(m => m.Information, "", new {@class = "error-msg"})
             </div>
         </div>
-
-        @* Submit Button *@
-        <div class="col-md-12 text-right">
-            <button type="button" class="invite-friends-btn" data-toggle="modal" data-target="#invite-modal">Invite Friends <i class="fa fa-send"></i></button>
-            <button type="submit" class="session-create-btn">Create Session <i class="fa fa-check" style="color:#fff;"></i></button>
-        </div>
     </div>
+    @* Submit Button *@
+    <div class="col-md-12 text-right">
+        <button type="button" class="invite-friends-btn" data-toggle="modal" data-target="#invite-modal">Invite Friends <i class="fa fa-send"></i></button>
+        <button type="submit" class="session-create-btn">Create Session <i class="fa fa-check" style="color:#fff;"></i></button>
+    </div>
+
 
     <!-- Modal -->
     <div class="modal fade" id="invite-modal" tabindex="-1" role="dialog" aria-labelledby="invite-modal-label">
@@ -314,7 +315,7 @@
         </div>
     </div>
 
-    }
+}
 
 
 

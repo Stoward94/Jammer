@@ -176,12 +176,14 @@ namespace GamingSessionApp.Controllers
         {
             if (sessionId == Guid.Empty) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             
-            if (await _sessionLogic.RemoveUserFromSession(UserId, sessionId))
-            {
-                return RedirectToAction("Details", new { id = sessionId });
-            }
+            ValidationResult result = await _sessionLogic.RemoveUserFromSession(UserId, sessionId);
 
-            return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+            if (result.Success)
+                return RedirectToAction("Details", new { id = sessionId });
+
+            //Add error
+            TempData["ErrorMsg"] = result.Error;
+            return RedirectToAction("Details", new { id = sessionId });
         }
         
         protected override void Dispose(bool disposing)

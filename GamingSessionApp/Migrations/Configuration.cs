@@ -105,17 +105,17 @@ namespace GamingSessionApp.Migrations
                 );
 
             //Seed the SessionType Descriptions
-            var sessionTypes = new List<string>
+            var sessionTypes = new List<SessionType>
             {
-                "Boosting",
-                "Co-op",
-                "Competitive",
-                "Clan match",
-                "Casual play",
-                "Achievement hunting"
+                new SessionType { Name = "Boosting", Description = "(Boosting) abusing the game to elevate or \"boost\" one's rank or progress towards a goal" },
+                new SessionType { Name = "Co-op", Description = "(Cooperative) play together as teammates through campaign, objectives, or other duo based modes" },
+                new SessionType { Name = "Competitive", Description = "(Competitive play) participating in a contest to determine the skill or ability of the players" },
+                new SessionType { Name = "Clan match", Description = "(Clan Match/Battle) pre-formed teams compete against other teams to see who is better" },
+                new SessionType { Name = "Casual play", Description = "(Causal Play) playing for fun or with no intended purpose, objective or goal" },
+                new SessionType { Name = "Achievement hunting", Description = "(Achievement/Trophy Hunting) playing to meet the requirements set for a given achievement or trophy" }
             };
 
-            sessionTypes.ForEach(c => context.SessionTypes.AddOrUpdate(x => x.Name, new SessionType { Name = c }));
+            sessionTypes.ForEach(c => context.SessionTypes.AddOrUpdate(x => x.Name, c));
 
             //Seed the Platforms
             var platforms = new List<string>

@@ -1,5 +1,6 @@
 ﻿@model GamingSessionApp.ViewModels.Session.SessionDetailsVM
 @using GamingSessionApp.Helpers
+@using Microsoft.AspNet.Identity
 
 @{
     ViewBag.Title = Model.GameTitle + " - " + Model.Platform;
@@ -42,14 +43,41 @@
         </div>
     </div>
     <div class="col-md-2 text-center">
-        @Html.SessionTypeIcon(Model.TypeId, "")
+        @Html.SessionTypeIcon(Model.TypeId, "", Model.TypeDescription)
     </div>
     <div class="col-md-3 text-center">
-        <span style="display: block"><i>SHARE THIS SESSION</i></span>
-        <a href="#" data-href="@Request.Url" class="social-icon share-fb">Facebook</a>
-        <a href="https://twitter.com/intent/tweet?url=@Request.Url&text=@ViewBag.Title&via=TriggerWars" class="social-icon icon-twitter">Tweet</a>
-        <a class="social-icon icon-googleplus" href="https://plus.google.com/share?url=@Request.Url" onclick="javascript:window.open(this.href,
-        '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">Google+</a>
+        <div class="border-bottom-green">
+            <label class="control-label"><i>SHARE THIS SESSION</i></label>
+        </div>
+        <div class="widget">
+            <a href="#" data-href="@Request.Url" class="social-icon share-fb">Facebook</a>
+            <a href="https://twitter.com/intent/tweet?url=@Request.Url&text=@ViewBag.Title&via=TriggerWars" class="social-icon icon-twitter">Tweet</a>
+            <a class="social-icon icon-googleplus" href="https://plus.google.com/share?url=@Request.Url" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">Google+</a>
+        </div>
+
+        @* Join/Leave actions *@
+        <div>
+            @if (Model.CanJoin)
+            {
+                <a class="tw-btn join-session-btn" href="@Url.Action("JoinSession", "Sessions", new {sessionId = Model.Id})">
+                    <i class="fa fa-thumbs-o-up"></i> Join
+                </a>
+            }
+
+            @if (Model.CanLeave)
+            {
+                <a class="tw-btn leave-session-btn" href="@Url.Action("LeaveSession", "Sessions", new {sessionId = Model.Id})">
+                    Leave <i class="fa fa-thumbs-o-down"></i>
+                </a>
+            }
+
+            @if (Model.CanEdit)
+            {
+                <a class="tw-btn edit-session-btn" href="@Url.Action("Edit", "Sessions", new {id = Model.Id})">
+                    Edit Session <i class="fa fa-pencil-square-o"></i>
+                </a>
+            }
+        </div>
     </div>
 </div>
 
@@ -60,9 +88,9 @@
         @* Goals *@
         <div class="session-goals">
             <div class="border-bottom-orange">
-                <label class="control-label">Objectives & Goals</label>
+                <label class="control-label"><i class="fa fa-list-alt" aria-hidden="true"></i> Objectives & Goals</label>
             </div>
-            <div class="goals-panel">
+            <div class="goals-panel widget">
                 @if (Model.Goals.Any())
                 {
                     <ul id="goals-ul">
@@ -86,121 +114,71 @@
 
         @* Details *@
         <div class="border-bottom-blue">
-            <label class="control-label">Session Details</label>
+            <label class="control-label"><i class="fa fa-puzzle-piece" aria-hidden="true"></i> Session Details</label>
         </div>
-        <div class="session-details">
+        <div class="session-details widget">
             @Html.Raw(Model.Information)
         </div>
 
+        @* Nav Tabs *@
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#comments" role="tab" data-toggle="tab">Comments</a>
+            </li>
+            <li role="presentation">
+                <a href="#feedback" role="tab" data-toggle="tab" data-ajax-url="@Url.Action("SessionFeedback", "Feedback", new {sessionId = Model.Id})">Feedback</a>
+            </li>
+        </ul>
+
+        @* Tab Panes *@
+        <div class="tab-content">
+
+            @* Comments Tab *@
+            <div role="tabpanel" class="tab-pane active" id="comments">
+                <div class="col-md-12">
+                    @Html.Partial("~/Views/Comments/_SessionComments.cshtml", Model.Comments)
+                </div>
+            </div>
+
+            @* Feedback *@
+            <div role="tabpanel" class="tab-pane" id="feedback" data-update-id="feedbackContainer" style="padding: 20px;">
+                <div id="ajaxLoading" class="ajax-spinner"></div>
+                <div id="feedbackContainer"></div>
+            </div>
+        </div>
+
     </div>
+
+
     <div class="col-md-3">
         @* Members *@
-        <div class="border-bottom-red">
-            <label class="control-label"><i class="fa fa-users"></i> Members (@Model.MembersCount/@Model.MembersRequired)</label>
-        </div>
-        <div class="session-members">
-            <ul>
-                @foreach (var m in Model.Members)
-                {
-                    <li>
-                        <div class="clearfix">
-                            <div style="width: 20%; float: left">
-                                <img src="@m.ThumbnailUrl" alt="Profile Pic" width="36" height="36"/>
-                            </div>
-                            <div style="width: 40%; float: left">
-                                @Html.ActionLink(m.DisplayName, "UserProfile", "Profile", new {userName = m.DisplayName}, null)
-                            </div>
-                            <div style="width: 30%; float: left">
-                                <i class="fa fa-trophy"></i> @m.Kudos
-                            </div>
-                            <div style="width: 10%; float: left">
-                                <i class="fa fa-check" style="color: green" title="Confirmed"></i>
-                            </div>
-                        </div>
-                    </li>
-                }
-            </ul>
-        </div>
+        @Html.Partial("_SessionMembers", Model)
 
-        @Html.LabelFor(m => m.MinUserRating, new { @class = "control-label" })
+        @* Min User Rating *@
+        <div class="text-center">
+            @Html.LabelFor(m => m.MinUserRating, new {@class = "control-label"})
 
-        @* Rating info popup *@
-        @{
-            string title = "Minimum User Rating";
-            string body = "Only users that meet the minimum user rating can join this session";
-        }
+            @* Rating info popup *@
+            @{
+                string title = "Minimum User Rating";
+                string body = "Only users that meet the minimum user rating can join this session";
+            }
 
-        @Html.InfoPopUp(title, body, "bottom")
+            @Html.InfoPopUp(title, body, "bottom")
 
-        <div class="form-group">
-            @Html.HiddenFor(m => m.MinUserRating, new { @class = "rating", @readonly="" })
-            <p style="margin: 0">
-                <i>@Model.MinUserRating / 10</i>
-            </p>
-        </div>
-    </div>
-</div>
-
-<div class="session-actions">
-    @if (Model.CanJoin)
-    {
-        <a class="tw-btn join-session-btn" href="@Url.Action("JoinSession", "Sessions", new {sessionId = Model.Id})">
-            <i class="fa fa-thumbs-o-up"></i> Join
-        </a>
-    }
-
-    @if (Model.CanLeave)
-    {
-        <a class="tw-btn leave-session-btn" href="@Url.Action("LeaveSession", "Sessions", new {sessionId = Model.Id})">
-            Leave <i class="fa fa-thumbs-o-down"></i>
-        </a>
-    }
-
-    @if (Model.CanEdit)
-    {
-        <a class="tw-btn edit-session-btn" href="@Url.Action("Edit", "Sessions", new { id = Model.Id })">
-            Edit Session <i class="fa fa-pencil-square-o"></i>
-        </a>
-    }
-
-</div>
-
-@* Variables *@
-@{
-    string feedbackUrl = Url.Action("SessionFeedback", "Feedback", new { sessionId = Model.Id });
-}
-
-@* Nav Tabs *@
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-        <a href="#comments" role="tab" data-toggle="tab">Comments</a>
-    </li>
-    <li role="presentation">
-        <a href="#feedback" role="tab" data-toggle="tab" data-ajax-url="@feedbackUrl">Feedback</a>
-    </li>
-</ul>
-
-@* Tab Panes *@
-<div class="tab-content">
-
-    @* Comments Tab *@
-    <div role="tabpanel" class="tab-pane active" id="comments">
-        <div class="row">
-            <div class="col-md-9">
-                @Html.Partial("~/Views/Comments/_SessionComments.cshtml", Model.Comments)
-            </div>
-            <div class="col-md-3">
-                @*<div style="height: 200px; width: 100%; border: 1px solid gray; margin-top: 40px;">
-                    ADVERT?
-                </div>*@
+            <div class="form-group">
+                @Html.HiddenFor(m => m.MinUserRating, new {@class = "rating", @readonly = ""})
+                <p style="margin: 0">
+                    <i>@Model.MinUserRating / 10</i>
+                </p>
             </div>
         </div>
-    </div>
 
-    @* Feedback *@
-    <div role="tabpanel" class="tab-pane" id="feedback" data-update-id="feedbackContainer" style="padding: 20px;">
-        <div id="ajaxLoading" class="ajax-spinner"></div>
-        <div id="feedbackContainer"></div>
+        <div>
+            @*<div style="height: 200px; width: 100%; border: 1px solid gray; margin-top: 40px;">
+                ADVERT?
+            </div>*@
+        </div>
     </div>
 </div>
 

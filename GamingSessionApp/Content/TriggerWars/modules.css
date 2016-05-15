@@ -20,7 +20,6 @@
     border-left: 1px solid #f1f1f1;
     padding-top: 5px;
     min-height: 100px;
-    padding: 5px 0;
     color: #393d40;
 }
 
@@ -284,8 +283,8 @@
     left: 0;
     width: 100%;
     background-color:#0fb8ad;
-    background-color:rgba(3, 69, 65, 0.50);
-    padding: 15px;
+    background-color:rgba(255, 25, 0, 0.7);
+    padding: 5px;
     font-weight: bold;
     font-size: 1.1em;
 }
@@ -363,10 +362,6 @@
 /**********************************************
     CREATE SESSION STYLES
 **********************************************/
-
-.types {
-    margin-bottom: 20px;
-}
 
 /* Platform icons */
 
@@ -488,8 +483,9 @@ a.type-casual:hover, .type-casual.selected { background-position: 0 -725px; }
 
 
 .goals-panel {
-    max-height: 280px;
+    max-height: 325px;
     overflow: auto;
+    min-height: 150px;
 }
 
 #goals-ul {
@@ -592,22 +588,9 @@ a.type-casual:hover, .type-casual.selected { background-position: 0 -725px; }
 }
 
 .session-details {
-    padding: 10px;
-    background: #f8f8f8;
-    border: 1px solid #e5e5e5;
     min-height: 150px;
     max-height: 300px;
     overflow: auto;
-    margin-top: 5px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-}
-
-.session-members {
-    padding: 10px 5px;
-    background: #fff6f7;
-    border: 1px solid #d24d57;
-    margin-bottom: 20px;
 }
 
 .session-members ul {

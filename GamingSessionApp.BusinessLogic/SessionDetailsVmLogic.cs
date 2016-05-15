@@ -48,6 +48,7 @@ namespace GamingSessionApp.BusinessLogic
                         PlatformId = x.PlatformId,
                         Platform = x.Platform.Name,
                         TypeId = x.TypeId,
+                        TypeDescription = x.Type.Description,
                         MembersRequired = x.MembersRequired,
                         IsPublic = x.Settings.IsPublic,
                         Information = x.Information,

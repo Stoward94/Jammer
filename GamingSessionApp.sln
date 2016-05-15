@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp", "GamingSessionApp\GamingSessionApp.csproj", "{FDF6AB1C-213F-46E4-A13A-0F2B506DD4BC}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp.ViewModels", "GamingSessionApp.ViewModels\GamingSessionApp.ViewModels.csproj", "{69C4F158-078B-4101-8E61-84F0F79C7A44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingSessionApp.Helpers", "GamingSessionApp.Helpers\GamingSessionApp.Helpers.csproj", "{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}"
+EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ModelingProject1", "ModelingProject1\ModelingProject1.modelproj", "{E02D7DF0-A16B-4E0D-AA69-13F7E9516420}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A49AE404-F16B-4348-97B4-AE0E60FF9BE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E02D7DF0-A16B-4E0D-AA69-13F7E9516420}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E02D7DF0-A16B-4E0D-AA69-13F7E9516420}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E02D7DF0-A16B-4E0D-AA69-13F7E9516420}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E02D7DF0-A16B-4E0D-AA69-13F7E9516420}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

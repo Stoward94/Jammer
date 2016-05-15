@@ -824,7 +824,7 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public async Task<bool> RemoveUserFromSession(string userId, Guid sessionId)
+        public async Task<ValidationResult> RemoveUserFromSession(string userId, Guid sessionId)
         {
             try
             {
@@ -833,9 +833,12 @@ namespace GamingSessionApp.BusinessLogic
                     .Include(x => x.Comments)
                     .FirstOrDefaultAsync();
 
-                if (targetSession == null) return false;
+                if (targetSession == null)
+                    return VResult.AddError("Unable to leave this session as this time");
 
-                if (!targetSession.Active) return false;
+                //Check the session is active
+                if (!targetSession.Active)
+                    return VResult.AddError("This session is no longer active");
 
                 UserProfile user = targetSession.Members.First(x => x.UserId == userId);
 
@@ -844,20 +847,22 @@ namespace GamingSessionApp.BusinessLogic
 
                 //Check if the status needs updating
                 CheckSessionStatus(targetSession);
-
+                
                 //Add 'User left' message to session feed
-                //_commentLogic.UserId = UserId;
-                //_commentLogic.AddUserLeftComment(targetSession, user.DisplayName);
+                _commentLogic = new SessionCommentLogic(UoW);
+                var comment = _commentLogic.AddUserLeftComment(targetSession.Id, user.DisplayName, user.UserId);
+
+                if (comment != null)
+                    targetSession.Comments.Add(comment);
+
+                //Send notification to the session owner
+                NotificationLogic nLogic = new NotificationLogic(UoW);
+                await nLogic.AddUserLeftNotification(targetSession, user.UserId);
 
                 _sessionRepo.Update(targetSession);
                 await SaveChangesAsync();
 
-                //Send email
-                //TODO: Send email
-                //Send notification
-                //TODO: Send notification
-
-                return true;
+                return VResult;
             }
             catch (Exception ex)
             {
