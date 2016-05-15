@@ -283,7 +283,28 @@
     <Content Include="Content\jquery.tag-editor.css" />
     <Content Include="Content\TriggerWars\footer.css" />
     <Content Include="Content\TriggerWars\modules.css" />
+    <Content Include="Images\180x180\default\sample-1.png" />
+    <Content Include="Images\180x180\default\sample-2.png" />
+    <Content Include="Images\180x180\default\sample-3.png" />
+    <Content Include="Images\180x180\default\sample-4.png" />
+    <Content Include="Images\180x180\default\sample-5.png" />
+    <Content Include="Images\48x48\Default\sample-1.png" />
+    <Content Include="Images\48x48\Default\sample-2.png" />
+    <Content Include="Images\48x48\Default\sample-3.png" />
+    <Content Include="Images\48x48\Default\sample-4.png" />
+    <Content Include="Images\48x48\Default\sample-5.png" />
+    <Content Include="Images\thumbnails\default\sample-1.png" />
+    <Content Include="Images\thumbnails\default\sample-2.png" />
+    <Content Include="Images\thumbnails\default\sample-3.png" />
+    <Content Include="Images\thumbnails\default\sample-4.png" />
+    <Content Include="Images\thumbnails\default\sample-5.png" />
     <Content Include="Media\Awards-sprite.png" />
+    <Content Include="Media\Banners\Awards-shot.png" />
+    <Content Include="Media\Banners\banner.jpg" />
+    <Content Include="Media\Banners\Capture.PNG" />
+    <Content Include="Media\Banners\Friends-sessions-shot.png" />
+    <Content Include="Media\Banners\kudos.png" />
+    <Content Include="Media\crown-icon.png" />
     <Content Include="Media\favicons\android-chrome-144x144.png" />
     <Content Include="Media\favicons\android-chrome-192x192.png" />
     <Content Include="Media\favicons\android-chrome-36x36.png" />
@@ -329,7 +350,6 @@
     <Content Include="Media\social-media\Xbox-Icon.svg" />
     <Content Include="Media\type-icons-sm.png" />
     <Content Include="Media\type-icons.png" />
-    <Content Include="Media\user-joined-icon.png" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\bootstrap-rating.min.js" />
     <Content Include="fonts\font-awesome\fontawesome-webfont.eot" />
@@ -349,6 +369,8 @@
     <None Include="Properties\PublishProfiles\GameJammer.pubxml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\TriggerWars-Test - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\TriggerWars-Test - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -485,6 +507,7 @@
     <Content Include="Views\Home\_TopRankingUsers.cshtml" />
     <Content Include="Views\Home\_NewestUsers.cshtml" />
     <Content Include="Views\Leaderboard\Index.cshtml" />
+    <Content Include="Views\Sessions\_SessionMembers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -557,6 +580,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
+  <Import Project="..\packages\Microsoft.Web.WebJobs.Publish.1.0.11\tools\webjobs.targets" Condition="Exists('..\packages\Microsoft.Web.WebJobs.Publish.1.0.11\tools\webjobs.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

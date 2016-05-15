@@ -16,9 +16,22 @@
                 <div id="carousel-example-generic" class="carousel slide text-center" data-ride="carousel" data-interval="8000" style="border: 1px solid #f1f1f1; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner" role="listbox">
+
                         <div class="item active">
-                            <img src="~/Media/Banners/Capture.PNG" style="width: 100%" />
-                            <div class="carousel-caption">Unlock awards throughout the site</div>
+                            <a href="@Url.Action("MyAwards", "Awards")">
+                                <img src="~/Media/Banners/Awards-shot.PNG" style="width: 100%" />
+                                <div class="carousel-caption">
+                                    Earn Your Mark<br />
+                                    <small>Unlock awards for a range of different milestones</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <img src="~/Media/Banners/kudos.png" style="width: 100%"/>
+                            <div class="carousel-caption">
+                                Rise To The Challenge<br />
+                                <small>Earn Kudos throughout the site and become the best</small>
+                            </div>
                         </div>
                         <div class="item">
                             <img src="~/Media/Banners/banner.jpg" style="width: 100%" />
