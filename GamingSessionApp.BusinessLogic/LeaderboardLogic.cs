@@ -26,10 +26,10 @@ namespace GamingSessionApp.BusinessLogic
                 int skip = (page - 1)*pageSize;
 
                 //Base query
-                var query = UoW.Repository<UserProfile>().Get();
+                var query = UoW.Repository<UserProfile>().Get().OrderByDescending(u => u.Kudos.Points);
 
                 //Fetch the data including a groupby count
-                var data = await query.OrderByDescending(u => u.Kudos.Points)
+                var data = await query
                     .Skip(skip)
                     .Take(pageSize)
                     .Select(u => new UserListItem
@@ -37,11 +37,11 @@ namespace GamingSessionApp.BusinessLogic
                         Kudos = u.Kudos.Points.ToString(),
                         ThumbnailUrl = u.ThumbnailUrl,
                         Username = u.DisplayName,
-                        Rank = query.Count(o => o.Kudos.Points >= u.Kudos.Points) //Calculats the rank (index)
+                        Rank = query.Count(o => o.Kudos.Points > u.Kudos.Points) + 1 //Calculats the rank (index)
                     })
                     .GroupBy(u => new { Total = query.Count() })
                     .FirstOrDefaultAsync();
-
+                
                 //Build the view model
                 var model = new UserLeaderboardViewModel
                 {
@@ -83,7 +83,7 @@ namespace GamingSessionApp.BusinessLogic
                             Kudos = x.Friend.Kudos.Points.ToString(),
                             ThumbnailUrl = x.Friend.ThumbnailUrl,
                             Username = x.Friend.DisplayName,
-                            Rank = query.Count(o => o.Kudos.Points >= x.Friend.Kudos.Points) //Calculats the rank (index)
+                            Rank = query.Count(o => o.Kudos.Points > x.Friend.Kudos.Points) + 1 //Calculates the rank (index)
                         })
                         .ToListAsync();
 
