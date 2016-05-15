@@ -64,6 +64,7 @@ namespace GamingSessionApp.BusinessLogic
                             SessionId = x.Id,
                             Comments = x.Comments.Select(c => new CommentViewModel
                             {
+                                Id = c.Id,
                                 Author = c.Author.DisplayName,
                                 ThumbnailUrl = c.Author.ThumbnailUrl,
                                 Kudos = c.Author.Kudos.Points.ToString(),

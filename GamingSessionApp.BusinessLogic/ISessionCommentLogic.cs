@@ -13,7 +13,7 @@ namespace GamingSessionApp.BusinessLogic
         void AddSessionCreatedComment(Session session);
         Task<CommentViewModel> AddSessionComment(PostCommentViewModel model, string userId);
         SessionComment AddUserJoinedComment(Guid sessionId, string username, string userId);
-        void AddUserLeftComment(Guid sessionId, string username);
+        SessionComment AddUserLeftComment(Guid sessionId, string username, string userId);
         Task<CommentViewModel> LoadComment(int commentId, string userId);
     }
 }

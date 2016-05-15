@@ -57,14 +57,16 @@ namespace GamingSessionApp.BusinessLogic
                 };
 
                 _commentRepo.Insert(comment);
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
 
                 //Notify members
                 var members = await UoW.Repository<Session>().Get(x => x.Id == model.SessionId)
                     .Select(x => x.Members).FirstAsync();
 
                 var nLogic = new NotificationLogic(UoW);
-                nLogic.AddCommentNotification(members, userId, model.SessionId, comment.Id);
+                nLogic.AddCommentNotification(members, model.SessionId, comment);
+
+                await SaveChangesAsync();
 
                 //Return commentId to load the new comment viewModel
                 return await LoadComment(comment.Id, userId);
@@ -97,23 +99,25 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
-        public void AddUserLeftComment(Guid sessionId, string username)
+        public SessionComment AddUserLeftComment(Guid sessionId, string username, string userId)
         {
             try
             {
                 SessionComment comment = new SessionComment()
                 {
-                    AuthorId = UserId,
+                    AuthorId = userId,
                     Body = $"{username} has left the session",
                     CommentTypeId = (int)SessionMessageTypeEnum.PlayerLeft,
                     SessionId = sessionId
                 };
 
-                _commentRepo.Insert(comment);
+                return comment;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //Let the caller catch the exception
+                LogError(ex, "Error adding user left comment. SessionId : " + sessionId + " UserId : " + userId);
+                return null;
             }
         }
 
