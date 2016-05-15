@@ -12,12 +12,22 @@ $.validator.setDefaults({
     }
 });
 
+//Override date validator (validate UK format)
+$.validator.methods.date = function (value, element) {
+    var date = moment(value, 'DD/MM/YYYY');
+    return date.isValid();
+}
+
 //Global opt in for bootstrap popovers
 var popOverSettings = {
     trigger: "hover",
     viewport: "#viewport",
     selector: '[data-toggle="popover"]'
 }
+
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+});
 
 /***************************************************
                 *  HOME SCRIPTS * 
@@ -435,7 +445,8 @@ $('#btn-comment-post').click(function() {
 
 //Initialise datetime picker
 $(".date-picker").datetimepicker({
-    format: "DD/MM/YYYY",
+    format: 'dddd Do MMMM YYYY',
+    extraFormats: [ 'dddd Do MMMM YYYY', 'DD/MM/YYYY'],
     useCurrent: false,
     minDate: new Date().setHours(0, 0, 0, 0)
 });
@@ -445,6 +456,7 @@ $(".time-picker").datetimepicker({
     stepping: 15,
     useCurrent: false
 });
+
 
 //Sessions Search next/previous controls
 $("#search-filter-submit").click(function (e) {
@@ -501,7 +513,7 @@ $(".share-fb").click(function(e) {
         hastag: "TriggerWars,Gaming",
         mobile_iframe: true
     }, function (response) { });
-});});
+});
 
 
 //Detect if we have an achor tag

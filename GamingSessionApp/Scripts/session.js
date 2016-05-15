@@ -49,9 +49,9 @@ var calculateEndDate = function () {
         return;
     }
 
-    var newDate = moment(date + " " + time, "DD/MM/YYYY HH:mm");
+    var newDate = moment(date + " " + time, "dddd Do MMMM HH:mm");
     newDate.add(duration, "m");
-    $("#end-time").val(moment(newDate).format("DD/MM/YYYY HH:mm"));
+    $("#end-time").val(moment(newDate).format("HH:mm - dddd Do MMMM"));
 };
 calculateEndDate();
 
@@ -125,3 +125,19 @@ $('#invite-modal').on('show.bs.modal', function (e) {
             updateTarget.text("Oops: Unable to get your friends. Please try again later.");
         });
 })
+
+
+//Create session button
+$(".session-create-btn").click(function(e) {
+    //e.preventDefault();
+
+    //var dateEl = $("#ScheduledDate");
+
+    //$("#ScheduledDate").val(moment(dateEl.val(), "DD-MMM-YY").unix());
+
+    //$(this).closest("form").submit();
+});
+
+$('#ScheduledDatePicker').on("dp.change", function (e) {
+    $("#ScheduledDate").val(moment(e.date).format("DD/MM/YYYY"));
+});

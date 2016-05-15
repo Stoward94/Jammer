@@ -152,10 +152,11 @@
                         @Html.LabelFor(m => m.ScheduledDate, new { @class = "control-label" })
 
                         <div class="input-icon">
-                            <input id="ScheduledDate" name="ScheduledDate" type="text" class="date-picker form-control input-validation-error"
+                            <input id="ScheduledDatePicker" type="text" class="date-picker form-control input-validation-error"
                                    value="@Model.ScheduledDate" data-val="true" data-val-required="The Schedule Date field is required.">
                             <i class="fa fa-calendar input-cal"></i>
                         </div>
+                        @Html.HiddenFor(m => m.ScheduledDate)
                         @Html.ValidationMessageFor(m => m.ScheduledDate, "", new { @class = "error-msg" })
 
                     </div>
