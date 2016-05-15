@@ -145,7 +145,7 @@
         <div class="profile-actions">
             
             @* Add friend button *@
-            @if (!Model.IsFriend)
+            @if (!Model.IsFriend && User.Identity.IsAuthenticated)
             {
                  using (Html.BeginForm("AddFriend", "Profile", new {username = Model.DisplayName}, FormMethod.Post))
                  {

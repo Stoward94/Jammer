@@ -7,7 +7,7 @@
         foreach (var n in Model)
         {
             <li class="notif-menu-item @(n.Read == false ? "unread" : "")" data-id="@n.Id">
-                <a href="@Url.Action("Details", "Sessions", new { id = n.SessionId })">
+                <a href="@Url.NotificationTypeLink(n)">
                     <div class="clearfix">
                         <div class="notif-icon hidden-xs">
                             @*@Html.NotificationTypeIcon(n.TypeId)*@
