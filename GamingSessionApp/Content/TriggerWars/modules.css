@@ -1078,7 +1078,8 @@ ul.edit-profile-nav .active {
     display: inline;
 }
 
-.user-about-empty, .my-about-empty, .no-social-links {
+.user-about-empty, .my-about-empty, .no-social-links,
+.user-social-empty {
     border: 2px dashed #ed1c24;
     padding: 15px;
     text-align: center;
@@ -1088,7 +1089,7 @@ ul.edit-profile-nav .active {
     min-height: 50px;
 }
 
-.user-about-empty {
+.user-about-empty, .user-social-empty {
     border-color: gray;
 }
 

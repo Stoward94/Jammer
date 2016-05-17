@@ -1,20 +1,29 @@
 ﻿@model List<GamingSessionApp.ViewModels.Shared.FriendListItem>
 
 <div id="invite-users" class="invite-users-modal">
-    <table>
-        @for (int i = 0; i < Model.Count; i++)
-        {
-            <tr>
-                <td>
-                    <div class="checkbox">
-                        <label>
-                            <input id="InviteRecipients" name="InviteRecipients" type="checkbox" value="@Model[i].DisplayName">
-                            <img src="@Model[i].Thumbnail" alt="Profile Pic" width="36" height="36"/>
-                            <span>@Model[i].DisplayName</span>
-                        </label>
-                    </div>
-                </td>
-            </tr>
-        }
-    </table>
+    @if (Model.Any())
+    {
+        <table>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <div class="checkbox">
+                            <label>
+                                <input id="InviteRecipients" name="InviteRecipients" type="checkbox" value="@Model[i].DisplayName">
+                                <img src="@Model[i].Thumbnail" alt="Profile Pic" width="36" height="36"/>
+                                <span>@Model[i].DisplayName</span>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <div class="no-friends">
+            You have no friends to invite :(
+        </div>
+    }
 </div>
