@@ -185,6 +185,20 @@ namespace GamingSessionApp.Controllers
             TempData["ErrorMsg"] = result.Error;
             return RedirectToAction("Details", new { id = sessionId });
         }
+
+        public async Task<ActionResult> KickUser(string kickUserId, Guid sessionId)
+        {
+            if (sessionId == Guid.Empty || string.IsNullOrEmpty(kickUserId))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ValidationResult result = await _sessionLogic.KickUserFromSession(kickUserId, sessionId, UserId);
+            
+            //Add error
+            if (!result.Success)
+                TempData["ErrorMsg"] = result.Error;
+
+            return RedirectToAction("Details", new { id = sessionId });
+        }
         
         protected override void Dispose(bool disposing)
         {

@@ -14,6 +14,8 @@ namespace GamingSessionApp.BusinessLogic
         Task<CommentViewModel> AddSessionComment(PostCommentViewModel model, string userId);
         SessionComment AddUserJoinedComment(Guid sessionId, string username, string userId);
         SessionComment AddUserLeftComment(Guid sessionId, string username, string userId);
+        SessionComment AddUserKickedComment(Guid sessionId, string username, string hostId);
+
         Task<CommentViewModel> LoadComment(int commentId, string userId);
     }
 }

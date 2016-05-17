@@ -141,7 +141,8 @@ namespace GamingSessionApp.Migrations
                 "Player Joined",
                 "Player Left",
                 "Comment",
-                "Invitation"
+                "Invitation",
+                "Player Kicked"
             };
 
             feedMessageTypes.ForEach(c => context.SessionMessageTypes.AddOrUpdate(x => x.Type, new SessionCommentType { Type = c }));
@@ -154,7 +155,8 @@ namespace GamingSessionApp.Migrations
                 "Kudos Added",
                 "Information",
                 "Invitation",
-                "Comment"
+                "Comment",
+                "Player Kicked"
             };
 
             userNotificationTypes.ForEach(t => context.UserNotificationTypes.AddOrUpdate(x => x.Name, new UserNotificationType { Name = t }));

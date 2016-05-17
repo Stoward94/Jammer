@@ -158,5 +158,26 @@ namespace GamingSessionApp.BusinessLogic
                 throw;
             }
         }
+
+        public SessionComment AddUserKickedComment(Guid sessionId, string username, string hostId)
+        {
+            try
+            {
+                SessionComment comment = new SessionComment()
+                {
+                    AuthorId = hostId,
+                    Body = $"{username} has been kicked from the session",
+                    CommentTypeId = (int)SessionMessageTypeEnum.PlayerKicked,
+                    SessionId = sessionId
+                };
+
+                return comment;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable add user kicked comment for session: " + sessionId + " and username: " + username);
+                return null;
+            }
+        }
     }
 }

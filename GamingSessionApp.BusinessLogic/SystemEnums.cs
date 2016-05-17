@@ -14,7 +14,8 @@ namespace GamingSessionApp.BusinessLogic
             PlayerJoined = 2,
             PlayerLeft = 3,
             Comment = 4,
-            Invitation = 5
+            Invitation = 5,
+            PlayerKicked = 6
         }
 
         public enum SessionStatusEnum
@@ -33,6 +34,7 @@ namespace GamingSessionApp.BusinessLogic
             Information = 4,
             Invitation = 5,
             Comment = 6,
+            PlayerKicked = 7
         }
 
         public enum PlatformEnum

@@ -146,22 +146,25 @@ namespace GamingSessionApp.BusinessLogic
                     switch (n.TypeId)
                     {
                         case (int)UserNotificationTypeEnum.Comment:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has commented on the session: <b>{n.Session.Game.GameTitle}</b>";
+                            notif.Body = $"<b>{n.Referee?.DisplayName}</b> has commented on the session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                         case (int)UserNotificationTypeEnum.Information:
                             notif.Body = n.Body;
                             break;
                         case (int)UserNotificationTypeEnum.Invitation:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has invited you to join their new session";
+                            notif.Body = $"<b>{n.Referee?.DisplayName}</b> has invited you to join their new session";
                             break;
                         case (int)UserNotificationTypeEnum.KudosAdded:
                             notif.Body = n.Body;
                             break;
                         case (int)UserNotificationTypeEnum.PlayerJoined:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has joined your session: <b>{n.Session.Game.GameTitle}</b>";
+                            notif.Body = $"<b>{n.Referee?.DisplayName}</b> has joined your session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                         case (int)UserNotificationTypeEnum.PlayerLeft:
-                            notif.Body = $"<b>{n.Referee.DisplayName}</b> has left your session: <b>{n.Session.Game.GameTitle}</b>";
+                            notif.Body = $"<b>{n.Referee?.DisplayName}</b> has left your session: <b>{n.Session.Game.GameTitle}</b>";
+                            break;
+                        case (int)UserNotificationTypeEnum.PlayerKicked:
+                            notif.Body = $"You have been <b>kicked</b> from the session: <b>{n.Session.Game.GameTitle}</b>";
                             break;
                     }
 
@@ -171,9 +174,9 @@ namespace GamingSessionApp.BusinessLogic
 
                 return model;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                LogError(ex, "Error building notifications for user: " + notifs.First().RecipientId);
                 throw;
             }
         }
@@ -300,6 +303,34 @@ namespace GamingSessionApp.BusinessLogic
             }
         }
 
+
+        public async Task AddUserKickedNotification(Session session, string userId)
+        {
+            try
+            {
+                UserNotification notification = new UserNotification
+                {
+                    SessionId = session.Id,
+                    RecipientId = userId,
+                    TypeId = (int)UserNotificationTypeEnum.PlayerKicked,
+                };
+
+                //Load the preferences to check whether to add the notification
+                UserPreferences preferences = await UoW.Repository<UserPreferences>()
+                    .Get(x => x.ProfileId == userId)
+                    .FirstOrDefaultAsync();
+
+                //Attach nofitication
+                AddNotification(preferences, notification);
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+        }
+
         //Adds notification, but first checks against users preferences. 
         private void AddNotification(UserPreferences prefs, UserNotification notification)
         {
@@ -341,5 +372,6 @@ namespace GamingSessionApp.BusinessLogic
         }
 
         #endregion
+
     }
 }

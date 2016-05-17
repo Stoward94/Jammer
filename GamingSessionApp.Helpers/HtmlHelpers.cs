@@ -135,6 +135,9 @@ namespace GamingSessionApp.Helpers
                     return helper.Action("Details", "Sessions", new { id = n.SessionId });
                 case 6: //Comment
                     return helper.Action("Details", "Sessions", new { id = n.SessionId }) + "#" + n.CommentId;
+                case 7: //Player Kicked
+                    return helper.Action("Details", "Sessions", new { id = n.SessionId });
+
             }
 
             return link;

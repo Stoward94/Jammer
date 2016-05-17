@@ -870,5 +870,52 @@ namespace GamingSessionApp.BusinessLogic
                 throw;
             }
         }
+
+        public async Task<ValidationResult> KickUserFromSession(string kickUserId, Guid sessionId, string hostId)
+        {
+            try
+            {
+                //Load the session
+                Session session = await _sessionRepo.Get(x => x.Id == sessionId)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync();
+
+                if (session == null)
+                    return VResult.AddError("Unable to remove user from the session.");
+
+                //Make sure it's the session host making the request
+                if (session.CreatorId != hostId)
+                    return VResult.AddError("You are unable to remove the user from this session.");
+
+                //Check the user to kick is actually a member
+                var user = session.Members.FirstOrDefault(x => x.UserId == kickUserId);
+
+                if (user == null)
+                    return VResult.AddError("This user is not a member of this session.");
+
+
+                //Remove the user from the session
+                session.Members.Remove(user);
+
+                //Add a "User removed" comment to the session
+                _commentLogic = new SessionCommentLogic(UoW);
+                SessionComment comment = _commentLogic.AddUserKickedComment(session.Id, user.DisplayName, hostId);
+                session.Comments.Add(comment);
+
+                _sessionRepo.Update(session);
+                await SaveChangesAsync();
+
+                //Notify the user they have been kicked
+                NotificationLogic nLogic = new NotificationLogic(UoW);
+                await nLogic.AddUserKickedNotification(session, user.UserId);
+
+                return VResult;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, "Unable to kick user:" + kickUserId + ". From session: " + sessionId);
+                return VResult.AddError("An error occurred whilst trying to remove the user. Please try again.");
+            }
+        }
     }
 }

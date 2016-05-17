@@ -13,6 +13,7 @@ namespace GamingSessionApp.BusinessLogic
 
         Task AddUserJoinedNotification(Session session, string refereeId);
         Task AddUserLeftNotification(Session session, string refereeId);
+        Task AddUserKickedNotification(Session session, string userId);
 
         void AddCommentNotification(ICollection<UserProfile> members, Guid sessionId, SessionComment comment);
 

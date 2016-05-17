@@ -1,5 +1,9 @@
 ﻿@model GamingSessionApp.ViewModels.Session.SessionDetailsVM
 
+@{
+    bool viewerIsHost = Model.CanEdit;
+}
+
 @* Members *@
 <div class="border-bottom-red">
     <label class="control-label"><i class="fa fa-users"></i> Members (@Model.MembersCount/@Model.MembersRequired)</label>
@@ -32,7 +36,16 @@
                         }
                         else
                         {
-                            <i class="fa fa-check" style="color: green" title="Confirmed"></i>
+                            if (viewerIsHost)
+                            {
+                                <a href="@Url.Action("KickUser", "Sessions", new {kickUserId = m.UserId, sessionId = Model.Id})" title="Kick user">
+                                    <i class="fa fa-close" style="color: red"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check" style="color: green" title="Confirmed"></i>
+                            }
                         }
 
                     </td>
