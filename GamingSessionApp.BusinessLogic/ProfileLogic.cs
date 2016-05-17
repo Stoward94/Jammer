@@ -49,11 +49,8 @@ namespace GamingSessionApp.BusinessLogic
                         Social = new UserSocialLinks
                         {
                             Xbox = x.Social.Xbox,
-                            XboxUrl = x.Social.XboxUrl,
                             PlayStation = x.Social.PlayStation,
-                            PlayStationUrl = x.Social.PlayStationUrl,
                             Steam = x.Social.Steam,
-                            SteamUrl = x.Social.SteamUrl,
                             Facebook = x.Social.Facebook,
                             Twitter = x.Social.Twitter,
                             Twitch = x.Social.Twitch
@@ -217,11 +214,8 @@ namespace GamingSessionApp.BusinessLogic
                         Social = new UserSocialLinks
                         {
                             Xbox = x.Social.Xbox,
-                            XboxUrl = x.Social.XboxUrl,
                             PlayStation = x.Social.PlayStation,
-                            PlayStationUrl = x.Social.PlayStationUrl,
                             Steam = x.Social.Steam,
-                            SteamUrl = x.Social.SteamUrl,
                             Facebook = x.Social.Facebook,
                             Twitter = x.Social.Twitter,
                             Twitch = x.Social.Twitch
@@ -570,11 +564,11 @@ namespace GamingSessionApp.BusinessLogic
                         About = x.About,
                         Website = x.Website,
                         XboxUsername = x.Social.Xbox,
-                        XboxUrl = x.Social.XboxUrl,
                         PsnUsername = x.Social.PlayStation,
-                        PsnUrl = x.Social.PlayStationUrl,
                         SteamUsername = x.Social.Steam,
-                        SteamUrl = x.Social.SteamUrl
+                        Twitch = x.Social.Twitch,
+                        Twitter = x.Social.Twitter,
+                        Facebook = x.Social.Facebook
                     })
                     .FirstOrDefaultAsync();
 
@@ -616,11 +610,11 @@ namespace GamingSessionApp.BusinessLogic
                 p.About = model.About;
                 p.Website = model.Website;
                 p.Social.Xbox = model.XboxUsername;
-                p.Social.XboxUrl = model.XboxUrl;
                 p.Social.PlayStation = model.PsnUsername;
-                p.Social.PlayStationUrl = model.PsnUrl;
                 p.Social.Steam = model.SteamUsername;
-                p.Social.SteamUrl = model.SteamUrl;
+                p.Social.Twitch = model.Twitch;
+                p.Social.Twitter = model.Twitter;
+                p.Social.Facebook = model.Facebook;
 
                 //Save changes
                 _profileRepo.Update(p);

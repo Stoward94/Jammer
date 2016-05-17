@@ -230,6 +230,9 @@ i.input-icon-l {
 .fa-clock-o { font-size: 14px; }
 .fa-star, .fa-star-o {color: #e0b611;}
 .fa-check { color: green; }
+.fa-twitch { color: #6441A5 !important; }
+.fa-twitter { color: #4099FF !important; }
+.fa-facebook { color: #3B5998 !important; }
 
 .date-time {
     color: gray;

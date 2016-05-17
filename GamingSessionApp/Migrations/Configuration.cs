@@ -69,7 +69,6 @@ namespace GamingSessionApp.Migrations
                             Social = new UserSocial
                             {
                                 Xbox = "British Legends",
-                                XboxUrl = "account.xbox.com/en-GB/Profile?gamerTag=British+Legend",
                                 Steam = "MonsterAchievements",
                                 Facebook = "Luke Stoward",
                                 PlayStation = "Stoward94",

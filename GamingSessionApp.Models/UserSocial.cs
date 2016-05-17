@@ -11,13 +11,10 @@ namespace GamingSessionApp.Models
         public UserProfile User { get; set; }
 
         public string Xbox { get; set; }
-        public string XboxUrl { get; set; }
 
         public string PlayStation { get; set; }
-        public string PlayStationUrl { get; set; }
 
         public string Steam { get; set; }
-        public string SteamUrl { get; set; }
 
         public string Twitch { get; set; }
 
