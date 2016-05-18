@@ -114,6 +114,10 @@ namespace GamingSessionApp.BusinessLogic
                     })
                     .FirstOrDefaultAsync();
 
+                //If no messages sent, create default object
+                if (sentMessages == null)
+                    sentMessages = new OutboxMessageViewModel();
+
                 DateTime now = DateTime.UtcNow.ToTimeZoneTime(GetUserTimeZone());
                 
                 //Convert the times to the users time zone
