@@ -7,11 +7,11 @@
 
 <div class="row">
     <div class="col-md-9">
-        <div class="row">
-            <div class="col-md-3">
-                <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180" />
+        <div class="clearfix" style="background: #fff; border: 1px solid #f1f1f1; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 10px 0;">
+            <div class="col-sm-3">
+                <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" title="@Model.DisplayName" width="180" height="180"/>
             </div>
-            <div class="col-md-9">
+            <div class="col-sm-9">
                 <h1>
                     @Model.DisplayName <small><i class="fa fa-trophy"></i> @Model.Kudos Kudos</small>
                 </h1>
@@ -25,7 +25,9 @@
                 }
                 else
                 {
-                    <div class="my-about-empty">Complete your <a href="@Url.Action("Edit", "Profile")">"about"</a> section to fill this space</div>
+                    <div class="my-about-empty">
+                        Complete your <a href="@Url.Action("Edit", "Profile")">"about"</a> section to fill this space
+                    </div>
                 }
 
                 <div style="margin-top: 10px;">
@@ -36,10 +38,11 @@
                         |
                     </i>
                 </div>
-
             </div>
+        </div>
 
-
+        @* Awards Summary *@
+        <div class="row">
             <div class="col-md-12">
                 <div class="user-awards">
                     <div class="clearfix" style="margin: 10px 0;">
@@ -61,7 +64,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
 

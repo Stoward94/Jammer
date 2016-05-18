@@ -340,8 +340,7 @@
     <Content Include="Media\ellipsis.gif" />
     <Content Include="Global.asax" />
     <Content Include="Content\TriggerWars\Site.css" />
-    <Content Include="Media\logo-alt.svg" />
-    <Content Include="Media\logo-light.svg" />
+    <Content Include="Media\Logo-beta.svg" />
     <Content Include="Media\Logo.svg" />
     <Content Include="Media\platform-icon-sprite.png" />
     <Content Include="Media\search-loader.gif" />
@@ -369,6 +368,8 @@
     <None Include="Properties\PublishProfiles\GameJammer.pubxml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\TriggerWars - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\TriggerWars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\TriggerWars-Test - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\TriggerWars-Test - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -508,6 +509,7 @@
     <Content Include="Views\Home\_NewestUsers.cshtml" />
     <Content Include="Views\Leaderboard\Index.cshtml" />
     <Content Include="Views\Sessions\_SessionMembers.cshtml" />
+    <Content Include="Views\Home\Beta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

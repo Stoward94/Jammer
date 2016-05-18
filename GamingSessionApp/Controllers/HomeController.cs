@@ -44,6 +44,13 @@ namespace GamingSessionApp.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [Route("Beta/")]
+        public ActionResult Beta()
+        {
+            return View();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

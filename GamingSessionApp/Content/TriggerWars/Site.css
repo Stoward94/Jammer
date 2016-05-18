@@ -45,13 +45,9 @@ a:focus {
     max-height: 55px;
     min-width: 230px;
     margin: 10px;
-    background: url("../../Media/logo.svg") no-repeat 0 0 ;
+    background: url("../../Media/Logo-beta.svg") no-repeat 0 0 ;
     background-size: auto 55px;
 }
-/*.logo:hover {
-    background: url("../../Media/logo-alt.svg") no-repeat 0 0 ;
-    background-size: auto 55px;
-}*/
 
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
@@ -130,7 +126,7 @@ figcaption {
 .navbar-nav > li > a {
     height: 75px;
     border-bottom: 3px solid transparent;
-    padding-bottom: 15px;
+    padding: 0 15px;
     padding-top: 25px;
 }
 
@@ -158,6 +154,9 @@ figcaption {
 .label {
     font-size: 1em;
 }
+
+
+
 
 /***************************
     FORM STYLES
